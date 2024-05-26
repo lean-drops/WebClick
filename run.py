@@ -1,5 +1,6 @@
 from app import create_app
 import os
+import socket
 
 # Erstelle die Flask-Anwendung
 app = create_app()
@@ -11,8 +12,6 @@ if __name__ == '__main__':
     # Finde einen freien Port, falls der Standardport 5000 belegt ist
     port = int(os.environ.get('PORT', 5000))
     if port == 5000:
-        import socket
-
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         result = sock.connect_ex(('127.0.0.1', port))
         if result == 0:

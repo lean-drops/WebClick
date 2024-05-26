@@ -1,14 +1,36 @@
+import subprocess
 import logging
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from scrapers.create_directory import create_directory
 from scrapers.fetch_content import scrape_website
-from scrapers.screenshot import run_screenshot_script
 from scrapers.link_processor import shorten_url, create_zip_file
 
 # Logger konfigurieren
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+def run_screenshot_script(url, screenshot_path):
+    """
+    Run the screenshot script using Node.js and Puppeteer.
+
+    Args:
+        url (str): The URL of the website to capture.
+        screenshot_path (str): The path to save the screenshot.
+
+    Returns:
+        tuple: A tuple containing success status (bool) and message (str).
+    """
+    try:
+        result = subprocess.run(['node', 'app/static/js/screenshot.js', url, screenshot_path], capture_output=True, text=True)
+        if result.returncode != 0:
+            logger.error(f"Failed to create screenshot for {url}: {result.stderr}")
+            return False, f"Failed to create screenshot for {url}: {result.stderr}"
+        logger.info(f"Screenshot saved at {screenshot_path}")
+        return True, ""
+    except Exception as e:
+        logger.error(f"Error running screenshot script for {url}: {e}")
+        return False, f"Error running screenshot script for {url}: {e}"
 
 def scrape_and_screenshot(url, output_path):
     """
@@ -47,22 +69,16 @@ def scrape_multiple_websites(urls, base_folder):
     subpages_folder = os.path.join(base_folder, 'subpages')
     create_directory(subpages_folder)  # Create subpages directory
 
-    with ThreadPoolExecutor() as executor:
-        future_to_url = {executor.submit(scrape_website, url): url for url in urls}
+    with ThreadPoolExecutor(max_workers=4) as executor:  # Adjust max_workers as needed
+        future_to_url = {executor.submit(scrape_and_screenshot, url, subpages_folder): url for url in urls}
         for future in as_completed(future_to_url):
             url = future_to_url[future]
             try:
-                content = future.result()
-                if 'error' in content:
-                    logger.warning(f"Skipping {url} due to error: {content['error']}")
-                    continue
-                screenshot_path = os.path.join(subpages_folder, f'page_{urls.index(url) + 1}.png')
-                screenshot_result = scrape_and_screenshot(url, subpages_folder)
+                screenshot_result = future.result()
                 if 'error' in screenshot_result:
                     logger.warning(f"Skipping screenshot for {url} due to error: {screenshot_result['error']}")
                     continue
-                content['screenshot'] = screenshot_result['screenshot']
-                all_contents.append(content)
+                all_contents.append({'url': url, 'screenshot': screenshot_result['screenshot']})
             except Exception as e:
                 logger.error(f"Error scraping {url}: {e}")
 

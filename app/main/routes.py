@@ -1,10 +1,7 @@
 from flask import Blueprint, request, jsonify, render_template, send_file
-
 from scrapers.create_directory import shorten_url
-from scrapers.scraper import run_package_creator, scrape_website, scrape_multiple_websites
+from scrapers.scraper import run_package_creator, scrape_website
 import os
-import re
-from urllib.parse import urlparse
 import logging
 
 # Logger konfigurieren
@@ -12,8 +9,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 main = Blueprint('main', __name__)
-
-
 
 @main.route('/')
 def index():
