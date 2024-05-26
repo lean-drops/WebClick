@@ -1,4 +1,5 @@
-import requests
+import aiohttp
+import ssl
 import logging
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
@@ -6,10 +7,10 @@ from urllib.parse import urljoin
 from utils.naming_utils import sanitize_filename
 
 # Logger konfigurieren
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levellevel)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-def fetch_website_content(url):
+async def fetch_website_content(url):
     """
     Fetch the HTML content of a website.
 
@@ -19,12 +20,18 @@ def fetch_website_content(url):
     Returns:
         tuple: A tuple containing the content (str or None) and a message (str).
     """
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+
     try:
-        response = requests.get(url, timeout=10)  # Set timeout to prevent hanging
-        response.raise_for_status()
-        logger.info(f"Successfully fetched content from {url}")
-        return response.content, ""
-    except requests.RequestException as e:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, ssl=ssl_context, timeout=10) as response:  # Set timeout to prevent hanging
+                response.raise_for_status()
+                content = await response.text()
+                logger.info(f"Successfully fetched content from {url}")
+                return content, ""
+    except aiohttp.ClientError as e:
         logger.error(f"Failed to fetch content from {url}: {e}")
         return None, f"Failed to fetch content from {url}: {e}"
 
@@ -48,7 +55,7 @@ def extract_links(soup, base_url):
     logger.info(f"Extracted {len(pages)} links from {base_url}")
     return pages
 
-def scrape_website(url):
+async def scrape_website(url):
     """
     Scrape the website and return links without creating screenshots.
 
@@ -59,7 +66,7 @@ def scrape_website(url):
         dict: A dictionary containing the URL and the list of pages or an error message.
     """
     logger.debug(f"Starting to scrape website: {url}")
-    content, message = fetch_website_content(url)
+    content, message = await fetch_website_content(url)
     if content is None:
         logger.error(f"Failed to scrape website: {url}, Error: {message}")
         return {'error': message}

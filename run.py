@@ -2,7 +2,7 @@ from app import create_app
 import os
 import socket
 
-# Erstelle die Flask-Anwendung
+# Erstelle die Quart-Anwendung
 app = create_app()
 
 if __name__ == '__main__':
