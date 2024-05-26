@@ -3,11 +3,12 @@ import logging
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from scrapers.create_directory import create_directory
-from scrapers.fetch_content import scrape_website
-from scrapers.link_processor import shorten_url, create_zip_file
+from scrapers.link_processor import create_zip_file
+
+from utils.naming_utils import sanitize_filename  # Import the sanitize function
 
 # Logger konfigurieren
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levellevel)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 def run_screenshot_script(url, screenshot_path):
@@ -44,7 +45,8 @@ def scrape_and_screenshot(url, output_path):
         dict: A dictionary containing the screenshot path or an error message.
     """
     logger.debug(f"Starting to scrape and screenshot website: {url}")
-    screenshot_path = os.path.join(output_path, 'main.png')
+    sanitized_url = sanitize_filename(url)  # Sanitize URL for filename
+    screenshot_path = os.path.join(output_path, f'{sanitized_url}.png')
 
     success, message = run_screenshot_script(url, screenshot_path)
     if not success:
@@ -97,7 +99,8 @@ def run_package_creator(base_url, urls, output_zip_path):
     Returns:
         str: The path to the created zip file.
     """
-    base_folder = os.path.join('outputs', shorten_url(base_url))
+    sanitized_base_url = sanitize_filename(base_url)  # Sanitize base URL for folder name
+    base_folder = os.path.join('outputs', sanitized_base_url)
     create_directory(base_folder)
 
     # Scrape and screenshot main website

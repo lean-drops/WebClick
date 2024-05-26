@@ -3,8 +3,10 @@ import logging
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
+from utils.naming_utils import sanitize_filename
+
 # Logger konfigurieren
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levellevel)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 def fetch_website_content(url):
@@ -41,7 +43,7 @@ def extract_links(soup, base_url):
     for link in soup.find_all('a', href=True):
         href = link['href']
         full_url = urljoin(base_url, href)
-        title = link.text.strip() or full_url
+        title = sanitize_filename(link.text.strip() or full_url)  # Sanitize link title
         pages.append({'title': title, 'url': full_url})
     logger.info(f"Extracted {len(pages)} links from {base_url}")
     return pages
