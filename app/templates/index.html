@@ -1,162 +1,62 @@
 <!DOCTYPE html>
-<html lang="en" x-data="app()">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Archiver</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.9.1/cdn.min.js" defer></script>
+    <!-- CSS einbinden -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component.css') }}">
+    <!-- JavaScript-Dateien einbinden -->
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/progress.js') }}" defer></script>
 </head>
 <body>
-    <div class="top-bar">
+    <!-- Top-Bar -->
+    <div id="top-bar">
         <h1>Website Archiver</h1>
     </div>
-    <div class="input-container">
-        <input type="text" x-model="url" placeholder="Enter website URL">
-        <button @click="openWebsite">Open Website</button>
-    </div>
-    <div class="container">
-        <div id="progress-container" style="display: none;">
-            <div id="progress-bar"></div>
-        </div>
-        <div class="links" x-show="pages.length > 0">
-            <h2>Links</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>Title</th>
-                        <th>URL</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <template x-for="page in pages" :key="page.url">
-                        <tr>
-                            <td><input type="checkbox" x-model="selectedUrls" :value="page.url"></td>
-                            <td x-text="page.title"></td>
-                            <td><a :href="page.url" target="_blank" x-text="shortenUrl(page.url)"></a></td>
-                        </tr>
-                    </template>
-                </tbody>
-            </table>
-            <button class="archive-btn" @click="archiveWebsite">Archive Website</button>
-            <button class="generate-btn" x-show="archiveComplete" @click="generateZip">Download ZIP</button>
-            <div x-show="error" x-text="error" class="error"></div>
-        </div>
-    </div>
-    <script>
-        function app() {
-            return {
-                url: '',
-                pages: [],
-                selectedUrls: [],
-                error: '',
-                archiveComplete: false,
-                openWebsite() {
-                    if (this.url) {
-                        this.scrapeWebsite();
-                    } else {
-                        this.error = 'Please enter a valid URL.';
-                    }
-                },
-                scrapeWebsite() {
-                    showProgressBar();
-                    fetch('/scrape', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ url: this.url })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        hideProgressBar();
-                        if (data.error) {
-                            this.error = data.error;
-                            this.pages = [];
-                        } else {
-                            this.error = '';
-                            this.pages = data.pages; // Ensure correct data assignment
-                        }
-                    })
-                    .catch(error => {
-                        hideProgressBar();
-                        this.error = 'Error scraping website';
-                    });
-                },
-                archiveWebsite() {
-                    if (this.selectedUrls.length === 0) {
-                        this.error = 'Please select at least one URL to archive.';
-                        return;
-                    }
-                    showProgressBar();
-                    fetch('/archive', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ url: this.url, urls: this.selectedUrls })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        hideProgressBar();
-                        if (data.error) {
-                            this.error = data.error;
-                        } else {
-                            this.archiveComplete = true;
-                        }
-                    })
-                    .catch(error => {
-                        hideProgressBar();
-                        this.error = 'Error archiving website';
-                    });
-                },
-                generateZip() {
-                    showProgressBar();
-                    fetch('/generate_zip', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ urls: this.selectedUrls })
-                    })
-                    .then(response => response.blob())
-                    .then(blob => {
-                        hideProgressBar();
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.style.display = 'none';
-                        a.href = url;
-                        a.download = 'website_archive.zip';
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                    })
-                    .catch(error => {
-                        hideProgressBar();
-                        this.error = 'Error generating ZIP';
-                    });
-                },
-                shortenUrl(url) {
-                    try {
-                        let urlObj = new URL(url);
-                        let path = urlObj.pathname.length > 20 ? urlObj.pathname.substring(0, 20) + '...' : urlObj.pathname;
-                        return `${urlObj.hostname}${path}`;
-                    } catch {
-                        return url;
-                    }
-                }
-            }
-        }
 
-        function showProgressBar() {
-            document.getElementById('progress-container').style.display = 'block';
-        }
+    <div id="main-container">
+        <!-- Formular und URL-Eingabe Container -->
+        <div id="left-container">
+            <form id="scrape-form">
+                <label for="url">Geben Sie die URL der Website ein, die Sie archivieren möchten:</label>
+                <div class="input-container">
+                    <i class="fa fa-link icon"></i>
+                    <input type="text" id="url" name="url" placeholder="https://example.com" required>
+                </div>
+                <button type="submit">Website öffnen</button>
+            </form>
 
-        function hideProgressBar() {
-            document.getElementById('progress-container').style.display = 'none';
-        }
-    </script>
+            <!-- Progress Bar -->
+            <div id="progress-container" style="display:none;">
+                <div id="progress-bar"></div>
+            </div>
+        </div>
+
+        <!-- Link-Liste Container -->
+        <div id="right-container">
+            <div id="links-container" style="display:none;">
+                <h2>Wählen Sie Links zum Archivieren aus</h2>
+                <form id="archive-form">
+                    <div class="table-container">
+                        <table id="links-table">
+                            <thead>
+                                <tr>
+                                    <th>Auswählen</th>
+                                    <th>Link</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Hyperlinks werden hier eingefügt -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="submit">Website archivieren</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
