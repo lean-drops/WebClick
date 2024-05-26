@@ -7,9 +7,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <!-- JavaScript-Dateien einbinden -->
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/progress.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/modal.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/screenshot.js') }}" defer></script>
 </head>
 <body>
     <!-- Top-Bar -->
@@ -55,6 +59,19 @@
                     <button type="submit" id="archive-button">Website archivieren</button>
                 </form>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal Fenster -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Website wurde erfolgreich gespeichert</h2>
+            <p>Die folgenden Links wurden archiviert:</p>
+            <ul id="archived-links-list">
+                <!-- Archivierte Links werden hier eingefügt -->
+            </ul>
+            <button id="download-button">Herunterladen</button>
         </div>
     </div>
 </body>
