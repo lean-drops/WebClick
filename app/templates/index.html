@@ -6,6 +6,7 @@
     <title>Website Archiver</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.9.1/cdn.min.js" defer></script>
+    <script src="{{ url_for('static', filename='js/progress.js') }}" defer></script>
 </head>
 <body>
     <div class="top-bar">
@@ -16,7 +17,10 @@
         <button @click="openWebsite">Open Website</button>
     </div>
     <div class="container">
-        <div class="links">
+        <div id="progress-container" style="display: none;">
+            <div id="progress-bar"></div>
+        </div>
+        <div class="links" x-show="pages.length > 0">
             <h2>Links</h2>
             <table>
                 <thead>
@@ -57,6 +61,7 @@
                     }
                 },
                 scrapeWebsite() {
+                    showProgressBar();
                     fetch('/scrape', {
                         method: 'POST',
                         headers: {
@@ -66,13 +71,18 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        hideProgressBar();
                         if (data.error) {
                             this.error = data.error;
                             this.pages = [];
                         } else {
                             this.error = '';
-                            this.pages = data.pages.map(page => ({ title: page.title, url: page.url }));
+                            this.pages = data.pages; // Ensure correct data assignment
                         }
+                    })
+                    .catch(error => {
+                        hideProgressBar();
+                        this.error = 'Error scraping website';
                     });
                 },
                 archiveWebsite() {
@@ -80,6 +90,7 @@
                         this.error = 'Please select at least one URL to archive.';
                         return;
                     }
+                    showProgressBar();
                     fetch('/archive', {
                         method: 'POST',
                         headers: {
@@ -89,14 +100,20 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        hideProgressBar();
                         if (data.error) {
                             this.error = data.error;
                         } else {
                             this.archiveComplete = true;
                         }
+                    })
+                    .catch(error => {
+                        hideProgressBar();
+                        this.error = 'Error archiving website';
                     });
                 },
                 generateZip() {
+                    showProgressBar();
                     fetch('/generate_zip', {
                         method: 'POST',
                         headers: {
@@ -106,6 +123,7 @@
                     })
                     .then(response => response.blob())
                     .then(blob => {
+                        hideProgressBar();
                         const url = window.URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.style.display = 'none';
@@ -116,6 +134,7 @@
                         window.URL.revokeObjectURL(url);
                     })
                     .catch(error => {
+                        hideProgressBar();
                         this.error = 'Error generating ZIP';
                     });
                 },
@@ -129,6 +148,14 @@
                     }
                 }
             }
+        }
+
+        function showProgressBar() {
+            document.getElementById('progress-container').style.display = 'block';
+        }
+
+        function hideProgressBar() {
+            document.getElementById('progress-container').style.display = 'none';
         }
     </script>
 </body>

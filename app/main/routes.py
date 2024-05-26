@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, render_template, send_file
-from scrapers.scraper import scrape_website, scrape_multiple_websites
+from scrapers.scraper import scrape_website, scrape_and_screenshot, scrape_multiple_websites
 from converters.pdf_converter import convert_to_pdf
 import os
 import re
@@ -23,14 +23,11 @@ def scrape():
     if not url:
         return jsonify({"error": "No URL provided"}), 400
 
-    folder_name = shorten_url(url)
-    base_folder = os.path.join('outputs', folder_name)
-
-    content = scrape_website(url, base_folder)
+    content = scrape_website(url)
     if 'error' in content:
         return jsonify(content), 500
 
-    return jsonify(content), 200
+    return jsonify(content)  # Ensure the correct content is returned
 
 @main.route('/archive', methods=['POST'])
 def archive():
@@ -43,16 +40,15 @@ def archive():
     folder_name = shorten_url(url)
     base_folder = os.path.join('outputs', folder_name)
 
-    # Scrape the main URL
-    content = scrape_website(url, base_folder)
-    if 'error' in content:
-        return jsonify(content), 500
+    # Scrape and screenshot the main URL
+    main_content = scrape_and_screenshot(url, base_folder)
+    if 'error' in main_content:
+        return jsonify(main_content), 500
 
-    # Scrape the selected URLs
-    if urls:
-        results = scrape_multiple_websites(urls, base_folder)
-        if not results:
-            return jsonify({"error": "No URLs scraped"}), 400
+    # Scrape and screenshot the selected URLs
+    results = scrape_multiple_websites(urls, base_folder)
+    if not results:
+        return jsonify({"error": "No URLs scraped"}), 400
 
     return jsonify({"message": "Website archived successfully"}), 200
 
