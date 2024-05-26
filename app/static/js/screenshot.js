@@ -1,4 +1,40 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+const fs = require('fs').promises;
+
+// Verwende das Stealth-Plugin
+puppeteer.use(StealthPlugin());
+
+// Verwende das Adblocker-Plugin, das auch Cookie-Banner blockieren kann
+puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
+
+// Funktion zum Laden der Cookie-Selektoren aus einer JSON-Datei
+const loadCookieSelectors = async () => {
+    try {
+        const data = await fs.readFile('cookie_selectors.json', 'utf8');
+        return JSON.parse(data);
+    } catch (err) {
+        console.error('Fehler beim Laden der Cookie-Selektoren:', err);
+        return [];
+    }
+};
+
+// Funktion zum automatischen Ablehnen von Cookie-Bannern
+const autoRejectCookies = async (page, cookieSelectors) => {
+    for (const selector of cookieSelectors) {
+        try {
+            const button = await page.$(selector);
+            if (button) {
+                await button.click();
+                console.log(`Clicked cookie reject button with selector: ${selector}`);
+                break;
+            }
+        } catch (err) {
+            console.error(`Fehler beim Klicken auf den Selektor ${selector}:`, err);
+        }
+    }
+};
 
 (async () => {
     const url = process.argv[2];
@@ -18,227 +54,8 @@ const puppeteer = require('puppeteer');
     // Ensure URL has a protocol
     const fullUrl = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
 
-const cookieSelectors = [
-    // Englisch
-    '#onetrust-reject-all-handler',
-    'button[title="Only essential cookies"]',
-    'button[aria-label="Reject Cookies"]',
-    'button[title="Reject Cookies"]',
-    'button[data-testid="reject-all"]',
-    '.cookie-consent-reject',
-    '.cookie-banner-reject',
-    'button.reject-cookies',
-    'button#reject-all-cookies',
-    '#cookie-reject',
-    '.cc-reject',
-    'button.cookie-reject',
-    'button[title="Decline"]',
-    'button[aria-label="Decline"]',
-    'button[data-testid="decline"]',
-    '.cookie-decline',
-    '.cookie-settings-decline',
-    'button.decline-cookies',
-    'button#decline-all-cookies',
-    'button[title="Dismiss"]',
-    'button[aria-label="Dismiss"]',
-    'button[data-testid="dismiss"]',
-    '.cookie-dismiss',
-    '.cookie-banner-dismiss',
-    'button.dismiss-cookies',
-    'button#dismiss-all-cookies',
-    'button[title="Reject all"]',
-    'button[aria-label="Reject all"]',
-    'button[data-testid="reject-all-cookies"]',
-    '.cookie-reject-all',
-    '.cookie-banner-reject-all',
-    'button.reject-all-cookies',
-    'button#reject-all-cookies-button',
-    'button[title="Deny"]',
-    'button[aria-label="Deny"]',
-    'button[data-testid="deny"]',
-    '.cookie-deny',
-    '.cookie-banner-deny',
-    'button.deny-cookies',
-    'button#deny-all-cookies',
-    'button[title="Opt out"]',
-    'button[aria-label="Opt out"]',
-    'button[data-testid="opt-out"]',
-    '.cookie-optout',
-    '.cookie-banner-optout',
-    'button.optout-cookies',
-    'button#opt-out-cookies',
-    'button[title="No"]',
-    'button[aria-label="No"]',
-    'button[data-testid="no"]',
-    '.cookie-no',
-    '.cookie-banner-no',
-    'button.no-cookies',
-    'button#no-all-cookies',
-    '.cookie-consent-deny',
-    '.cookie-consent-no',
-    '.cookie-consent-opt-out',
-    '.cookie-settings-reject',
-    'button.cookie-settings-reject',
-    'button[data-cookie-action="reject"]',
-    'button[data-cookie-action="deny"]',
-    'button[data-cookie-action="opt-out"]',
-
-    // Deutsch
-    'button[title="Nur essenzielle Cookies"]',
-    'button[aria-label="Cookies ablehnen"]',
-    'button[title="Cookies ablehnen"]',
-    'button[data-testid="alle ablehnen"]',
-    '.cookie-zustimmung-ablehnen',
-    '.cookie-banner-ablehnen',
-    'button.cookies-ablehnen',
-    'button#alle-cookies-ablehnen',
-    '#cookies-ablehnen',
-    '.cc-ablehnen',
-    'button.cookie-ablehnen',
-    'button[title="Ablehnen"]',
-    'button[aria-label="Ablehnen"]',
-    'button[data-testid="ablehnen"]',
-    '.cookie-ablehnen',
-    '.cookie-einstellungen-ablehnen',
-    'button.einstellungen-ablehnen',
-    'button[title="Ablehnen"]',
-    'button[aria-label="Alle ablehnen"]',
-    'button[data-testid="alle-ablehnen"]',
-    '.cookie-alle-ablehnen',
-    '.cookie-banner-alle-ablehnen',
-    'button.alle-ablehnen',
-    'button#alle-ablehnen-button',
-    'button[title="Verweigern"]',
-    'button[aria-label="Verweigern"]',
-    'button[data-testid="verweigern"]',
-    '.cookie-verweigern',
-    '.cookie-banner-verweigern',
-    'button.verweigern-cookies',
-    'button#verweigern-alle-cookies',
-    'button[title="Abmelden"]',
-    'button[aria-label="Abmelden"]',
-    'button[data-testid="abmelden"]',
-    '.cookie-abmelden',
-    '.cookie-banner-abmelden',
-    'button.abmelden-cookies',
-    'button#abmelden-alle-cookies',
-    '.cookie-zustimmung-verweigern',
-    '.cookie-zustimmung-nein',
-    '.cookie-zustimmung-opt-out',
-    '.cookie-einstellungen-verweigern',
-    'button.cookie-einstellungen-verweigern',
-    'button[data-cookie-aktion="verweigern"]',
-    'button[data-cookie-aktion="nein"]',
-
-    // Spanisch
-    'button[title="Solo cookies esenciales"]',
-    'button[aria-label="Rechazar cookies"]',
-    'button[title="Rechazar cookies"]',
-    'button[data-testid="rechazar todo"]',
-    '.consentimiento-cookies-rechazar',
-    '.banner-cookies-rechazar',
-    'button.rechazar-cookies',
-    'button#rechazar-todas-las-cookies',
-    '#rechazar-cookies',
-    '.cc-rechazar',
-    'button.cookie-rechazar',
-    'button[title="Rechazar"]',
-    'button[aria-label="Rechazar"]',
-    'button[data-testid="rechazar"]',
-    '.cookie-rechazar',
-    '.ajustes-cookies-rechazar',
-    'button.ajustes-rechazar',
-    'button[title="Rechazar todo"]',
-    'button[aria-label="Rechazar todo"]',
-    'button[data-testid="rechazar-todas"]',
-    '.cookie-rechazar-todo',
-    '.banner-cookies-rechazar-todo',
-    'button.rechazar-todo',
-    'button#rechazar-todo-boton',
-    'button[title="Denegar"]',
-    'button[aria-label="Denegar"]',
-    'button[data-testid="denegar"]',
-    '.cookie-denegar',
-    '.banner-cookies-denegar',
-    'button.denegar-cookies',
-    'button#denegar-todas-las-cookies',
-    'button[title="Optar por no participar"]',
-    'button[aria-label="Optar por no participar"]',
-    'button[data-testid="optar-no-participar"]',
-    '.cookie-optar-no-participar',
-    '.banner-cookies-optar-no-participar',
-    'button.optar-no-participar-cookies',
-    'button#optar-no-participar-cookies',
-    'button[title="No"]',
-    'button[aria-label="No"]',
-    'button[data-testid="no"]',
-    '.cookie-no',
-    '.banner-cookies-no',
-    'button.no-cookies',
-    'button#no-todas-las-cookies',
-    '.consentimiento-cookies-denegar',
-    '.consentimiento-cookies-no',
-    '.consentimiento-cookies-optar-no',
-    '.ajustes-cookies-rechazar',
-    'button.ajustes-cookies-rechazar',
-    'button[data-cookie-accion="rechazar"]',
-    'button[data-cookie-accion="denegar"]',
-    'button[data-cookie-accion="optar-no"]',
-
-    // Französisch
-    'button[title="Cookies essentiels uniquement"]',
-    'button[aria-label="Refuser les cookies"]',
-    'button[title="Refuser les cookies"]',
-    'button[data-testid="tout refuser"]',
-    '.consentement-cookies-refuser',
-    '.banniere-cookies-refuser',
-    'button.refuser-cookies',
-    'button#refuser-tous-les-cookies',
-    '#refuser-cookies',
-    '.cc-refuser',
-    'button.cookie-refuser',
-    'button[title="Refuser"]',
-    'button[aria-label="Refuser"]',
-    'button[data-testid="refuser"]',
-    '.cookie-refuser',
-    '.parametres-cookies-refuser',
-    'button.parametres-refuser',
-    'button[title="Refuser tout"]',
-    'button[aria-label="Refuser tout"]',
-    'button[data-testid="refuser-tous"]',
-    '.cookie-refuser-tout',
-    '.banniere-cookies-refuser-tout',
-    'button.refuser-tout',
-    'button#refuser-tout-bouton',
-    'button[title="Refuser"]',
-    'button[aria-label="Refuser"]',
-    'button[data-testid="refuser"]',
-    '.cookie-refuser',
-    '.banniere-cookies-refuser',
-    'button.refuser-cookies',
-    'button#refuser-tous-les-cookies',
-    'button[title="Se désinscrire"]',
-    'button[aria-label="Se désinscrire"]',
-    'button[data-testid="se-desinscrire"]',
-    '.cookie-se-desinscrire',
-    '.banniere-cookies-se-desinscrire',
-    'button.se-desinscrire-cookies',
-    'button#se-desinscrire-tous-les-cookies',
-    'button[title="Non"]',
-    'button[aria-label="Non"]',
-    'button[data-testid="non"]',
-    '.cookie-non',
-    '.banniere-cookies-non',
-    'button.non-cookies',
-    'button#non-tous-les-cookies',
-    '.consentement-cookies-refuser',
-    '.consentement-cookies-non',
-    '.consentement-cookies-opt-out',
-    '.parametres-cookies-refuser',
-    'button.parametres-cookies-refuser',
-    'button[data-cookie-action="refuser"]',
-    'button[data-cookie-action="non"]'
-];
+    // Lade die Cookie-Selektoren
+    const cookieSelectors = await loadCookieSelectors();
 
     const otherBannerSelectors = [
         '#age-gate',
@@ -277,15 +94,8 @@ const cookieSelectors = [
         console.log(`Navigating to ${fullUrl}...`);
         await page.goto(fullUrl, { waitUntil: 'networkidle2', timeout: 120000 }); // Timeout auf 120 Sekunden setzen
 
-        console.log('Checking for cookie banners...');
-        for (const selector of cookieSelectors) {
-            const button = await page.$(selector);
-            if (button) {
-                await button.click();
-                console.log(`Clicked cookie reject button with selector: ${selector}`);
-                break;
-            }
-        }
+        // Automatisches Ablehnen von Cookie-Bannern
+        await autoRejectCookies(page, cookieSelectors);
 
         console.log('Waiting for 3 seconds...');
         await new Promise(resolve => setTimeout(resolve, 3000));
