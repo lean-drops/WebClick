@@ -1,3 +1,15 @@
+"""
+Routes for the Quart web application.
+
+This script defines the main routes for a web scraping and archiving application using Quart. It includes the following routes:
+1. `/` - Renders the homepage.
+2. `/scrape` - API endpoint for scraping a single webpage. Expects JSON with a URL and returns the scraped content or an error message.
+3. `/archive` - API endpoint for scraping and archiving a main webpage and its subpages. Expects JSON with a main URL and a list of subpage URLs. Returns a success message and the path to the ZIP archive or an error message.
+4. `/generate_zip` - API endpoint for generating a ZIP archive of scraped webpages. Expects JSON with a list of URLs. Returns the ZIP file as an attachment or an error message.
+
+Each route handles asynchronous requests and includes detailed logging for debugging and monitoring purposes.
+"""
+
 from quart import Blueprint, request, jsonify, render_template, send_file
 from scrapers.create_directory import create_directory, shorten_url
 from scrapers.fetch_content import scrape_website
@@ -5,23 +17,24 @@ from scrapers.scraper import run_package_creator
 import os
 import logging
 
-# Logger konfigurieren
+# Configure logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+# Define Blueprint
 main = Blueprint('main', __name__)
 
 @main.route('/')
 async def index():
     """
-    Rendert die Startseite der Anwendung.
+    Renders the homepage of the application.
     """
     return await render_template('index.html')
 
 @main.route('/scrape', methods=['POST'])
 async def scrape():
     """
-    API-Endpunkt zum Scrapen einer einzelnen Webseite.
+    API endpoint to scrape a single webpage.
 
     Expects JSON:
         {
@@ -48,7 +61,7 @@ async def scrape():
 @main.route('/archive', methods=['POST'])
 async def archive():
     """
-    API-Endpunkt zum Scrapen und Archivieren einer Hauptseite und ihrer Unterseiten.
+    API endpoint to scrape and archive a main webpage and its subpages.
 
     Expects JSON:
         {
@@ -80,7 +93,7 @@ async def archive():
 @main.route('/generate_zip', methods=['POST'])
 async def generate_zip():
     """
-    API-Endpunkt zum Generieren eines ZIP-Archivs der gescrapten Webseiten.
+    API endpoint to generate a ZIP archive of the scraped webpages.
 
     Expects JSON:
         {
