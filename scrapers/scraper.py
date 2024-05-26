@@ -73,11 +73,13 @@ def scrape_website(url, output_path):
 def scrape_multiple_websites(urls, base_folder):
     all_contents = []
     create_directory(base_folder)
-    for url in urls:
-        content = scrape_website(url, base_folder)
+    for i, url in enumerate(urls):
+        screenshot_path = os.path.join(base_folder, f'page_{i+1}.png')
+        content = scrape_website(url, screenshot_path)
         if 'error' in content:
             logger.warning(f"Skipping {url} due to error: {content['error']}")
             continue
+        content['screenshot'] = screenshot_path
         all_contents.append(content)
     logger.info(f"Scraped content from {len(all_contents)} out of {len(urls)} websites")
     return all_contents

@@ -49,16 +49,29 @@ def convert_to_pdf(contents, base_folder):
             pdf.image(screenshot_path, x=10, y=pdf.get_y(), w=pdf.w - 20)
             pdf.ln(10)
 
-        # Add hyperlinks
+        # Add hyperlinks to corresponding PNGs
         for j, page in enumerate(content['pages']):
             link_text = f"{j+1}. {page['title']}"
             pdf.set_font('Arial', 'U', 12)
             pdf.set_text_color(0, 0, 255)
-            pdf.cell(0, 10, link_text, ln=True, link=page['url'])
+            png_filename = f'page_{j+1}.pdf'
+            link_path = os.path.join('screenshots', png_filename)
+            pdf.cell(0, 10, link_text, ln=True, link=link_path)
             pdf.set_text_color(0, 0, 0)  # Reset text color
             pdf.ln(5)
 
         pdf.output(pdf_file)
+
+    # Convert each PNG to PDF in the screenshots folder
+    for root, _, files in os.walk(screenshots_folder):
+        for file in files:
+            if file.endswith('.png'):
+                png_path = os.path.join(root, file)
+                pdf_path = png_path.replace('.png', '.pdf')
+                pdf = PDF()
+                pdf.add_page()
+                pdf.image(png_path, x=10, y=10, w=pdf.w - 20)
+                pdf.output(pdf_path)
 
     zip_path = os.path.join(base_folder, 'website_archive.zip')
     create_zip(base_folder, zip_path)

@@ -4,7 +4,6 @@ from converters.pdf_converter import convert_to_pdf
 import os
 import re
 from urllib.parse import urlparse
-import io
 
 main = Blueprint('main', __name__)
 
@@ -32,6 +31,30 @@ def scrape():
         return jsonify(content), 500
 
     return jsonify(content), 200
+
+@main.route('/archive', methods=['POST'])
+def archive():
+    data = request.json
+    url = data.get('url')
+    urls = data.get('urls', [])
+    if not url:
+        return jsonify({"error": "No URL provided"}), 400
+
+    folder_name = shorten_url(url)
+    base_folder = os.path.join('outputs', folder_name)
+
+    # Scrape the main URL
+    content = scrape_website(url, base_folder)
+    if 'error' in content:
+        return jsonify(content), 500
+
+    # Scrape the selected URLs
+    if urls:
+        results = scrape_multiple_websites(urls, base_folder)
+        if not results:
+            return jsonify({"error": "No URLs scraped"}), 400
+
+    return jsonify({"message": "Website archived successfully"}), 200
 
 @main.route('/generate_zip', methods=['POST'])
 def generate_zip():

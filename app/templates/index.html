@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.9.1/cdn.min.js" defer></script>
 </head>
-<body x-init="init()">
+<body>
     <div class="top-bar">
         <h1>Website Archiver</h1>
     </div>
@@ -36,7 +36,8 @@
                     </template>
                 </tbody>
             </table>
-            <button class="generate-btn" @click="generateZip">Generate ZIP</button>
+            <button class="archive-btn" @click="archiveWebsite">Archive Website</button>
+            <button class="generate-btn" x-show="archiveComplete" @click="generateZip">Download ZIP</button>
             <div x-show="error" x-text="error" class="error"></div>
         </div>
     </div>
@@ -47,21 +48,9 @@
                 pages: [],
                 selectedUrls: [],
                 error: '',
-                init() {
-                    // Leere Funktion, damit x-init nicht versucht, die Methode zu laden
-                },
+                archiveComplete: false,
                 openWebsite() {
                     if (this.url) {
-                        // Berechnen der Fenstergröße und -position
-                        let screenWidth = window.screen.width;
-                        let screenHeight = window.screen.height;
-                        let width = screenWidth / 2;
-                        let height = screenHeight;
-                        let left = screenWidth / 2;
-                        let top = 0;
-
-                        // Öffnen eines neuen Fensters auf der rechten Hälfte des Bildschirms
-                        window.open(this.url, '_blank', `width=${width},height=${height},top=${top},left=${left}`);
                         this.scrapeWebsite();
                     } else {
                         this.error = 'Please enter a valid URL.';
@@ -83,6 +72,27 @@
                         } else {
                             this.error = '';
                             this.pages = data.pages.map(page => ({ title: page.title, url: page.url }));
+                        }
+                    });
+                },
+                archiveWebsite() {
+                    if (this.selectedUrls.length === 0) {
+                        this.error = 'Please select at least one URL to archive.';
+                        return;
+                    }
+                    fetch('/archive', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ url: this.url, urls: this.selectedUrls })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            this.error = data.error;
+                        } else {
+                            this.archiveComplete = true;
                         }
                     });
                 },
