@@ -1,59 +1,210 @@
-/* ==============================
-   Layout CSS
-   ============================== */
-
-/* --------------------------------
-   Top-Bar
-   -------------------------------- */
-
-/* Stil für die obere Leiste */
+/* Top-Bar */
 #top-bar {
-    width: 100%; /* Volle Breite */
-    background-color: #007BFF; /* Hintergrundfarbe */
-    color: #fff; /* Textfarbe */
-    padding: 20px 0; /* Innenabstand oben und unten */
-    text-align: center; /* Zentrierter Text */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Schatteneffekt */
+    width: 100%;
+    background-color: #007BFF;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
 }
 
-/* --------------------------------
-   Hauptcontainer
-   -------------------------------- */
-
-/* Stil für den Hauptcontainer */
+/* Main Container */
 #main-container {
-    display: flex; /* Flexbox-Layout */
-    flex: 1; /* Flexibles Wachstum */
-    width: 100%; /* Volle Breite */
-    box-sizing: border-box; /* Box-Sizing auf Border-Box setzen */
+    display: flex;
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    gap: 20px;
 }
 
-/* --------------------------------
-   Rechte Seite - Link-Liste Container
-   -------------------------------- */
-
-/* Stil für den rechten Container */
+/* Link-Liste Container */
 #right-container {
-    flex: 1; /* Flexibles Wachstum */
-    padding: 20px; /* Innenabstand */
-    background-color: rgba(255, 255, 255, 0.9); /* Hintergrundfarbe mit Transparenz */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Schatteneffekt */
-    overflow-y: auto; /* Vertikale Scrollleiste */
+    flex: 1;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9); /* Etwas Transparenz hinzufügen */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; /* Abrundung der Ecken */
+    overflow-y: auto; /* Scrollbar für den rechten Container */
+    font-family: 'Roboto', sans-serif;
 }
 
-/* --------------------------------
-   Linke Seite - Formular und URL-Eingabe Container
-   -------------------------------- */
-
-/* Stil für den linken Container */
+/* Formular und URL-Eingabe Container */
 #left-container {
-    flex: 1; /* Flexibles Wachstum */
-    padding: 20px; /* Innenabstand */
-    background-color: rgba(255, 255, 255, 0.9); /* Hintergrundfarbe mit Transparenz */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Schatteneffekt */
-    border: 1px solid #ccc; /* Feiner Rahmen */
-    display: flex; /* Flexbox-Layout */
-    flex-direction: column; /* Flex-Elemente vertikal anordnen */
-    justify-content: center; /* Zentrierung der Inhalte */
-    overflow-y: auto; /* Vertikale Scrollleiste */
+    flex: 1;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9); /* Etwas Transparenz hinzufügen */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; /* Abrundung der Ecken */
+    border: 1px solid #ccc; /* Feiner Rahmen um den linken Container */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto; /* Scrollbar für den linken Container */
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Formular und Eingabeelemente */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #007BFF;
+    font-size: 18px; /* Schriftgröße erhöhen */
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input-container .icon {
+    padding: 10px;
+    background: #007BFF;
+    color: white;
+    min-width: 50px;
+    text-align: center;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #007BFF;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus {
+    border-color: #0056b3;
+    outline: none;
+}
+
+button {
+    padding: 15px;
+    font-size: 18px;
+    color: #fff;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+button:active {
+    background-color: #003f7f;
+    transform: translateY(0);
+}
+
+/* Fortschrittsanzeige */
+#progress-container {
+    display: none;
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+#progress-bar {
+    width: 0;
+    height: 30px;
+    background: repeating-linear-gradient(
+        45deg,
+        #e0e0e0,
+        #e0e0e0 10px,
+        #ffffff 10px,
+        #ffffff 20px
+    );
+    transition: width 0.3s;
+}
+
+/* Link-Liste Container */
+#links-container {
+    margin-top: 20px;
+}
+
+.table-container {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+th {
+    background-color: #007BFF;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+td a {
+    color: #007BFF;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+td a:hover {
+    color: #0056b3;
+}
+
+/* Fehler- und Erfolgsmeldungen */
+.error {
+    color: #ff0000;
+    background-color: #ffe6e6;
+    padding: 10px;
+    border-left: 4px solid #ff0000;
+    margin-bottom: 20px;
+}
+
+.success {
+    color: #008000;
+    background-color: #e6ffe6;
+    padding: 10px;
+    border-left: 4px solid #008000;
+    margin-bottom: 20px;
+}
+
+/* Download-Link */
+.download-link {
+    display: block;
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.download-link:hover {
+    background-color: #0056b3;
 }

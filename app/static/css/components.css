@@ -1,253 +1,223 @@
-/* ==============================
-   Component CSS
-   ============================== */
-
-/* Google Fonts einbinden */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
-/* Grundlegende Stile */
-body {
-    font-family: 'Roboto', sans-serif; /* Schöne und moderne Schriftart */
-    line-height: 1.6; /* Angenehme Zeilenhöhe */
-    color: #333; /* Textfarbe */
+/* Top-Bar */
+#top-bar {
+    width: 100%;
+    background-color: #007BFF;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    font-size: 24px;
 }
 
-/* --------------------------------
-   Formularelemente
-   -------------------------------- */
+/* Main Container */
+#main-container {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    gap: 20px;
+}
 
-/* Grundlegendes Layout für Formulare */
+/* Link-Liste Container */
+#right-container {
+    flex: 1;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; /* Abrundung der Ecken */
+    overflow-y: auto;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Formular und URL-Eingabe Container */
+#left-container {
+    flex: 1;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; /* Abrundung der Ecken */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto;
+    font-family: 'Arial', sans-serif;
+}
+
 form {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Abstand zwischen den Elementen */
 }
 
-/* Stil für Labels */
 label {
-    font-weight: 500; /* Mittleres Schriftgewicht */
-    margin-bottom: 8px; /* Kleinerer Abstand unterhalb des Labels */
-    color: #007BFF; /* Textfarbe */
-    font-size: 16px; /* Schriftgröße */
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #007BFF;
+    font-size: 18px; /* Schriftgröße erhöhen */
 }
 
-/* Stil für Text-Eingabefelder */
+.input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input-container .icon {
+    padding: 10px;
+    background: #007BFF;
+    color: white;
+    min-width: 50px;
+    text-align: center;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
 input[type="text"] {
-    width: 100%; /* Volle Breite */
-    padding: 12px; /* Innenabstand */
-    border: 2px solid #007BFF; /* Rahmenfarbe und -stärke */
-    border-radius: 6px; /* Abgerundete Ecken */
-    font-size: 16px; /* Schriftgröße */
-    font-family: 'Roboto', sans-serif; /* Schriftart */
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1); /* Leichter Schatten */
-    transition: border-color 0.3s, box-shadow 0.3s; /* Übergangseffekt */
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #007BFF;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
 }
 
 input[type="text"]:focus {
-    border-color: #0056b3; /* Rahmenfarbe beim Fokus */
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Verstärkter Schatten beim Fokus */
+    border-color: #0056b3;
+    outline: none;
 }
 
-/* --------------------------------
-   Schaltflächen
-   -------------------------------- */
-
-/* Allgemeiner Stil für Schaltflächen */
 button {
-    padding: 15px; /* Innenabstand */
-    font-size: 18px; /* Schriftgröße */
-    font-weight: 500; /* Mittleres Schriftgewicht */
-    color: #fff; /* Textfarbe */
-    background-color: #007BFF; /* Hintergrundfarbe */
-    border: none; /* Kein Rahmen */
-    border-radius: 6px; /* Abgerundete Ecken */
-    cursor: pointer; /* Mauszeiger als Zeiger */
-    transition: background-color 0.3s, transform 0.2s; /* Übergangseffekt */
-    margin-top: 20px; /* Abstand oberhalb der Schaltfläche */
-    font-family: 'Roboto', sans-serif; /* Schriftart */
+    padding: 15px;
+    font-size: 18px;
+    color: #fff;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 20px;
 }
 
 button:hover {
-    background-color: #0056b3; /* Dunklere Hintergrundfarbe beim Hover */
-    transform: scale(1.05); /* Leichte Vergrößerung beim Hover */
+    background-color: #0056b3;
+    transform: translateY(-2px);
 }
 
 button:active {
-    transform: scale(1); /* Normalgröße beim Klick */
+    background-color: #003f7f;
+    transform: translateY(0);
 }
 
-/* Pulsiereffekt für den Archivierungsbutton */
 #archive-button.pulsing {
-    animation: pulse 2s infinite; /* Endlos wiederholende Animation */
+    animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4); /* Anfangszustand */
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4);
     }
     70% {
-        box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); /* Mittlerer Zustand */
+        box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
     }
     100% {
-        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); /* Endzustand */
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
     }
 }
 
-/* --------------------------------
-   Fortschrittsanzeige
-   -------------------------------- */
-
-/* Container für die Fortschrittsanzeige */
+/* Fortschrittsanzeige */
 #progress-container {
-    display: none; /* Versteckt */
-    width: 100%; /* Volle Breite */
-    background-color: #e0e0e0; /* Hintergrundfarbe */
-    border-radius: 4px; /* Abgerundete Ecken */
-    overflow: hidden; /* Inhalt beschneiden */
-    margin-top: 20px; /* Abstand oberhalb des Containers */
+    display: none;
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 20px;
 }
 
-/* Fortschrittsbalken */
 #progress-bar {
-    width: 0; /* Anfangsbreite */
-    height: 30px; /* Höhe */
+    width: 0;
+    height: 30px;
     background: repeating-linear-gradient(
         45deg,
         #e0e0e0,
         #e0e0e0 10px,
         #ffffff 10px,
         #ffffff 20px
-    ); /* Wiederholender Verlauf */
-    transition: width 0.3s; /* Übergangseffekt */
+    );
+    transition: width 0.3s;
 }
 
-/* --------------------------------
-   Links und Tabellen
-   -------------------------------- */
-
-/* Container für Links */
 #links-container {
-    margin-top: 20px; /* Abstand oberhalb des Containers */
+    margin-top: 20px;
 }
 
-/* Container für Tabellen */
 .table-container {
-    max-height: 800px; /* Maximale Höhe */
-    overflow-y: auto; /* Vertikale Scrollleiste */
-    margin-top: 20px; /* Abstand oberhalb des Containers */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Leichter Schatten */
-    border-radius: 6px; /* Abgerundete Ecken */
+    max-height: 600px;
+    overflow-y: auto;
 }
 
-/* Tabellenstil */
 table {
-    width: 100%; /* Volle Breite */
-    border-collapse: collapse; /* Rahmen zusammenführen */
-    margin-bottom: 20px; /* Abstand unterhalb der Tabelle */
-    background-color: #ffffff; /* Hintergrundfarbe */
-    font-family: 'Roboto', sans-serif; /* Schriftart */
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
 }
 
-/* Tabellenzellenstil */
 th, td {
-    padding: 12px; /* Innenabstand */
-    text-align: left; /* Linksbündiger Text */
-    border-bottom: 1px solid #f0f0f0; /* Rahmen unten */
+    padding: 10px;
+    text-align: left;
+    border-bottom: 2px solid #f0f0f0;
 }
 
-/* Tabellenüberschrift */
 th {
-    background-color: #007BFF; /* Hintergrundfarbe */
-    color: #fff; /* Textfarbe */
-    font-size: 18px; /* Schriftgröße */
-    font-weight: bold; /* Fettgedruckter Text */
-    border-top: 2px solid #0056b3; /* Rahmen oben */
+    background-color: #007BFF;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
 }
 
-/* Tabellenzeilenstil */
-tr:nth-child(even) {
-    background-color: #f9f9f9; /* Hintergrundfarbe für gerade Zeilen */
-}
-
-/* Links in Tabellenzellen */
 td a {
-    color: #007BFF; /* Textfarbe */
-    text-decoration: none; /* Keine Unterstreichung */
-    transition: color 0.3s; /* Übergangseffekt */
+    color: #007BFF;
+    text-decoration: none;
+    transition: color 0.3s;
 }
 
 td a:hover {
-    color: #0056b3; /* Dunklere Textfarbe beim Hover */
+    color: #0056b3;
 }
 
-/* --------------------------------
-   Fehler- und Erfolgsmeldungen
-   -------------------------------- */
-
-/* Container für Nachrichten */
-#message-container {
-    position: relative; /* Relative Positionierung */
-    top: 0; /* Anfangsposition oben */
-    left: 0; /* Anfangsposition links */
-    width: 100%; /* Volle Breite */
-    display: flex; /* Flexbox-Layout */
-    justify-content: center; /* Zentrierung */
-    align-items: center; /* Zentrierung */
-    z-index: 1000; /* Höchster Stapelindex */
-    margin-top: 20px; /* Abstand oberhalb des Containers */
-}
-
-/* Fehlernachrichten */
+/* Fehler- und Erfolgsmeldungen */
 .error {
-    color: #ff0000; /* Textfarbe */
-    background-color: #ffe6e6; /* Hintergrundfarbe */
-    padding: 12px; /* Innenabstand */
-    border-left: 4px solid #ff0000; /* Linker Rand */
-    margin-bottom: 20px; /* Abstand unterhalb der Nachricht */
-    border-radius: 4px; /* Abgerundete Ecken */
-    max-width: 600px; /* Maximale Breite */
-    width: 90%; /* Breite des Overlays */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Schatteneffekt */
-    font-family: 'Roboto', sans-serif; /* Schriftart */
+    color: #ff0000;
+    background-color: #ffe6e6;
+    padding: 10px;
+    border-left: 4px solid #ff0000;
+    margin-bottom: 20px;
 }
 
-/* Erfolgsmeldungen */
 .success {
-    color: #008000; /* Textfarbe */
-    background-color: #e6ffe6; /* Hintergrundfarbe */
-    padding: 12px; /* Innenabstand */
-    border-left: 4px solid #008000; /* Linker Rand */
-    margin-bottom: 20px; /* Abstand unterhalb der Nachricht */
-    border-radius: 4px; /* Abgerundete Ecken */
-    max-width: 600px; /* Maximale Breite */
-    width: 90%; /* Breite des Overlays */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Schatteneffekt */
-    font-family: 'Roboto', sans-serif; /* Schriftart */
+    color: #008000;
+    background-color: #e6ffe6;
+    padding: 10px;
+    border-left: 4px solid #008000;
+    margin-bottom: 20px;
 }
 
-/* --------------------------------
-   Download-Links
-   -------------------------------- */
-
-/* Stil für Download-Links */
+/* Download-Link */
 .download-link {
-    display: block; /* Block-Element */
-    padding: 15px; /* Innenabstand */
-    background-color: #007BFF; /* Hintergrundfarbe */
-    color: #fff; /* Textfarbe */
-    text-align: center; /* Zentrierter Text */
-    border-radius: 4px; /* Abgerundete Ecken */
-    text-decoration: none; /* Keine Unterstreichung */
-    margin-top: 20px; /* Abstand oberhalb des Links */
-    transition: background-color 0.3s, transform 0.2s; /* Übergangseffekt */
-    font-family: 'Roboto', sans-serif; /* Schriftart */
+    display: block;
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-top: 20px;
+    transition: background-color 0.3s;
 }
 
 .download-link:hover {
-    background-color: #0056b3; /* Dunklere Hintergrundfarbe beim Hover */
-    transform: scale(1.05); /* Leichte Vergrößerung beim Hover */
-}
-
-.download-link:active {
-    transform: scale(1); /* Normalgröße beim Klick */
+    background-color: #0056b3;
 }
