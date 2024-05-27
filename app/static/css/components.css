@@ -1,192 +1,253 @@
+/* ==============================
+   Component CSS
+   ============================== */
+
+/* Google Fonts einbinden */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Grundlegende Stile */
+body {
+    font-family: 'Roboto', sans-serif; /* Schöne und moderne Schriftart */
+    line-height: 1.6; /* Angenehme Zeilenhöhe */
+    color: #333; /* Textfarbe */
+}
+
+/* --------------------------------
+   Formularelemente
+   -------------------------------- */
+
+/* Grundlegendes Layout für Formulare */
 form {
     display: flex;
     flex-direction: column;
+    gap: 20px; /* Abstand zwischen den Elementen */
 }
 
+/* Stil für Labels */
 label {
-    font-weight: bold;
-    margin-bottom: 20px; /* Abstand oberhalb der Schaltfläche erhöht */
-    color: #007BFF;
+    font-weight: 500; /* Mittleres Schriftgewicht */
+    margin-bottom: 8px; /* Kleinerer Abstand unterhalb des Labels */
+    color: #007BFF; /* Textfarbe */
+    font-size: 16px; /* Schriftgröße */
 }
 
-.input-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.input-container .icon {
-    padding: 10px;
-    background: #007BFF;
-    color: white;
-    min-width: 50px;
-    text-align: center;
-}
-
+/* Stil für Text-Eingabefelder */
 input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border: 2px solid #007BFF;
-    border-radius: 4px;
-    font-size: 16px;
+    width: 100%; /* Volle Breite */
+    padding: 12px; /* Innenabstand */
+    border: 2px solid #007BFF; /* Rahmenfarbe und -stärke */
+    border-radius: 6px; /* Abgerundete Ecken */
+    font-size: 16px; /* Schriftgröße */
+    font-family: 'Roboto', sans-serif; /* Schriftart */
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1); /* Leichter Schatten */
+    transition: border-color 0.3s, box-shadow 0.3s; /* Übergangseffekt */
 }
 
+input[type="text"]:focus {
+    border-color: #0056b3; /* Rahmenfarbe beim Fokus */
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Verstärkter Schatten beim Fokus */
+}
+
+/* --------------------------------
+   Schaltflächen
+   -------------------------------- */
+
+/* Allgemeiner Stil für Schaltflächen */
 button {
-    padding: 10px;
-    font-size: 16px;
-    color: #fff;
-    background-color: #007BFF;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 10px; /* Abstand oberhalb der Schaltfläche */
+    padding: 15px; /* Innenabstand */
+    font-size: 18px; /* Schriftgröße */
+    font-weight: 500; /* Mittleres Schriftgewicht */
+    color: #fff; /* Textfarbe */
+    background-color: #007BFF; /* Hintergrundfarbe */
+    border: none; /* Kein Rahmen */
+    border-radius: 6px; /* Abgerundete Ecken */
+    cursor: pointer; /* Mauszeiger als Zeiger */
+    transition: background-color 0.3s, transform 0.2s; /* Übergangseffekt */
+    margin-top: 20px; /* Abstand oberhalb der Schaltfläche */
+    font-family: 'Roboto', sans-serif; /* Schriftart */
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #0056b3; /* Dunklere Hintergrundfarbe beim Hover */
+    transform: scale(1.05); /* Leichte Vergrößerung beim Hover */
 }
 
+button:active {
+    transform: scale(1); /* Normalgröße beim Klick */
+}
+
+/* Pulsiereffekt für den Archivierungsbutton */
 #archive-button.pulsing {
-    animation: pulse 2s infinite;
+    animation: pulse 2s infinite; /* Endlos wiederholende Animation */
 }
 
 @keyframes pulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4);
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4); /* Anfangszustand */
     }
     70% {
-        box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+        box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); /* Mittlerer Zustand */
     }
     100% {
-        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); /* Endzustand */
     }
 }
 
-/* Fortschrittsanzeige */
+/* --------------------------------
+   Fortschrittsanzeige
+   -------------------------------- */
+
+/* Container für die Fortschrittsanzeige */
 #progress-container {
-    display: none;
-    width: 100%;
-    background-color: #e0e0e0;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 20px;
+    display: none; /* Versteckt */
+    width: 100%; /* Volle Breite */
+    background-color: #e0e0e0; /* Hintergrundfarbe */
+    border-radius: 4px; /* Abgerundete Ecken */
+    overflow: hidden; /* Inhalt beschneiden */
+    margin-top: 20px; /* Abstand oberhalb des Containers */
 }
 
+/* Fortschrittsbalken */
 #progress-bar {
-    width: 0;
-    height: 30px;
+    width: 0; /* Anfangsbreite */
+    height: 30px; /* Höhe */
     background: repeating-linear-gradient(
         45deg,
         #e0e0e0,
         #e0e0e0 10px,
         #ffffff 10px,
         #ffffff 20px
-    );
-    transition: width 0.3s;
+    ); /* Wiederholender Verlauf */
+    transition: width 0.3s; /* Übergangseffekt */
 }
 
+/* --------------------------------
+   Links und Tabellen
+   -------------------------------- */
+
+/* Container für Links */
 #links-container {
-    margin-top: 20px;
+    margin-top: 20px; /* Abstand oberhalb des Containers */
 }
 
+/* Container für Tabellen */
 .table-container {
-    max-height: 600px; /* Maximalhöhe der Tabelle erhöht */
-    overflow-y: auto; /* Scrollbar für die Tabelle */
+    max-height: 800px; /* Maximale Höhe */
+    overflow-y: auto; /* Vertikale Scrollleiste */
+    margin-top: 20px; /* Abstand oberhalb des Containers */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Leichter Schatten */
+    border-radius: 6px; /* Abgerundete Ecken */
 }
 
+/* Tabellenstil */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
+    width: 100%; /* Volle Breite */
+    border-collapse: collapse; /* Rahmen zusammenführen */
+    margin-bottom: 20px; /* Abstand unterhalb der Tabelle */
+    background-color: #ffffff; /* Hintergrundfarbe */
+    font-family: 'Roboto', sans-serif; /* Schriftart */
 }
 
+/* Tabellenzellenstil */
 th, td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 2px solid #f0f0f0;
+    padding: 12px; /* Innenabstand */
+    text-align: left; /* Linksbündiger Text */
+    border-bottom: 1px solid #f0f0f0; /* Rahmen unten */
 }
 
+/* Tabellenüberschrift */
 th {
-    background-color: #007BFF;
-    color: #fff;
-    font-size: 18px; /* Schriftgröße der Überschrift vergrößert */
-    font-weight: bold; /* Fettschrift für die Überschrift */
+    background-color: #007BFF; /* Hintergrundfarbe */
+    color: #fff; /* Textfarbe */
+    font-size: 18px; /* Schriftgröße */
+    font-weight: bold; /* Fettgedruckter Text */
+    border-top: 2px solid #0056b3; /* Rahmen oben */
 }
 
+/* Tabellenzeilenstil */
+tr:nth-child(even) {
+    background-color: #f9f9f9; /* Hintergrundfarbe für gerade Zeilen */
+}
+
+/* Links in Tabellenzellen */
 td a {
-    color: #007BFF;
-    text-decoration: none;
-    transition: color 0.3s;
+    color: #007BFF; /* Textfarbe */
+    text-decoration: none; /* Keine Unterstreichung */
+    transition: color 0.3s; /* Übergangseffekt */
 }
 
 td a:hover {
-    color: #0056b3;
+    color: #0056b3; /* Dunklere Textfarbe beim Hover */
 }
 
-button {
-    padding: 15px; /* Abstand der Schaltfläche vergrößert */
-    font-size: 18px; /* Schriftgröße der Schaltfläche vergrößert */
-    color: #fff;
-    background-color: #007BFF;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 20px; /* Abstand oberhalb der Schaltfläche */
+/* --------------------------------
+   Fehler- und Erfolgsmeldungen
+   -------------------------------- */
+
+/* Container für Nachrichten */
+#message-container {
+    position: relative; /* Relative Positionierung */
+    top: 0; /* Anfangsposition oben */
+    left: 0; /* Anfangsposition links */
+    width: 100%; /* Volle Breite */
+    display: flex; /* Flexbox-Layout */
+    justify-content: center; /* Zentrierung */
+    align-items: center; /* Zentrierung */
+    z-index: 1000; /* Höchster Stapelindex */
+    margin-top: 20px; /* Abstand oberhalb des Containers */
 }
 
-button:hover {
-    background-color: #0056b3;
-}
-
-#archive-button.pulsing {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
-    }
-}
-
-
-/* Fehler- und Erfolgsmeldungen */
+/* Fehlernachrichten */
 .error {
-    color: #ff0000;
-    background-color: #ffe6e6;
-    padding: 10px;
-    border-left: 4px solid #ff0000;
-    margin-bottom: 20px;
+    color: #ff0000; /* Textfarbe */
+    background-color: #ffe6e6; /* Hintergrundfarbe */
+    padding: 12px; /* Innenabstand */
+    border-left: 4px solid #ff0000; /* Linker Rand */
+    margin-bottom: 20px; /* Abstand unterhalb der Nachricht */
+    border-radius: 4px; /* Abgerundete Ecken */
+    max-width: 600px; /* Maximale Breite */
+    width: 90%; /* Breite des Overlays */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Schatteneffekt */
+    font-family: 'Roboto', sans-serif; /* Schriftart */
 }
 
+/* Erfolgsmeldungen */
 .success {
-    color: #008000;
-    background-color: #e6ffe6;
-    padding: 10px;
-    border-left: 4px solid #008000;
-    margin-bottom: 20px;
+    color: #008000; /* Textfarbe */
+    background-color: #e6ffe6; /* Hintergrundfarbe */
+    padding: 12px; /* Innenabstand */
+    border-left: 4px solid #008000; /* Linker Rand */
+    margin-bottom: 20px; /* Abstand unterhalb der Nachricht */
+    border-radius: 4px; /* Abgerundete Ecken */
+    max-width: 600px; /* Maximale Breite */
+    width: 90%; /* Breite des Overlays */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Schatteneffekt */
+    font-family: 'Roboto', sans-serif; /* Schriftart */
 }
 
-/* Download-Link */
+/* --------------------------------
+   Download-Links
+   -------------------------------- */
+
+/* Stil für Download-Links */
 .download-link {
-    display: block;
-    padding: 10px;
-    background-color: #007BFF;
-    color: #fff;
-    text-align: center;
-    border-radius: 4px;
-    text-decoration: none;
-    margin-top: 20px;
-    transition: background-color 0.3s;
+    display: block; /* Block-Element */
+    padding: 15px; /* Innenabstand */
+    background-color: #007BFF; /* Hintergrundfarbe */
+    color: #fff; /* Textfarbe */
+    text-align: center; /* Zentrierter Text */
+    border-radius: 4px; /* Abgerundete Ecken */
+    text-decoration: none; /* Keine Unterstreichung */
+    margin-top: 20px; /* Abstand oberhalb des Links */
+    transition: background-color 0.3s, transform 0.2s; /* Übergangseffekt */
+    font-family: 'Roboto', sans-serif; /* Schriftart */
 }
 
 .download-link:hover {
-    background-color: #0056b3;
+    background-color: #0056b3; /* Dunklere Hintergrundfarbe beim Hover */
+    transform: scale(1.05); /* Leichte Vergrößerung beim Hover */
+}
+
+.download-link:active {
+    transform: scale(1); /* Normalgröße beim Klick */
 }

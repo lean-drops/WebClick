@@ -1,20 +1,33 @@
-/* Grundlegende Einstellungen */
-body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+/* ==============================
+   Base CSS
+   ============================== */
+
+/* --------------------------------
+   Grundlegende Einstellungen
+   -------------------------------- */
+
+/* Setze alle Elemente auf null und verwende Border-Box für Box-Sizing */
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    background-color: #fff;
-    background-image: url('../img/background.png'); /* Hintergrundbild einbinden */
-    background-repeat: repeat; /* Bild kacheln */
-    background-size: 100px 100px; /* Größe der Kacheln anpassen */
-    color: #333;
+    box-sizing: border-box; /* Verhindert, dass Padding und Border die Größe eines Elements beeinflussen */
 }
 
+/* Globaler Stil für das gesamte Dokument */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif; /* Schriftart setzen */
+    height: 100vh; /* Höhe des Viewports verwenden */
+    display: flex; /* Flexbox-Layout für das Body-Element */
+    flex-direction: column; /* Flex-Elemente vertikal anordnen */
+    background-color: #fff; /* Hintergrundfarbe setzen */
+    background-image: url('../img/background.png'); /* Hintergrundbild einbinden */
+    background-repeat: repeat; /* Hintergrundbild kacheln */
+    background-size: 100px 100px; /* Größe der Kacheln anpassen */
+    color: #333; /* Textfarbe setzen */
+}
+
+/* Standard-Stile für häufige HTML-Elemente */
 h1, h2, h3, h4, h5, h6, p, div, form {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    margin: 0; /* Standard-Margin entfernen */
+    padding: 0; /* Standard-Padding entfernen */
 }

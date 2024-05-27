@@ -1,38 +1,59 @@
-/* Top-Bar */
+/* ==============================
+   Layout CSS
+   ============================== */
+
+/* --------------------------------
+   Top-Bar
+   -------------------------------- */
+
+/* Stil für die obere Leiste */
 #top-bar {
-    width: 100%;
-    background-color: #007BFF;
-    color: #fff;
-    padding: 20px 0;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Volle Breite */
+    background-color: #007BFF; /* Hintergrundfarbe */
+    color: #fff; /* Textfarbe */
+    padding: 20px 0; /* Innenabstand oben und unten */
+    text-align: center; /* Zentrierter Text */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Schatteneffekt */
 }
 
+/* --------------------------------
+   Hauptcontainer
+   -------------------------------- */
+
+/* Stil für den Hauptcontainer */
 #main-container {
-    display: flex;
-    flex: 1;
-    width: 100%;
-    box-sizing: border-box;
+    display: flex; /* Flexbox-Layout */
+    flex: 1; /* Flexibles Wachstum */
+    width: 100%; /* Volle Breite */
+    box-sizing: border-box; /* Box-Sizing auf Border-Box setzen */
 }
 
-/* Link-Liste Container */
+/* --------------------------------
+   Rechte Seite - Link-Liste Container
+   -------------------------------- */
+
+/* Stil für den rechten Container */
 #right-container {
-    flex: 1;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9); /* Etwas Transparenz hinzufügen */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow-y: auto; /* Scrollbar für den rechten Container */
+    flex: 1; /* Flexibles Wachstum */
+    padding: 20px; /* Innenabstand */
+    background-color: rgba(255, 255, 255, 0.9); /* Hintergrundfarbe mit Transparenz */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Schatteneffekt */
+    overflow-y: auto; /* Vertikale Scrollleiste */
 }
 
-/* Formular und URL-Eingabe Container */
+/* --------------------------------
+   Linke Seite - Formular und URL-Eingabe Container
+   -------------------------------- */
+
+/* Stil für den linken Container */
 #left-container {
-    flex: 1;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9); /* Etwas Transparenz hinzufügen */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ccc; /* Feiner Rahmen um den linken Container */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    overflow-y: auto; /* Scrollbar für den linken Container */
+    flex: 1; /* Flexibles Wachstum */
+    padding: 20px; /* Innenabstand */
+    background-color: rgba(255, 255, 255, 0.9); /* Hintergrundfarbe mit Transparenz */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Schatteneffekt */
+    border: 1px solid #ccc; /* Feiner Rahmen */
+    display: flex; /* Flexbox-Layout */
+    flex-direction: column; /* Flex-Elemente vertikal anordnen */
+    justify-content: center; /* Zentrierung der Inhalte */
+    overflow-y: auto; /* Vertikale Scrollleiste */
 }
