@@ -2,16 +2,6 @@
    Component CSS
    ============================== */
 
-/* Google Fonts einbinden */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
-/* Grundlegende Stile */
-body {
-    font-family: 'Roboto', sans-serif; /* Schöne und moderne Schriftart */
-    line-height: 1.6; /* Angenehme Zeilenhöhe */
-    color: #333; /* Textfarbe */
-}
-
 /* --------------------------------
    Formularelemente
    -------------------------------- */

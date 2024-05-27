@@ -67,43 +67,29 @@ async def archive():
 
     folder_name = shorten_url(url)
     base_folder = os.path.join('outputs', folder_name)
-    create_directory(base_folder)
+    await create_directory(base_folder)
 
     try:
         # Scrape and screenshot the main URL and selected URLs
         zip_file_path = await run_package_creator(url, urls, os.path.join(base_folder, 'website_archive.zip'))
-        return jsonify({"message": "Website archived successfully", "zip_path": zip_file_path}), 200
+        return jsonify({"message": "Website archived successfully", "zip_path": f"/download?path={zip_file_path}"}), 200
     except Exception as e:
         logger.error(f"Error during archiving process: {e}")
         return jsonify({"error": str(e)}), 500
 
-@main.route('/generate_zip', methods=['POST'])
-async def generate_zip():
+@main.route('/download', methods=['GET'])
+async def download():
     """
-    API-Endpunkt zum Generieren eines ZIP-Archivs der gescrapten Webseiten.
+    API-Endpunkt zum Herunterladen der Zip-Datei.
 
-    Expects JSON:
-        {
-            "urls": ["<URL1>", "<URL2>", ...]
-        }
+    Expects query parameter:
+        ?path=<zip_file_path>
 
     Returns:
         ZIP file as an attachment.
     """
-    data = await request.json
-    urls = data.get('urls', [])
-    if not urls:
-        return jsonify({"error": "No URLs provided"}), 400
+    zip_file_path = request.args.get('path')
+    if not zip_file_path or not os.path.exists(zip_file_path):
+        return jsonify({"error": "File not found"}), 404
 
-    base_url = urls[0] if urls else ''
-    folder_name = shorten_url(base_url)
-    base_folder = os.path.join('outputs', folder_name)
-    create_directory(base_folder)
-
-    try:
-        # Run the package creator to scrape and screenshot the URLs and generate a ZIP file
-        zip_file_path = await run_package_creator(base_url, urls, os.path.join(base_folder, 'website_archive.zip'))
-        return await send_file(zip_file_path, as_attachment=True)
-    except Exception as e:
-        logger.error(f"Error during zip generation process: {e}")
-        return jsonify({"error": str(e)}), 500
+    return await send_file(zip_file_path, as_attachment=True)

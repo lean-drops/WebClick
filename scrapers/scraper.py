@@ -2,7 +2,6 @@ import asyncio
 import subprocess
 import logging
 import os
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from scrapers.create_directory import create_directory
 from scrapers.link_processor import create_zip_file
 from utils.naming_utils import sanitize_filename  # Import the sanitize function
@@ -30,6 +29,9 @@ async def run_screenshot_script(url, screenshot_path, countdown_seconds=0):
             await asyncio.sleep(1)
 
     try:
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(screenshot_path), exist_ok=True)
+
         process = await asyncio.create_subprocess_exec(
             'node', 'app/static/js/screenshot.js', url, screenshot_path, str(countdown_seconds),
             stdout=subprocess.PIPE, stderr=subprocess.PIPE
@@ -42,7 +44,7 @@ async def run_screenshot_script(url, screenshot_path, countdown_seconds=0):
         logger.info(f"Screenshot saved at {screenshot_path}")
         return True, ""
     except Exception as e:
-        logger.error(f"Error running screenshot script for {url}: {e}")
+        logger.exception(f"Error running screenshot script for {url}: {e}")
         return False, f"Error running screenshot script for {url}: {e}"
 
 async def scrape_and_screenshot(url, output_path, countdown_seconds=0):
@@ -86,16 +88,18 @@ async def scrape_multiple_websites(urls, base_folder, countdown_seconds=0):
 
     all_contents = []
     subpages_folder = os.path.join(base_folder, 'subpages')
-    create_directory(subpages_folder)  # Create subpages directory
+    await create_directory(subpages_folder)  # Create subpages directory
 
     tasks = [scrape_and_screenshot(url, subpages_folder, countdown_seconds) for url in urls]
-    for future in asyncio.as_completed(tasks):
-        screenshot_result = await future
-        url = urls[tasks.index(future)]
-        if 'error' in screenshot_result:
-            logger.warning(f"Skipping screenshot for {url} due to error: {screenshot_result['error']}")
-            continue
-        all_contents.append({'url': url, 'screenshot': screenshot_result['screenshot']})
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    for result in results:
+        if isinstance(result, Exception):
+            logger.warning(f"Error during scraping: {result}")
+        elif 'error' in result:
+            logger.warning(f"Skipping screenshot due to error: {result['error']}")
+        else:
+            all_contents.append(result)
 
     logger.info(f"Scraped content from {len(all_contents)} out of {len(urls)} websites")
     return all_contents
@@ -116,7 +120,7 @@ async def run_package_creator(base_url, urls, output_zip_path, countdown_seconds
     logger.info(f"Starting package creation for {base_url} with countdown {countdown_seconds} seconds.")
     sanitized_base_url = sanitize_filename(base_url)  # Sanitize base URL for folder name
     base_folder = os.path.join('outputs', sanitized_base_url)
-    create_directory(base_folder)
+    await create_directory(base_folder)
 
     # Scrape and screenshot main website
     await scrape_and_screenshot(base_url, base_folder, countdown_seconds)
@@ -125,7 +129,7 @@ async def run_package_creator(base_url, urls, output_zip_path, countdown_seconds
     await scrape_multiple_websites(urls, base_folder, countdown_seconds)
 
     # Create zip file
-    create_zip_file(base_folder, output_zip_path)
+    await create_zip_file(base_folder, output_zip_path)
 
     logger.info(f"Package created at {output_zip_path}")
     return output_zip_path

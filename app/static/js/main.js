@@ -1,176 +1,58 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const scrapeForm = document.getElementById('scrape-form');
-    const archiveForm = document.getElementById('archive-form');
-    const linksContainer = document.getElementById('links-container');
-    const linksTableBody = document.getElementById('links-table').querySelector('tbody');
-    const archiveButton = document.getElementById('archive-button');
-    const progressBar = document.getElementById('progress-bar');
-    const progressContainer = document.getElementById('progress-container');
+const puppeteer = require('puppeteer');
 
-    function showError(message) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error';
-        errorDiv.textContent = message;
-        document.body.prepend(errorDiv);
-        setTimeout(() => errorDiv.remove(), 5000);
+(async () => {
+    const url = process.argv[2];
+    const screenshotPath = process.argv[3];
+    const countdownSeconds = parseInt(process.argv[4], 10) || 0;
+
+    if (!url || !screenshotPath) {
+        console.error('URL oder Screenshot-Pfad nicht angegeben');
+        process.exit(1);
     }
 
-    function showSuccess(message) {
-        const successDiv = document.createElement('div');
-        successDiv.className = 'success';
-        successDiv.textContent = message;
-        document.body.prepend(successDiv);
-        setTimeout(() => successDiv.remove(), 5000);
+    if (url.startsWith('mailto:')) {
+        console.error('Screenshot von einer Mailto-Link ist nicht möglich');
+        process.exit(1);
     }
 
-    function normalizeURL(url) {
-        if (!/^https?:\/\//i.test(url)) {
-            url = 'http://' + url;
-        }
-        try {
-            new URL(url);
-            return url;
-        } catch (e) {
-            return null;
-        }
-    }
+    const fullUrl = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
 
-    function openInNewWindow(url, windowFeatures) {
-        const newWindow = window.open(url, '_blank', windowFeatures);
-        if (newWindow) {
-            newWindow.focus();
-        } else {
-            showError('Failed to open the link in a new window.');
-        }
-    }
-
-    function createLinkRow(page) {
-        const row = document.createElement('tr');
-        const cellSelect = document.createElement('td');
-        const cellLink = document.createElement('td');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = page.url;
-        cellSelect.appendChild(checkbox);
-
-        const link = document.createElement('a');
-        link.href = '#';
-        link.textContent = page.title;
-        link.addEventListener('dblclick', (event) => {
-            event.preventDefault();
-            const windowFeatures = `width=${window.screen.width / 2},height=${window.screen.height},left=${window.screen.width / 2},top=0,scrollbars=yes,resizable=yes`;
-            openInNewWindow(page.url, windowFeatures);
+    try {
+        console.log('Launching browser...');
+        const browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            timeout: 120000 // Timeout auf 120 Sekunden setzen
         });
-        cellLink.appendChild(link);
 
-        row.appendChild(cellSelect);
-        row.appendChild(cellLink);
-        return row;
-    }
-
-    function adjustMainWindow() {
-        if (window.screen.width > 1280) {
-            window.moveTo(0, 0);
-            window.resizeTo(window.screen.width / 2, window.screen.height);
-        } else {
-            showError('Your screen resolution is too low to adjust the window.');
-        }
-    }
-
-    function openWebsiteOnRight(url) {
-        const windowFeatures = `width=${window.screen.width / 2},height=${window.screen.height},left=${window.screen.width / 2},top=0,scrollbars=yes,resizable=yes`;
-        openInNewWindow(url, windowFeatures);
-    }
-
-    scrapeForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        let url = document.getElementById('url').value.trim();
-
-        if (!url) {
-            showError('Bitte geben Sie eine gültige URL ein.');
-            return;
-        }
-
-        url = normalizeURL(url);
-        if (!url) {
-            showError('Ungültige URL. Bitte geben Sie eine gültige URL ein.');
-            return;
-        }
-
-        adjustMainWindow();
-        openWebsiteOnRight(url);
-
-        showProgressBar();
-
-        fetch('/scrape', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ url: url }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            hideProgressBar();
-            if (data.error) {
-                showError(data.error);
-            } else {
-                linksTableBody.innerHTML = '';
-                data.pages.forEach(page => {
-                    const row = createLinkRow(page);
-                    linksTableBody.appendChild(row);
-                });
-                linksContainer.classList.add('fade-in');
-                linksContainer.style.display = 'block';
-                showSuccess('Links erfolgreich abgerufen.');
-            }
-        })
-        .catch(error => {
-            hideProgressBar();
-            console.error('Error:', error);
-            showError('Ein Fehler ist beim Abrufen der Links aufgetreten.');
+        console.log('Opening new page...');
+        const page = await browser.newPage();
+        await page.setViewport({
+            width: 1920,
+            height: 1080,
+            deviceScaleFactor: 2
         });
-    });
 
-    archiveForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const checkboxes = linksTableBody.querySelectorAll('input[type="checkbox"]:checked');
-        const urls = Array.from(checkboxes).map(checkbox => checkbox.value);
+        console.log(`Navigating to ${fullUrl}...`);
+        await page.goto(fullUrl, { waitUntil: 'networkidle2', timeout: 120000 }); // Timeout auf 120 Sekunden setzen
 
-        if (urls.length === 0) {
-            showError('Bitte wählen Sie mindestens einen Link zum Archivieren aus.');
-            return;
+        console.log('Waiting for the page to load completely...');
+        await page.waitForTimeout(3000); // Warte 3 Sekunden, um sicherzustellen, dass die Seite vollständig geladen ist
+
+        // Countdown-Timer
+        console.log(`Countdown gestartet: ${countdownSeconds} Sekunden`);
+        for (let i = countdownSeconds; i > 0; i--) {
+            console.log(`Countdown: ${i} Sekunden`);
+            await new Promise(resolve => setTimeout(resolve, 1000));
         }
 
-        archiveButton.textContent = 'Archivierung läuft...';
-        archiveButton.classList.add('pulsing');
+        console.log('Taking screenshot...');
+        await page.screenshot({ path: screenshotPath, fullPage: true });
 
-        fetch('/archive', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ url: document.getElementById('url').value, urls: urls }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            archiveButton.classList.remove('pulsing');
-            if (data.error) {
-                showError(data.error);
-                archiveButton.textContent = 'Website archivieren';
-            } else {
-                archiveButton.textContent = 'Website Downloaden';
-                archiveButton.addEventListener('click', () => {
-                    window.location.href = `/download/${data.zip_path}`;
-                });
-                showSuccess('Website erfolgreich archiviert!');
-            }
-        })
-        .catch(error => {
-            archiveButton.classList.remove('pulsing');
-            console.error('Error:', error);
-            showError('Ein Fehler ist beim Archivieren der Website aufgetreten.');
-            archiveButton.textContent = 'Website archivieren';
-        });
-    });
-});
+        await browser.close();
+        console.log('Screenshot gespeichert unter ' + screenshotPath);
+    } catch (err) {
+        console.error('Fehler beim Erstellen des Screenshots:', err);
+        process.exit(1);
+    }
+})();
