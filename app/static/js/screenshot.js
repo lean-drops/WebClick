@@ -39,7 +39,7 @@ const autoRejectCookies = async (page, cookieSelectors) => {
 (async () => {
     const url = process.argv[2];
     const screenshotPath = process.argv[3];
-    const countdownSeconds = parseInt(process.argv[4], 10) || 0; // Countdown-Zeit in Sekunden
+    const countdownSeconds = parseInt(process.argv[4], 10) || 0;
 
     if (!url || !screenshotPath) {
         console.error('URL oder Screenshot-Pfad nicht angegeben');
@@ -51,7 +51,6 @@ const autoRejectCookies = async (page, cookieSelectors) => {
         process.exit(1);
     }
 
-    // Ensure URL has a protocol
     const fullUrl = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
 
     // Lade die Cookie-Selektoren
@@ -80,7 +79,7 @@ const autoRejectCookies = async (page, cookieSelectors) => {
         const browser = await puppeteer.launch({
             headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
-            timeout: 120000 // Timeout auf 120 Sekunden setzen
+            timeout: 120000
         });
 
         console.log('Opening new page...');
@@ -92,13 +91,9 @@ const autoRejectCookies = async (page, cookieSelectors) => {
         });
 
         console.log(`Navigating to ${fullUrl}...`);
-        await page.goto(fullUrl, { waitUntil: 'networkidle2', timeout: 120000 }); // Timeout auf 120 Sekunden setzen
+        await page.goto(fullUrl, { waitUntil: 'networkidle2', timeout: 120000 });
 
-        // Automatisches Ablehnen von Cookie-Bannern
         await autoRejectCookies(page, cookieSelectors);
-
-        console.log('Waiting for 3 seconds...');
-        await new Promise(resolve => setTimeout(resolve, 3000));
 
         console.log('Removing other banners...');
         await page.evaluate((selectors) => {
@@ -108,24 +103,15 @@ const autoRejectCookies = async (page, cookieSelectors) => {
             });
         }, otherBannerSelectors);
 
-        console.log('Calculating full page height...');
-        const fullHeight = await page.evaluate(() => {
-            return document.body.scrollHeight;
-        });
-
         console.log('Scrolling and waiting for the page to load completely...');
-        let previousHeight;
-        do {
-            previousHeight = await page.evaluate('document.body.scrollHeight');
-            await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
-            console.log('Waiting for 1 second to allow for full load...');
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Warte 1 Sekunde
-        } while ((await page.evaluate('document.body.scrollHeight')) !== previousHeight);
-
-        await page.setViewport({
-            width: 1920,
-            height: Math.ceil(fullHeight),
-            deviceScaleFactor: 2
+        await page.evaluate(async () => {
+            let totalHeight = 0;
+            let distance = 100;
+            while (totalHeight < document.body.scrollHeight) {
+                window.scrollBy(0, distance);
+                totalHeight += distance;
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
         });
 
         // Countdown-Timer

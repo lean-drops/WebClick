@@ -1,35 +1,34 @@
-"""
-Routes for the Quart web application.
-
-This script defines the main routes for a web scraping and archiving application using Quart. It includes the following routes:
-1. `/` - Renders the homepage.
-2. `/scrape` - API endpoint for scraping a single webpage. Expects JSON with a URL and returns the scraped content or an error message.
-3. `/archive` - API endpoint for scraping and archiving a main webpage and its subpages. Expects JSON with a main URL and a list of subpage URLs. Returns a success message and the path to the ZIP archive or an error message.
-4. `/generate_zip` - API endpoint for generating a ZIP archive of scraped webpages. Expects JSON with a list of URLs. Returns the ZIP file as an attachment or an error message.
-
-Each route handles asynchronous requests and includes detailed logging for debugging and monitoring purposes.
-"""
-
 from quart import Blueprint, request, jsonify, render_template, send_file
 from scrapers.create_directory import create_directory, shorten_url
 from scrapers.fetch_content import scrape_website
+from scrapers.screenshot import take_screenshot
 from scrapers.scraper import run_package_creator
 import os
 import logging
 
 # Configure logger
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("logs/application.log"),
+        logging.StreamHandler()
+    ]
+)
 logger = logging.getLogger(__name__)
 
 # Define Blueprint
 main = Blueprint('main', __name__)
+
 
 @main.route('/')
 async def index():
     """
     Renders the homepage of the application.
     """
+    logger.debug("Rendering the homepage")
     return await render_template('index.html')
+
 
 @main.route('/scrape', methods=['POST'])
 async def scrape():
@@ -46,17 +45,28 @@ async def scrape():
     """
     data = await request.json
     url = data.get('url')
+    logger.debug(f"Scrape request received for URL: {url}")
     if not url:
+        logger.warning("No URL provided in the request")
         return jsonify({"error": "No URL provided"}), 400
 
     try:
         content = await scrape_website(url)
+        logger.info(f"Scraping successful for URL: {url}")
         if 'error' in content:
             return jsonify(content), 500
+
+        # Take a screenshot of the scraped website
+        output_dir = os.path.join('outputs', shorten_url(url))
+        os.makedirs(output_dir, exist_ok=True)
+        screenshot_path = os.path.join(output_dir, 'screenshot.png')
+        take_screenshot(url, screenshot_path, countdown_seconds=3)
+
         return jsonify(content)
     except Exception as e:
-        logger.error(f"Error scraping website: {e}")
+        logger.error(f"Error scraping website: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
+
 
 @main.route('/archive', methods=['POST'])
 async def archive():
@@ -75,7 +85,9 @@ async def archive():
     data = await request.json
     url = data.get('url')
     urls = data.get('urls', [])
+    logger.debug(f"Archive request received for URL: {url} with subpages: {urls}")
     if not url:
+        logger.warning("No URL provided in the archive request")
         return jsonify({"error": "No URL provided"}), 400
 
     folder_name = shorten_url(url)
@@ -83,12 +95,14 @@ async def archive():
     create_directory(base_folder)
 
     try:
-        # Scrape and screenshot the main URL and selected URLs
+        # Run the package creator to scrape and archive the website and its subpages
         zip_file_path = await run_package_creator(url, urls, os.path.join(base_folder, 'website_archive.zip'))
+        logger.info(f"Website archived successfully: {zip_file_path}")
         return jsonify({"message": "Website archived successfully", "zip_path": zip_file_path}), 200
     except Exception as e:
-        logger.error(f"Error during archiving process: {e}")
+        logger.error(f"Error during archiving process: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
+
 
 @main.route('/generate_zip', methods=['POST'])
 async def generate_zip():
@@ -105,7 +119,9 @@ async def generate_zip():
     """
     data = await request.json
     urls = data.get('urls', [])
+    logger.debug(f"Generate ZIP request received for URLs: {urls}")
     if not urls:
+        logger.warning("No URLs provided in the generate_zip request")
         return jsonify({"error": "No URLs provided"}), 400
 
     base_url = urls[0] if urls else ''
@@ -114,9 +130,10 @@ async def generate_zip():
     create_directory(base_folder)
 
     try:
-        # Run the package creator to scrape and screenshot the URLs and generate a ZIP file
+        # Run the package creator to scrape, screenshot, and zip the webpages
         zip_file_path = await run_package_creator(base_url, urls, os.path.join(base_folder, 'website_archive.zip'))
+        logger.info(f"ZIP generation successful: {zip_file_path}")
         return await send_file(zip_file_path, as_attachment=True)
     except Exception as e:
-        logger.error(f"Error during zip generation process: {e}")
+        logger.error(f"Error during zip generation process: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500

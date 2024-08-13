@@ -3,12 +3,9 @@ import ssl
 import logging
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+import logging
+from utils.naming_utils import sanitize_filename, logger
 
-from utils.naming_utils import sanitize_filename
-
-# Logger konfigurieren
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
 
 async def fetch_website_content(url):
     """
@@ -32,7 +29,7 @@ async def fetch_website_content(url):
                 logger.info(f"Successfully fetched content from {url}")
                 return content, ""
     except aiohttp.ClientError as e:
-        logger.error(f"Failed to fetch content from {url}: {e}")
+        logger.error(f"Failed to fetch content from {url}: {e}", exc_info=True)
         return None, f"Failed to fetch content from {url}: {e}"
 
 def extract_links(soup, base_url):
