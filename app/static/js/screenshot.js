@@ -1,4 +1,40 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
+const fs = require('fs').promises;
+
+// Verwende das Stealth-Plugin
+puppeteer.use(StealthPlugin());
+
+// Verwende das Adblocker-Plugin, das auch Cookie-Banner blockieren kann
+puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
+
+// Funktion zum Laden der Cookie-Selektoren aus einer JSON-Datei
+const loadCookieSelectors = async () => {
+    try {
+        const data = await fs.readFile('cookie_selectors.json', 'utf8');
+        return JSON.parse(data);
+    } catch (err) {
+        console.error('Fehler beim Laden der Cookie-Selektoren:', err);
+        return [];
+    }
+};
+
+// Funktion zum automatischen Ablehnen von Cookie-Bannern
+const autoRejectCookies = async (page, cookieSelectors) => {
+    for (const selector of cookieSelectors) {
+        try {
+            const button = await page.$(selector);
+            if (button) {
+                await button.click();
+                console.log(`Clicked cookie reject button with selector: ${selector}`);
+                break;
+            }
+        } catch (err) {
+            console.error(`Fehler beim Klicken auf den Selektor ${selector}:`, err);
+        }
+    }
+};
 
 (async () => {
     const url = process.argv[2];
@@ -10,22 +46,32 @@ const puppeteer = require('puppeteer');
         process.exit(1);
     }
 
-    if (url.startsWith('mailto:') || url.startsWith('tel:')) {
-        console.error('Screenshot von einer Mailto- oder Tel-Link ist nicht möglich');
+    if (url.startsWith('mailto:')) {
+        console.error('Screenshot von einer Mailto-Link ist nicht möglich');
         process.exit(1);
     }
 
     const fullUrl = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
 
-    const cookieSelectors = [
-        '#onetrust-reject-all-handler',
-        'button[title="Only essential cookies"]',
-        'button[aria-label="Reject Cookies"]',
-    ];
+    // Lade die Cookie-Selektoren
+    const cookieSelectors = await loadCookieSelectors();
 
     const otherBannerSelectors = [
-        '.ad-banner', '.newsletter-popup', '.modal-overlay',
-        '.subscription-banner', '.promo-banner', '.gdpr-banner'
+        '#age-gate',
+        '.rating-popup',
+        '.ad-banner',
+        '.newsletter-popup',
+        '.modal-overlay',
+        '.subscription-banner',
+        '#age-verification',
+        '.survey-popup',
+        '.feedback-popup',
+        '.welcome-screen',
+        '.promo-banner',
+        '.gdpr-banner',
+        '.cc-window',
+        '.cookie-consent-banner',
+        '.interstitial'
     ];
 
     try {
@@ -47,18 +93,7 @@ const puppeteer = require('puppeteer');
         console.log(`Navigating to ${fullUrl}...`);
         await page.goto(fullUrl, { waitUntil: 'networkidle2', timeout: 120000 });
 
-        console.log('Checking for cookie banners...');
-        for (const selector of cookieSelectors) {
-            const button = await page.$(selector);
-            if (button) {
-                await button.click();
-                console.log(`Clicked cookie reject button with selector: ${selector}`);
-                break;
-            }
-        }
-
-        console.log('Waiting for 3 seconds...');
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        await autoRejectCookies(page, cookieSelectors);
 
         console.log('Removing other banners...');
         await page.evaluate((selectors) => {
@@ -67,6 +102,17 @@ const puppeteer = require('puppeteer');
                 elements.forEach(element => element.remove());
             });
         }, otherBannerSelectors);
+
+        console.log('Scrolling and waiting for the page to load completely...');
+        await page.evaluate(async () => {
+            let totalHeight = 0;
+            let distance = 100;
+            while (totalHeight < document.body.scrollHeight) {
+                window.scrollBy(0, distance);
+                totalHeight += distance;
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+        });
 
         // Countdown-Timer
         console.log(`Countdown gestartet: ${countdownSeconds} Sekunden`);
