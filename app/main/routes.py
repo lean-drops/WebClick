@@ -8,8 +8,8 @@ import logging
 
 # Configure logger
 logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler("logs/application.log"),
         logging.StreamHandler()
@@ -20,13 +20,12 @@ logger = logging.getLogger(__name__)
 # Define Blueprint
 main = Blueprint('main', __name__)
 
-
 @main.route('/')
 async def index():
     """
     Renders the homepage of the application.
     """
-    logger.debug("Rendering the homepage")
+    logger.info("Rendering the homepage")
     return await render_template('index.html')
 
 
@@ -45,7 +44,7 @@ async def scrape():
     """
     data = await request.json
     url = data.get('url')
-    logger.debug(f"Scrape request received for URL: {url}")
+    logger.info(f"Scrape request received for URL: {url}")
     if not url:
         logger.warning("No URL provided in the request")
         return jsonify({"error": "No URL provided"}), 400
@@ -57,7 +56,7 @@ async def scrape():
             return jsonify(content), 500
 
         # Take a screenshot of the scraped website
-        output_dir = os.path.join('outputs', shorten_url(url))
+        output_dir = os.path.join('outputs_directory', shorten_url(url))
         os.makedirs(output_dir, exist_ok=True)
         screenshot_path = os.path.join(output_dir, 'screenshot.png')
         take_screenshot(url, screenshot_path, countdown_seconds=3)
@@ -85,13 +84,13 @@ async def archive():
     data = await request.json
     url = data.get('url')
     urls = data.get('urls', [])
-    logger.debug(f"Archive request received for URL: {url} with subpages: {urls}")
+    logger.info(f"Archive request received for URL: {url} with subpages: {urls}")
     if not url:
         logger.warning("No URL provided in the archive request")
         return jsonify({"error": "No URL provided"}), 400
 
     folder_name = shorten_url(url)
-    base_folder = os.path.join('outputs', folder_name)
+    base_folder = os.path.join('outputs_directory', folder_name)
     create_directory(base_folder)
 
     try:
@@ -119,14 +118,14 @@ async def generate_zip():
     """
     data = await request.json
     urls = data.get('urls', [])
-    logger.debug(f"Generate ZIP request received for URLs: {urls}")
+    logger.info(f"Generate ZIP request received for URLs: {urls}")
     if not urls:
         logger.warning("No URLs provided in the generate_zip request")
         return jsonify({"error": "No URLs provided"}), 400
 
     base_url = urls[0] if urls else ''
     folder_name = shorten_url(base_url)
-    base_folder = os.path.join('outputs', folder_name)
+    base_folder = os.path.join('outputs_directory', folder_name)
     create_directory(base_folder)
 
     try:

@@ -44,8 +44,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function createLinkRow(page) {
+    function createLinkRow(page, isSubLink = false) {
         const row = document.createElement('tr');
+        if (isSubLink) {
+            row.classList.add('sub-link');
+        }
+
         const cellSelect = document.createElement('td');
         const cellLink = document.createElement('td');
         const checkbox = document.createElement('input');
@@ -61,11 +65,34 @@ document.addEventListener('DOMContentLoaded', function() {
             const windowFeatures = `width=${window.screen.width / 2},height=${window.screen.height},left=${window.screen.width / 2},top=0,scrollbars=yes,resizable=yes`;
             openInNewWindow(page.url, windowFeatures);
         });
-        cellLink.appendChild(link);
 
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            if (page.subLinks) {
+                toggleSubLinks(row, page.subLinks);
+            }
+        });
+
+        cellLink.appendChild(link);
         row.appendChild(cellSelect);
         row.appendChild(cellLink);
         return row;
+    }
+
+    function toggleSubLinks(parentRow, subLinks) {
+        if (parentRow.classList.contains('expanded')) {
+            const nextSibling = parentRow.nextSibling;
+            while (nextSibling && nextSibling.classList.contains('sub-link')) {
+                nextSibling.remove();
+            }
+            parentRow.classList.remove('expanded');
+        } else {
+            subLinks.forEach(subLink => {
+                const subLinkRow = createLinkRow(subLink, true);
+                parentRow.after(subLinkRow);
+            });
+            parentRow.classList.add('expanded');
+        }
     }
 
     function adjustMainWindow() {
@@ -80,6 +107,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function openWebsiteOnRight(url) {
         const windowFeatures = `width=${window.screen.width / 2},height=${window.screen.height},left=${window.screen.width / 2},top=0,scrollbars=yes,resizable=yes`;
         openInNewWindow(url, windowFeatures);
+    }
+
+    function showProgressBar() {
+        progressContainer.style.display = 'block';
+        progressBar.style.width = '0%';
+    }
+
+    function hideProgressBar() {
+        progressContainer.style.display = 'none';
     }
 
     scrapeForm.addEventListener('submit', function(event) {
