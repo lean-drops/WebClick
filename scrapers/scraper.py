@@ -115,7 +115,7 @@ async def run_package_creator(base_url, urls, output_zip_path, countdown_seconds
     """
     logger.info(f"Starting package creation for {base_url} with countdown {countdown_seconds} seconds.")
     sanitized_base_url = sanitize_filename(base_url)  # Sanitize base URL for folder name
-    base_folder = os.path.join('outputs', sanitized_base_url)
+    base_folder = os.path.join('outputs_directory', sanitized_base_url)
     create_directory(base_folder)
 
     # Scrape and screenshot main website
