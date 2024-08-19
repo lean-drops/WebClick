@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 def sanitize_filename(filename):
     """
-    Normalize the filename, remove non-ASCII characters, and replace spaces and special characters.
+    Sanitize the filename by removing non-ASCII characters, replacing spaces and special characters.
 
     Args:
         filename (str): The filename to sanitize.
@@ -15,32 +15,13 @@ def sanitize_filename(filename):
     Returns:
         str: The sanitized filename.
     """
-    filename = unicodedata.normalize('NFC', filename)
-    filename = filename.encode('ascii', 'ignore').decode('ascii')
-    filename = filename.replace(' ', '_')
-    filename = re.sub(r'[^A-Za-z0-9_\-]', '', filename)
-    return filename
-
-def format_filename(filename):
-    """
-    Format the filename by removing unwanted characters and replacing underscores with spaces.
-
-    Args:
-        filename (str): The filename to format.
-
-    Returns:
-        str: The formatted filename.
-    """
-    filename = unicodedata.normalize('NFC', filename)
-    filename = filename.encode('ascii', 'ignore').decode('ascii')
-    filename = filename.replace('_', ' ')
-    filename = re.sub(r'[^A-Za-z0-9 \-\.]', '', filename)
-    filename = filename.strip()
+    filename = unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore').decode('ascii')
+    filename = re.sub(r'[^A-Za-z0-9\-_]', '', filename)
     return filename
 
 def shorten_url(url):
     """
-    Shorten the URL to create a folder-friendly name.
+    Shorten the URL to create a more concise, folder-friendly name.
 
     Args:
         url (str): The URL to shorten.
@@ -51,8 +32,8 @@ def shorten_url(url):
     parsed_url = urlparse(url)
     netloc = parsed_url.netloc.replace('www.', '').replace('http://', '').replace('https://', '')
     path = parsed_url.path.replace('/', '_')
-    short_name = f"{netloc}{path}"
-    short_name = re.sub(r'\W+', '_', short_name)  # Replace non-word characters with underscores
-    short_name = short_name.replace('_', ' ')  # Replace underscores with spaces
+    short_name = f"{netloc}{path}".strip('_')  # Remove leading/trailing underscores
+    short_name = re.sub(r'[_]+', '_', short_name)  # Replace multiple underscores with a single one
+    short_name = sanitize_filename(short_name)
     logger.debug(f"Shortened URL: {url} to {short_name}")
     return short_name

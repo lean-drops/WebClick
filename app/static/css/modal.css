@@ -172,3 +172,33 @@ ul#archived-links-list li {
 #download-button:hover {
     background-color: #0056b3;
 }
+
+
+/* Einzug und Hintergrundfarbe für Sublinks */
+.sub-link {
+    padding-left: 20px; /* Mehr Einzug für Sublinks */
+    background-color: #f9f9f9; /* Leicht abweichende Hintergrundfarbe */
+}
+
+/* Animation für Dropdown-Effekt */
+.expanded .sub-link {
+    display: none;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.expanded .sub-link.show {
+    display: table-row;
+    opacity: 1;
+}
+
+/* Pfeilsymbol drehen für Dropdown */
+.toggle-arrow {
+    cursor: pointer;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.expanded .toggle-arrow {
+    transform: rotate(90deg); /* Pfeil drehen, wenn geöffnet */
+}

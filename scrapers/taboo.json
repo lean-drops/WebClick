@@ -41,7 +41,7 @@
     "taboo_patterns": [
         "(?i)\\b\\d{3,4}[ -]?\\d{3,4}[ -]?\\d{3,4}\\b",
         "(?i)@",
-        "(?i)mailto:",
+        "(?i)Nation",
         "(?i)#contact",
         "(?i)\\bfacebook\\.com\\b",
         "(?i)\\btwitter\\.com\\b",

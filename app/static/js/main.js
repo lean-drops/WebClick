@@ -1,26 +1,32 @@
+import { showProgressBar, hideProgressBar, updateProgressBar } from './loadingbar.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     const scrapeForm = document.getElementById('scrape-form');
     const archiveForm = document.getElementById('archive-form');
-    const linksContainer = document.getElementById('links-container');
     const linksTableBody = document.getElementById('links-table').querySelector('tbody');
     const archiveButton = document.getElementById('archive-button');
-    const progressBar = document.getElementById('progress-bar');
-    const progressContainer = document.getElementById('progress-container');
+    const notificationContainer = document.getElementById('notification-container');
 
-    function showError(message) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error';
-        errorDiv.textContent = message;
-        document.body.prepend(errorDiv);
-        setTimeout(() => errorDiv.remove(), 5000);
+    function log(message, type = 'info') {
+        if (type === 'error') {
+            console.error(`[ERROR] ${message}`);
+        } else if (type === 'warn') {
+            console.warn(`[WARN] ${message}`);
+        } else {
+            console.log(`[INFO] ${message}`);
+        }
     }
 
-    function showSuccess(message) {
-        const successDiv = document.createElement('div');
-        successDiv.className = 'success';
-        successDiv.textContent = message;
-        document.body.prepend(successDiv);
-        setTimeout(() => successDiv.remove(), 5000);
+    function showNotification(message, type = 'info') {
+        const notificationDiv = document.createElement('div');
+        notificationDiv.className = `notification ${type}`;
+        notificationDiv.textContent = message;
+        notificationContainer.appendChild(notificationDiv);
+
+        setTimeout(() => {
+            notificationDiv.classList.add('fade-out');
+            setTimeout(() => notificationDiv.remove(), 500);
+        }, 3000);
     }
 
     function normalizeURL(url) {
@@ -31,91 +37,9 @@ document.addEventListener('DOMContentLoaded', function() {
             new URL(url);
             return url;
         } catch (e) {
+            showNotification('Ungültige URL. Bitte geben Sie eine gültige URL ein.', 'error');
             return null;
         }
-    }
-
-    function openInNewWindow(url, windowFeatures) {
-        const newWindow = window.open(url, '_blank', windowFeatures);
-        if (newWindow) {
-            newWindow.focus();
-        } else {
-            showError('Failed to open the link in a new window.');
-        }
-    }
-
-    function createLinkRow(page, isSubLink = false) {
-        const row = document.createElement('tr');
-        if (isSubLink) {
-            row.classList.add('sub-link');
-        }
-
-        const cellSelect = document.createElement('td');
-        const cellLink = document.createElement('td');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = page.url;
-        cellSelect.appendChild(checkbox);
-
-        const link = document.createElement('a');
-        link.href = '#';
-        link.textContent = page.title;
-        link.addEventListener('dblclick', (event) => {
-            event.preventDefault();
-            const windowFeatures = `width=${window.screen.width / 2},height=${window.screen.height},left=${window.screen.width / 2},top=0,scrollbars=yes,resizable=yes`;
-            openInNewWindow(page.url, windowFeatures);
-        });
-
-        link.addEventListener('click', (event) => {
-            event.preventDefault();
-            if (page.subLinks) {
-                toggleSubLinks(row, page.subLinks);
-            }
-        });
-
-        cellLink.appendChild(link);
-        row.appendChild(cellSelect);
-        row.appendChild(cellLink);
-        return row;
-    }
-
-    function toggleSubLinks(parentRow, subLinks) {
-        if (parentRow.classList.contains('expanded')) {
-            const nextSibling = parentRow.nextSibling;
-            while (nextSibling && nextSibling.classList.contains('sub-link')) {
-                nextSibling.remove();
-            }
-            parentRow.classList.remove('expanded');
-        } else {
-            subLinks.forEach(subLink => {
-                const subLinkRow = createLinkRow(subLink, true);
-                parentRow.after(subLinkRow);
-            });
-            parentRow.classList.add('expanded');
-        }
-    }
-
-    function adjustMainWindow() {
-        if (window.screen.width > 1280) {
-            window.moveTo(0, 0);
-            window.resizeTo(window.screen.width / 2, window.screen.height);
-        } else {
-            showError('Your screen resolution is too low to adjust the window.');
-        }
-    }
-
-    function openWebsiteOnRight(url) {
-        const windowFeatures = `width=${window.screen.width / 2},height=${window.screen.height},left=${window.screen.width / 2},top=0,scrollbars=yes,resizable=yes`;
-        openInNewWindow(url, windowFeatures);
-    }
-
-    function showProgressBar() {
-        progressContainer.style.display = 'block';
-        progressBar.style.width = '0%';
-    }
-
-    function hideProgressBar() {
-        progressContainer.style.display = 'none';
     }
 
     scrapeForm.addEventListener('submit', function(event) {
@@ -123,22 +47,16 @@ document.addEventListener('DOMContentLoaded', function() {
         let url = document.getElementById('url').value.trim();
 
         if (!url) {
-            showError('Bitte geben Sie eine gültige URL ein.');
+            showNotification('Bitte geben Sie eine gültige URL ein.', 'error');
             return;
         }
 
         url = normalizeURL(url);
-        if (!url) {
-            showError('Ungültige URL. Bitte geben Sie eine gültige URL ein.');
-            return;
-        }
-
-        adjustMainWindow();
-        openWebsiteOnRight(url);
+        if (!url) return;
 
         showProgressBar();
 
-        fetch('/scrape', {
+        fetch('/scrape_sub_links', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -149,64 +67,71 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             hideProgressBar();
             if (data.error) {
-                showError(data.error);
+                showNotification(data.error, 'error');
             } else {
                 linksTableBody.innerHTML = '';
-                data.pages.forEach(page => {
+                data.links.forEach(page => {
                     const row = createLinkRow(page);
                     linksTableBody.appendChild(row);
                 });
-                linksContainer.classList.add('fade-in');
-                linksContainer.style.display = 'block';
-                showSuccess('Links erfolgreich abgerufen.');
+                showNotification('Links erfolgreich abgerufen.', 'success');
             }
         })
         .catch(error => {
             hideProgressBar();
-            console.error('Error:', error);
-            showError('Ein Fehler ist beim Abrufen der Links aufgetreten.');
+            showNotification('Ein Fehler ist beim Abrufen der Links aufgetreten.', 'error');
+            log(`Error fetching sub-links for URL: ${url} - ${error}`, 'error');
         });
     });
 
-    archiveForm.addEventListener('submit', function(event) {
+    archiveForm.addEventListener('submit', async function(event) {
         event.preventDefault();
         const checkboxes = linksTableBody.querySelectorAll('input[type="checkbox"]:checked');
         const urls = Array.from(checkboxes).map(checkbox => checkbox.value);
 
+        const mainUrl = document.getElementById('url').value.trim();
         if (urls.length === 0) {
-            showError('Bitte wählen Sie mindestens einen Link zum Archivieren aus.');
-            return;
+            urls.push(mainUrl);
+        } else if (!urls.includes(mainUrl)) {
+            urls.unshift(mainUrl);
         }
 
         archiveButton.textContent = 'Archivierung läuft...';
         archiveButton.classList.add('pulsing');
 
-        fetch('/archive', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ url: document.getElementById('url').value, urls: urls }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            archiveButton.classList.remove('pulsing');
-            if (data.error) {
-                showError(data.error);
-                archiveButton.textContent = 'Website archivieren';
-            } else {
+        showProgressBar();
+
+        const eventSource = new EventSource('/archive');
+
+        eventSource.onmessage = function(event) {
+            const data = event.data;
+
+            if (data === 'complete') {
                 archiveButton.textContent = 'Website Downloaden';
-                archiveButton.addEventListener('click', () => {
-                    window.location.href = `/download/${data.zip_path}`;
-                });
-                showSuccess('Website erfolgreich archiviert!');
+                archiveButton.classList.remove('pulsing');
+                archiveButton.onclick = () => {
+                    const downloadUrl = event.lastEventId;  // lastEventId wird verwendet, um den Pfad zu speichern
+                    const a = document.createElement('a');
+                    a.href = `/download/${downloadUrl}`;
+                    a.download = downloadUrl.split('/').pop();  // Dateiname aus dem Pfad extrahieren
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                };
+                hideProgressBar();
+                showNotification('Website erfolgreich archiviert!', 'success');
+                eventSource.close();
+            } else {
+                updateProgressBar(parseInt(data));
             }
-        })
-        .catch(error => {
-            archiveButton.classList.remove('pulsing');
-            console.error('Error:', error);
-            showError('Ein Fehler ist beim Archivieren der Website aufgetreten.');
+        };
+
+        eventSource.onerror = function() {
+            showNotification('Ein Fehler ist beim Archivieren der Website aufgetreten.', 'error');
             archiveButton.textContent = 'Website archivieren';
-        });
+            archiveButton.classList.remove('pulsing');
+            hideProgressBar();
+            eventSource.close();
+        };
     });
 });

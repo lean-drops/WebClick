@@ -191,3 +191,40 @@ td a:hover {
 .download-link:hover {
     background-color: #0056b3;
 }
+/* Einzug und Hintergrundfarbe für Sublinks */
+.sub-link {
+    padding-left: 20px;
+    background-color: #f9f9f9;
+}
+
+/* Hintergrundfarbe ändern beim Hovern */
+.sub-link:hover {
+    background-color: #e0e0e0;
+}
+
+/* Pfeil-Animation für expandierte Links */
+.expanded .toggle-arrow {
+    transform: rotate(90deg);
+    transition: transform 0.3s ease;
+}
+
+/* Ein- und Ausblendung für Sublinks */
+.sub-link {
+    display: none;
+}
+
+.expanded + .sub-link {
+    display: table-row;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
