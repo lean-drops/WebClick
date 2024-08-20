@@ -1,4 +1,17 @@
-/* layout.css */
+/* Grundlegende Einstellungen für die gesamte Seite */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #fff;
+    background-image: url('../img/background.png');
+    background-repeat: repeat;
+    background-size: 100px 100px;
+    color: #333;
+}
 
 /* Top-Bar Styling */
 #top-bar {
@@ -10,6 +23,73 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     font-family: 'Roboto', sans-serif;
     font-size: 24px;
+}
+
+/* Hauptcontainer Layout */
+#main-container {
+    display: flex; /* Flexbox aktivieren */
+    flex-direction: row; /* Nebeneinander anordnen */
+    justify-content: space-between; /* Platz zwischen den Containern */
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+/* Linker und rechter Container */
+#left-container, #right-container {
+    flex: 1; /* Beide Container nehmen gleich viel Platz ein */
+    margin: 10px; /* Abstand zwischen den Containern */
+    display: flex;
+    flex-direction: column; /* Inhalt innerhalb der Container vertikal anordnen */
+}
+
+#right-container {
+    margin-left: 20px; /* Optional: Zusätzlicher Abstand links für den rechten Container */
+}
+
+/* Formular- und Eingabeelemente */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #007BFF;
+    font-size: 18px;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input-container .icon {
+    padding: 10px;
+    background: #007BFF;
+    color: white;
+    min-width: 50px;
+    text-align: center;
+    border-radius: 4px 0 0 4px;
+}
+
+input[type="url"] {
+    flex-grow: 1;
+    padding: 10px;
+    border: 2px solid #007BFF;
+    border-radius: 0 4px 4px 0;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+input[type="url"]:focus {
+    border-color: #0056b3;
+    outline: none;
 }
 
 /* Fortschrittsanzeige Layout */
@@ -46,8 +126,6 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
-    background-color: #ffffff;
-    color: #333;
 }
 
 th, td {
