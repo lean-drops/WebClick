@@ -1,18 +1,21 @@
-import { createLinkRow, expandSubLinks, collapseSubLinks, openModalWithLinks } from './dropdown.js';
-import { showProgressBar, hideProgressBar, updateProgressBar } from './loadingbar.js';
+import { showProgressBar, hideProgressBar } from './loadingbar.js';
+import { createLinkRow, expandSubLinks, collapseSubLinks } from './dropdown.js';
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log("[DEBUG] DOMContentLoaded event fired.");
 
-    // Element References
     const scrapeForm = document.getElementById('scrape-form');
     const linksTableBody = document.getElementById('links-table').querySelector('tbody');
     const notificationContainer = document.getElementById('notification-container');
-    let cache = {}; // Cache to store fetched links
+    const archiveForm = document.getElementById('archive-form');
+    const archiveButton = document.getElementById('archive-button');
+    const modal = document.getElementById('modal');
+    const modalCloseButton = modal.querySelector('.close');
+    const archivedLinksList = document.getElementById('archived-links-list');
+    const downloadButton = document.getElementById('download-button');
 
-    console.log("[DEBUG] Elements loaded:", { scrapeForm, linksTableBody, notificationContainer });
+    console.log("[DEBUG] Elements loaded:", { scrapeForm, linksTableBody, notificationContainer, archiveForm, archiveButton, modal, modalCloseButton, archivedLinksList, downloadButton });
 
-    // Utility Functions
     function showNotification(message, type = 'info') {
         const notificationDiv = document.createElement('div');
         notificationDiv.className = `notification ${type}`;
@@ -26,93 +29,132 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 
-    function normalizeURL(url) {
-        if (!/^https?:\/\//i.test(url)) {
-            url = 'http://' + url;
-        }
+    async function scrapeWebsiteLinks(url) {
         try {
-            new URL(url);
-            return url;
-        } catch (e) {
-            showNotification('Ungültige URL. Bitte geben Sie eine gültige URL ein.', 'error');
-            return null;
-        }
-    }
-
-    // Fetch sublinks function defined within main.js
-    async function fetchSublinks(url) {
-        console.log("[DEBUG] fetchSublinks called with URL:", url);
-        try {
-            const response = await fetch('/fetch_sublinks', {
+            const response = await fetch('/scrape_sub_links', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ url: url }),
+                body: JSON.stringify({ url }),
             });
 
-            console.log("[DEBUG] fetchSublinks received response:", response);
-
             if (!response.ok) {
-                console.error("[ERROR] Failed to fetch sublinks:", response.statusText);
-                throw new Error('Failed to fetch sublinks');
+                const errorText = await response.text();
+                throw new Error(`Server error: ${errorText}`);
             }
 
             const data = await response.json();
-            console.log("[DEBUG] Sublinks data received:", data);
-            return data.links || [];  // Return sublinks
+            if (data.error) {
+                showNotification(`Error: ${data.error}`, 'error');
+                return [];
+            }
+
+            return data.links || [];
         } catch (error) {
-            console.error("[ERROR] Error fetching sublinks:", error);
+            console.error("[ERROR] Error fetching website links:", error);
+            showNotification(`Error fetching website links: ${error.message}`, 'error');
             return [];
         }
     }
 
-    // Function to recursively fetch links up to three levels deep
-    async function fetchLinksRecursively(url, level = 0) {
-        if (level > 2) return []; // Stop at third level
-        console.log(`[DEBUG] Fetching links for ${url} at level ${level}`);
-
-        if (cache[url]) {
-            console.log("[DEBUG] Using cached data for:", url);
-            return cache[url];
-        }
-
-        const sublinks = await fetchSublinks(url);
-        cache[url] = sublinks; // Cache the results
-
-        for (let link of sublinks) {
-            const deeperLinks = await fetchLinksRecursively(link.url, level + 1);
-            cache[link.url] = deeperLinks;
-        }
-
-        return sublinks;
-    }
-
-    // Event Listeners
-    scrapeForm.addEventListener('submit', async function(event) {
-        event.preventDefault();
-        let url = document.getElementById('url').value.trim();
-        url = normalizeURL(url);
-        if (!url) return;
-
+    async function displayWebsiteLinks(url) {
         showProgressBar();
+        linksTableBody.innerHTML = '';  // Clear previous results
 
         try {
-            const links = await fetchLinksRecursively(url);
-            console.log("[DEBUG] All links fetched:", links);
+            const links = await scrapeWebsiteLinks(url);
 
-            linksTableBody.innerHTML = '';
-            links.forEach(page => {
-                const row = createLinkRow(page);
+            links.forEach(link => {
+                const row = createLinkRow(link);
                 linksTableBody.appendChild(row);
             });
 
-            showNotification('Links erfolgreich abgerufen.', 'success');
+            showNotification('Links successfully retrieved.', 'success');
         } catch (error) {
-            console.error("[ERROR] Error fetching links:", error);
-            showNotification('Ein Fehler ist beim Abrufen der Links aufgetreten.', 'error');
+            console.error("[ERROR] Error displaying website links:", error);
+            showNotification('Failed to display website links.', 'error');
         } finally {
             hideProgressBar();
+        }
+    }
+
+    scrapeForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const url = document.getElementById('url').value.trim();
+        if (url) {
+            displayWebsiteLinks(url);
+        } else {
+            showNotification('Please enter a valid URL.', 'error');
+        }
+    });
+
+    archiveForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const url = document.getElementById('url').value.trim();
+        if (!url) {
+            showNotification('Please enter a URL to archive.', 'error');
+            return;
+        }
+
+        // Collect all selected links
+        const selectedLinks = Array.from(linksTableBody.querySelectorAll('input[type="checkbox"]:checked'))
+            .map(input => input.value);
+
+        if (selectedLinks.length === 0) {
+            showNotification('Please select at least one link to archive.', 'error');
+            return;
+        }
+
+        archiveButton.disabled = true;
+        showProgressBar();
+
+        try {
+            const savePath = prompt("Please enter the path where you want to save the archive:");
+            if (!savePath) {
+                showNotification('Save path was not provided.', 'error');
+                return;
+            }
+
+            const response = await fetch('/archive', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url, save_path: savePath, urls: selectedLinks }),
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                showNotification('Archive created successfully.', 'success');
+                modal.style.display = 'block';
+                archivedLinksList.innerHTML = '';
+                selectedLinks.forEach(link => {
+                    const li = document.createElement('li');
+                    li.textContent = link;
+                    archivedLinksList.appendChild(li);
+                });
+                downloadButton.onclick = () => window.open(result.zip_path, '_blank');
+            } else {
+                showNotification(`Error: ${result.error}`, 'error');
+            }
+        } catch (error) {
+            console.error("[ERROR] Error archiving links:", error);
+            showNotification('An error occurred while archiving the links.', 'error');
+        } finally {
+            hideProgressBar();
+            archiveButton.disabled = false;
+        }
+    });
+
+    modalCloseButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
         }
     });
 

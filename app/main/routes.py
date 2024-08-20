@@ -34,8 +34,10 @@ async def index():
     """
     Renders the homepage of the application.
     """
+    timestamp = datetime.now().timestamp()
+
     logger.info("Rendering the homepage")
-    return await render_template('index.html')
+    return await render_template('index.html', timestamp=timestamp)
 
 
 @main.route('/scrape_sub_links', methods=['POST'])
@@ -50,7 +52,7 @@ async def scrape_sub_links():
         logger.warning("No URL provided in the request")
         return jsonify({"error": "No URL provided"}), 400
 
-    if not is_valid_url(url):  # Die Funktion is_valid_url sollte eine URL-Validierung durchführen
+    if not is_valid_url(url):
         logger.warning(f"Invalid URL provided: {url}")
         return jsonify({"error": "Invalid URL provided"}), 400
 
@@ -87,10 +89,15 @@ async def archive():
     data = await request.json
     urls = data.get('urls', [])
     main_url = data.get('url')
+    save_path = data.get('save_path')  # Benutzerdefinierter Speicherpfad
 
     if not main_url:
         logger.warning("No main URL provided in the archive request")
         return jsonify({"error": "No main URL provided"}), 400
+
+    if not save_path:
+        logger.warning("No save path provided in the archive request")
+        return jsonify({"error": "No save path provided"}), 400
 
     # Ensure the main URL is always included
     if not urls:
@@ -102,7 +109,7 @@ async def archive():
 
     try:
         run_number = datetime.now().strftime("%Y%m%d_%H%M%S")
-        base_folder = os.path.join('outputs_directory', f'screenshots_run_{run_number}')
+        base_folder = os.path.join(save_path, f'screenshots_run_{run_number}')
         os.makedirs(base_folder, exist_ok=True)
 
         driver_paths = [
@@ -120,7 +127,7 @@ async def archive():
         await start_screenshot_process_sequentially(urls, base_folder, selectors, driver_paths, chrome_binary_paths)
 
         zip_filename = f"screenshots_run_{run_number}.zip"
-        zip_filepath = os.path.join(os.getcwd(), zip_filename)
+        zip_filepath = os.path.join(save_path, zip_filename)
 
         with zipfile.ZipFile(zip_filepath, 'w') as zipf:
             for root, dirs, files in os.walk(base_folder):

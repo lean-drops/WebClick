@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Archiver</title>
+
     <!-- CSS einbinden -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}?v=1.0.0&t={{ timestamp }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}?v=1.0.0&t={{ timestamp }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}?v=1.0.0&t={{ timestamp }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}?v=1.0.0&t={{ timestamp }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
     <!-- JavaScript-Dateien als Module einbinden -->
-    <script src="{{ url_for('static', filename='js/progress.js') }}" type="module" defer></script>
-    <script src="{{ url_for('static', filename='js/modal.js') }}" type="module" defer></script>
-    <script src="{{ url_for('static', filename='js/loadingbar.js') }}" type="module" defer></script>
-        <script src="{{ url_for('static', filename='js/dropdown.js') }}" type="module" defer></script>
-
-    <script src="{{ url_for('static', filename='js/main.js') }}" type="module" defer></script>
+    <script src="{{ url_for('static', filename='js/progress.js') }}?v=1.0.0&t={{ timestamp }}" type="module" defer></script>
+    <script src="{{ url_for('static', filename='js/modal.js') }}?v=1.0.0&t={{ timestamp }}" type="module" defer></script>
+    <script src="{{ url_for('static', filename='js/loadingbar.js') }}?v=1.0.0&t={{ timestamp }}" type="module" defer></script>
+    <script src="{{ url_for('static', filename='js/dropdown.js') }}?v=1.0.0&t={{ timestamp }}" type="module" defer></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=1.0.0&t={{ timestamp }}" type="module" defer></script>
 </head>
 <body>
     <!-- Kopfzeile -->
@@ -33,7 +33,7 @@
                 <label for="url">Geben Sie die URL der Website ein, die Sie archivieren möchten:</label>
                 <div class="input-container">
                     <i class="fa fa-link icon" aria-hidden="true"></i>
-                    <input type="url" id="url" name="url" placeholder="https://example.com" required aria-label="URL der Website eingeben">
+                    <input type="url" id="url" name="url" placeholder="https://schlosskyburg.ch/" required aria-label="URL der Website eingeben">
                 </div>
                 <button type="submit">Website öffnen</button>
             </form>
