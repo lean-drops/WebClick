@@ -2,13 +2,14 @@ import os
 import logging
 import traceback
 import asyncio
+
+import aiohttp
 from quart import Blueprint, request, jsonify, render_template, send_file, Response
 from datetime import datetime
 import zipfile
 
 from scrapers.fetch_content import scrape_website_links
-from utils.naming_utils import sanitize_filename, shorten_url
-from utils.screenshot import load_cookie_selectors, start_screenshot_process_sequentially
+from scrapers.screenshot import load_cookie_selectors, start_screenshot_process_sequentially, is_valid_url
 
 # Logger configuration
 logging.basicConfig(
@@ -36,6 +37,7 @@ async def index():
     logger.info("Rendering the homepage")
     return await render_template('index.html')
 
+
 @main.route('/scrape_sub_links', methods=['POST'])
 async def scrape_sub_links():
     """
@@ -48,18 +50,34 @@ async def scrape_sub_links():
         logger.warning("No URL provided in the request")
         return jsonify({"error": "No URL provided"}), 400
 
+    if not is_valid_url(url):  # Die Funktion is_valid_url sollte eine URL-Validierung durchführen
+        logger.warning(f"Invalid URL provided: {url}")
+        return jsonify({"error": "Invalid URL provided"}), 400
+
     logger.info(f"Scrape sub-links request received for URL: {url}")
 
     try:
         content = await scrape_website_links(url)
+
         if 'error' in content:
+            logger.error(f"Scraping failed with error: {content['error']}")
             return jsonify(content), 500
 
         logger.info(f"Scraping sub-links successful for URL: {url}")
-        return jsonify({"links": content.get('links', [])})
+        return jsonify(content)
+
+    except asyncio.TimeoutError:
+        logger.error(f"Timeout occurred while scraping {url}")
+        return jsonify({"error": "Timeout occurred while scraping the website"}), 500
+
+    except aiohttp.ClientError as e:
+        logger.error(f"Network-related error while scraping {url}: {e}")
+        return jsonify({"error": f"Network error occurred: {str(e)}"}), 500
+
     except Exception as e:
-        logger.error(f"Error scraping sub-links: {e}", exc_info=True)
+        logger.error(f"Unexpected error scraping sub-links: {e}", exc_info=True)
         return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
+
 
 @main.route('/archive', methods=['POST'])
 async def archive():
@@ -99,42 +117,19 @@ async def archive():
             r"C:\Google Neu\chrome-win32 Parallel 2\chrome.exe"
         ]
 
-        total_urls = len(urls)
-        progress = 0
+        await start_screenshot_process_sequentially(urls, base_folder, selectors, driver_paths, chrome_binary_paths)
 
-        async def generate():
-            progress = 0
+        zip_filename = f"screenshots_run_{run_number}.zip"
+        zip_filepath = os.path.join(os.getcwd(), zip_filename)
 
-            for i, url in enumerate(urls):
-                driver_path = driver_paths[i % len(driver_paths)]
-                chrome_binary_path = chrome_binary_paths[i % len(chrome_binary_paths)]
+        with zipfile.ZipFile(zip_filepath, 'w') as zipf:
+            for root, dirs, files in os.walk(base_folder):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    zipf.write(file_path, os.path.relpath(file_path, base_folder))
 
-                short_url_name = shorten_url(url)
-                output_filename = os.path.join(base_folder, f"{short_url_name}.png")
-
-                await start_screenshot_process_sequentially(
-                    [url], base_folder, selectors, [driver_path], [chrome_binary_path]
-                )
-
-                logger.info(f"Screenshot saved for {url} as {output_filename}")
-
-                progress += 1
-                yield f"data: {progress} von {total_urls} URLs verarbeitet\n\n"
-
-            zip_filename = f"screenshots_run_{run_number}.zip"
-            zip_filepath = os.path.join(os.getcwd(), zip_filename)
-
-            with zipfile.ZipFile(zip_filepath, 'w') as zipf:
-                for root, dirs, files in os.walk(base_folder):
-                    for file in files:
-                        file_path = os.path.join(root, file)
-                        zipf.write(file_path, os.path.relpath(file_path, base_folder))
-
-            logger.info(f"All screenshots have been taken and zipped into {zip_filepath}")
-            yield f"data: complete\n\n"
-            yield f"data: {zip_filepath}\n\n"
-
-        return Response(generate(), mimetype='text/event-stream')
+        logger.info(f"All screenshots have been taken and zipped into {zip_filepath}")
+        return jsonify({"zip_path": zip_filepath})
 
     except Exception as e:
         logger.error(f"Error during archiving process: {e}", exc_info=True)

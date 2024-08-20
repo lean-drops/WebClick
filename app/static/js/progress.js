@@ -1,4 +1,4 @@
-function showProgressBar() {
+export function showProgressBar() {
     const progressContainer = document.getElementById('progress-container');
     const progressBar = document.getElementById('progress-bar');
 
@@ -16,7 +16,7 @@ function showProgressBar() {
     }, 100); // Adjust the interval time as needed
 }
 
-function hideProgressBar() {
+export function hideProgressBar() {
     const progressContainer = document.getElementById('progress-container');
     progressContainer.style.display = 'none';
 }

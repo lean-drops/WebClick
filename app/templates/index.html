@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Archiver</title>
     <!-- CSS einbinden -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
@@ -9,40 +10,42 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <!-- JavaScript-Dateien einbinden -->
-    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='js/progress.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='js/modal.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='js/loadingbar.js') }}" defer></script>
 
+    <!-- JavaScript-Dateien als Module einbinden -->
+    <script src="{{ url_for('static', filename='js/progress.js') }}" type="module" defer></script>
+    <script src="{{ url_for('static', filename='js/dropdown.js') }}" type="module" defer></script>
+    <script src="{{ url_for('static', filename='js/modal.js') }}" type="module" defer></script>
+    <script src="{{ url_for('static', filename='js/loadingbar.js') }}" type="module" defer></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" type="module" defer></script>
 </head>
 <body>
-    <!-- Top-Bar -->
-    <div id="top-bar">
+    <!-- Kopfzeile -->
+    <header id="top-bar">
         <h1>Website Archiver</h1>
-    </div>
+    </header>
+    <div id="notification-container"></div>
 
-    <div id="main-container">
-        <!-- Formular und URL-Eingabe Container -->
-        <div id="left-container">
+    <main id="main-container">
+        <!-- Link-Formular und URL-Eingabe -->
+        <section id="left-container">
             <form id="scrape-form">
                 <label for="url">Geben Sie die URL der Website ein, die Sie archivieren möchten:</label>
                 <div class="input-container">
-                    <i class="fa fa-link icon"></i>
-                    <input type="text" id="url" name="url" placeholder="https://example.com" required>
+                    <i class="fa fa-link icon" aria-hidden="true"></i>
+                    <input type="url" id="url" name="url" placeholder="https://example.com" required aria-label="URL der Website eingeben">
                 </div>
                 <button type="submit">Website öffnen</button>
             </form>
 
-            <!-- Progress Bar -->
-            <div id="progress-container" style="display:none;">
-                <div id="progress-bar"></div>
+            <!-- Fortschrittsanzeige -->
+            <div id="progress-container">
+                <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-        </div>
+        </section>
 
-        <!-- Link-Liste Container -->
-        <div id="right-container">
-            <div id="links-container" style="display:none;">
+        <!-- Container für die Liste der gefundenen Links -->
+        <section id="right-container">
+            <div id="links-container">
                 <form id="archive-form">
                     <div class="table-container">
                         <table id="links-table">
@@ -53,24 +56,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Hyperlinks werden hier eingefügt -->
+                                <!-- Hier werden die Hyperlinks eingefügt -->
                             </tbody>
                         </table>
                     </div>
                     <button type="submit" id="archive-button">Website archivieren</button>
                 </form>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <!-- Modal Fenster -->
+    <!-- Modalfenster zur Bestätigung -->
     <div id="modal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <button class="close" aria-label="Schließen">&times;</button>
             <h2>Website wurde erfolgreich gespeichert</h2>
             <p>Die folgenden Links wurden archiviert:</p>
             <ul id="archived-links-list">
-                <!-- Archivierte Links werden hier eingefügt -->
+                <!-- Hier werden die archivierten Links eingefügt -->
             </ul>
             <button id="download-button">Herunterladen</button>
         </div>

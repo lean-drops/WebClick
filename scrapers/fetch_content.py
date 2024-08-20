@@ -6,7 +6,7 @@ import re
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from utils.naming_utils import sanitize_filename, logger
-
+import asyncio
 # Logging konfigurieren
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -101,7 +101,7 @@ if __name__ == "__main__":
 
 
     async def main():
-        test_url = "https://www.sportschau.de/schach/weltmeisterschaft-analyse-100.html"
+        test_url = r"https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html"
         result = await scrape_website_links(test_url)
 
         if 'error' in result:

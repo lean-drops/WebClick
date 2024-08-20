@@ -1,4 +1,6 @@
-/* Grundlegende Einstellungen */
+/* base.css */
+
+/* Grundlegende Einstellungen für die gesamte Seite */
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
@@ -13,8 +15,60 @@ body {
     color: #333;
 }
 
-h1, h2, h3, h4, h5, h6, p, div, form {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+#main-container {
+    display: flex;
+    flex-direction: row; /* Change this to row for horizontal layout */
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow-y: auto;
+}
+
+#left-container, #right-container {
+    flex: 1;  /* Ensures both containers take up equal space */
+    margin: 10px; /* Optional: Adds space between the containers */
+}
+
+
+/* Formular- und Eingabeelemente */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #007BFF;
+    font-size: 18px;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input-container .icon {
+    padding: 10px;
+    background: #007BFF;
+    color: white;
+    min-width: 50px;
+    text-align: center;
+    border-radius: 4px 0 0 4px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #007BFF;
+    border-radius: 0 4px 4px 0;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus {
+    border-color: #0056b3;
+    outline: none;
 }

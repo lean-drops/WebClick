@@ -1,5 +1,6 @@
 /* modal.css */
 
+/* Styling für das Modal-Fenster */
 .modal {
     display: none;
     position: fixed;
@@ -25,42 +26,42 @@
 }
 
 @keyframes animatetop {
-    from {top: -300px; opacity: 0}
-    to {top: 0; opacity: 1}
+    from {top: -300px; opacity: 0;}
+    to {top: 0; opacity: 1;}
 }
 
+/* Schließen-Button im Modal */
 .close {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
     cursor: pointer;
 }
 
-h2 {
+.close:hover, .close:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+/* Modal-Titel und Text */
+.modal h2 {
     font-size: 24px;
     margin-bottom: 20px;
     color: #007BFF;
 }
 
-p {
+.modal p, .modal ul {
     font-size: 18px;
     margin-bottom: 20px;
 }
 
-ul#archived-links-list {
+.modal ul#archived-links-list {
     list-style-type: none;
     padding: 0;
-    margin-bottom: 20px;
 }
 
-ul#archived-links-list li {
+.modal ul#archived-links-list li {
     background: #f9f9f9;
     margin: 5px 0;
     padding: 10px;
@@ -68,137 +69,34 @@ ul#archived-links-list li {
     border: 1px solid #ddd;
 }
 
-#download-button {
-    display: block;
-    width: 100%;
-    padding: 12px 0;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 18px;
-    transition: background-color 0.3s;
-    text-align: center;
-}
-
-#download-button:hover {
-    background-color: #0056b3;
-}
-/* modal.css */
-
-.modal {
-    display: none;
+/* Benachrichtigungen */
+#notification-container {
     position: fixed;
-    z-index: 1;
-    padding-top: 60px;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(5px);
+    bottom: 20px;
+    left: 20px;
+    max-width: 300px;
+    z-index: 1000;
+    pointer-events: none;
 }
 
-.modal-content {
-    background-color: #fff;
-    margin: auto;
-    padding: 20px;
+.notification {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
     border-radius: 10px;
-    width: 60%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    animation: animatetop 0.4s;
-}
-
-@keyframes animatetop {
-    from {top: -300px; opacity: 0}
-    to {top: 0; opacity: 1}
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #007BFF;
-}
-
-p {
-    font-size: 18px;
-    margin-bottom: 20px;
-}
-
-ul#archived-links-list {
-    list-style-type: none;
-    padding: 0;
-    margin-bottom: 20px;
-}
-
-ul#archived-links-list li {
-    background: #f9f9f9;
-    margin: 5px 0;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-}
-
-#download-button {
-    display: block;
-    width: 100%;
-    padding: 12px 0;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 18px;
-    transition: background-color 0.3s;
-    text-align: center;
-}
-
-#download-button:hover {
-    background-color: #0056b3;
-}
-
-
-/* Einzug und Hintergrundfarbe für Sublinks */
-.sub-link {
-    padding-left: 20px; /* Mehr Einzug für Sublinks */
-    background-color: #f9f9f9; /* Leicht abweichende Hintergrundfarbe */
-}
-
-/* Animation für Dropdown-Effekt */
-.expanded .sub-link {
-    display: none;
+    margin-bottom: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     opacity: 0;
-    transition: all 0.3s ease;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-.expanded .sub-link.show {
-    display: table-row;
+.notification.fade-out {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.notification.fade-in {
     opacity: 1;
-}
-
-/* Pfeilsymbol drehen für Dropdown */
-.toggle-arrow {
-    cursor: pointer;
-    display: inline-block;
-    transition: transform 0.3s ease;
-}
-
-.expanded .toggle-arrow {
-    transform: rotate(90deg); /* Pfeil drehen, wenn geöffnet */
+    transform: translateY(0);
 }
