@@ -1,64 +1,86 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en" x-data="app()">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Archiver</title>
-    <!-- CSS einbinden -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
-    <!-- JavaScript-Dateien einbinden -->
-    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='js/progress.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.9.1/cdn.min.js" defer></script>
 </head>
 <body>
-    <!-- Top-Bar -->
-    <div id="top-bar">
+    <div class="container">
         <h1>Website Archiver</h1>
-    </div>
-
-    <div id="main-container">
-        <!-- Formular und URL-Eingabe Container -->
-        <div id="left-container">
-            <form id="scrape-form">
-                <label for="url">Geben Sie die URL der Website ein, die Sie archivieren möchten:</label>
-                <div class="input-container">
-                    <i class="fa fa-link icon"></i>
-                    <input type="text" id="url" name="url" placeholder="https://example.com" required>
-                </div>
-                <button type="submit">Website öffnen</button>
-            </form>
-
-            <!-- Progress Bar -->
-            <div id="progress-container" style="display:none;">
-                <div id="progress-bar"></div>
-            </div>
+        <input type="text" x-model="url" placeholder="Enter website URL">
+        <button @click="scrapeWebsite">Scrape Website</button>
+        <div x-show="pages.length > 0">
+            <h2>Pages</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Title</th>
+                        <th>URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="page in pages">
+                        <tr>
+                            <td><input type="checkbox" x-model="selectedUrls" :value="page.url"></td>
+                            <td x-text="page.title"></td>
+                            <td><a :href="page.url" target="_blank" x-text="page.url"></a></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+            <button @click="generatePDF">Generate PDF</button>
         </div>
-
-        <!-- Link-Liste Container -->
-        <div id="right-container">
-            <div id="links-container" style="display:none;">
-                <form id="archive-form">
-                    <div class="table-container">
-                        <table id="links-table">
-                            <thead>
-                                <tr>
-                                    <th>Auswählen</th>
-                                    <th>Link</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Hyperlinks werden hier eingefügt -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <button type="submit" id="archive-button">Website archivieren</button>
-                </form>
-                <div id="download-container" style="display:none;">
-                    <a id="download-link" href="#" download>Website-Zip herunterladen</a>
-                </div>
-            </div>
-        </div>
+        <div x-show="error" x-text="error" class="error"></div>
     </div>
+    <script>
+        function app() {
+            return {
+                url: '',
+                pages: [],
+                selectedUrls: [],
+                error: '',
+                scrapeWebsite() {
+                    fetch('/scrape', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ url: this.url })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            this.error = data.error;
+                            this.pages = [];
+                        } else {
+                            this.error = '';
+                            this.pages = data.pages.map(page => ({ title: page.title, url: page.url }));
+                        }
+                    });
+                },
+                generatePDF() {
+                    fetch('/generate_pdf', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ urls: this.selectedUrls })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            this.error = data.error;
+                        } else {
+                            window.location.href = data.pdf_file;
+                        }
+                    });
+                }
+            }
+        }
+    </script>
 </body>
 </html>
