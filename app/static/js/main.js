@@ -1,105 +1,166 @@
 import { showProgressBar, hideProgressBar } from './loadingbar.js';
 import { createLinkRow, expandSubLinks, collapseSubLinks } from './dropdown.js';
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
     console.log("[DEBUG] DOMContentLoaded event fired.");
 
-    const scrapeForm = document.getElementById('scrape-form');
-    const linksTableBody = document.getElementById('links-table').querySelector('tbody');
-    const notificationContainer = document.getElementById('notification-container');
-    const archiveForm = document.getElementById('archive-form');
-    const archiveButton = document.getElementById('archive-button');
-    const modal = document.getElementById('modal');
-    const modalCloseButton = modal.querySelector('.close');
-    const archivedLinksList = document.getElementById('archived-links-list');
-    const downloadButton = document.getElementById('download-button');
+    const elements = {
+        scrapeForm: document.getElementById('scrape-form'),
+        linksTableBody: document.getElementById('links-table')?.querySelector('tbody'),
+        notificationContainer: document.getElementById('notification-container'),
+        archiveForm: document.getElementById('archive-form'),
+        archiveButton: document.getElementById('archive-button'),
+        modal: document.getElementById('modal'),
+        modalCloseButton: document.getElementById('modal')?.querySelector('.close'),
+        archivedLinksList: document.getElementById('archived-links-list'),
+        downloadButton: document.getElementById('download-button'),
+        urlInput: document.getElementById('url')
+    };
 
-    console.log("[DEBUG] Elements loaded:", { scrapeForm, linksTableBody, notificationContainer, archiveForm, archiveButton, modal, modalCloseButton, archivedLinksList, downloadButton });
+    console.log("[DEBUG] Elements loaded:", elements);
 
-    function showNotification(message, type = 'info') {
+    const showNotification = (message, type = 'info') => {
         const notificationDiv = document.createElement('div');
         notificationDiv.className = `notification ${type}`;
         notificationDiv.textContent = message;
-        notificationContainer.appendChild(notificationDiv);
+
+        elements.notificationContainer.appendChild(notificationDiv);
         setTimeout(() => notificationDiv.classList.add('fade-in'), 10);
         setTimeout(() => {
             notificationDiv.classList.remove('fade-in');
             notificationDiv.classList.add('fade-out');
             setTimeout(() => notificationDiv.remove(), 500);
         }, 3000);
-    }
+    };
 
-    async function scrapeWebsiteLinks(url) {
+    const validateUrl = (url) => {
         try {
-            const response = await fetch('/scrape_sub_links', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ url }),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Server error: ${errorText}`);
-            }
-
-            const data = await response.json();
-            if (data.error) {
-                showNotification(`Error: ${data.error}`, 'error');
-                return [];
-            }
-
-            return data.links || [];
-        } catch (error) {
-            console.error("[ERROR] Error fetching website links:", error);
-            showNotification(`Error fetching website links: ${error.message}`, 'error');
-            return [];
+            new URL(url);
+            return true;
+        } catch {
+            return false;
         }
-    }
+    };
 
-    async function displayWebsiteLinks(url) {
-        showProgressBar();
-        linksTableBody.innerHTML = '';  // Clear previous results
+    const fetchData = async (endpoint, payload, options = {}) => {
+        const {
+            retries = 3,
+            retryDelay = 1000,
+            timeout = 5000,
+        } = options;
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
 
         try {
-            const links = await scrapeWebsiteLinks(url);
+            for (let attempt = 1; attempt <= retries; attempt++) {
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                            'Accept': 'application/json, text/plain, */*',
+                            'Accept-Language': 'en-US,en;q=0.9',
+                            'Referer': 'https://www.zh.ch/'
+                        },
+                        body: JSON.stringify(payload),
+                        signal: controller.signal,
+                    });
 
-            links.forEach(link => {
-                const row = createLinkRow(link);
-                linksTableBody.appendChild(row);
-            });
+                    clearTimeout(timeoutId);
 
-            showNotification('Links successfully retrieved.', 'success');
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error(`[ERROR] Server error (Attempt ${attempt} of ${retries}): ${errorText}`);
+                        if (attempt === retries) {
+                            throw new Error(`Server error: ${errorText}`);
+                        }
+                    } else {
+                        const data = await response.json();
+
+                        if (data.error) {
+                            console.error(`[ERROR] API error (Attempt ${attempt} of ${retries}): ${data.error}`);
+                            if (attempt === retries) {
+                                throw new Error(`Error: ${data.error}`);
+                            }
+                        } else {
+                            return data; // Return the data if everything is okay
+                        }
+                    }
+                } catch (error) {
+                    if (attempt === retries || error.name === 'AbortError') {
+                        throw error; // Rethrow the error if it's the last attempt or a timeout
+                    }
+                    console.warn(`[WARN] Request failed (Attempt ${attempt} of ${retries}). Retrying in ${retryDelay}ms...`);
+                    await new Promise(res => setTimeout(res, retryDelay)); // Wait before retrying
+                }
+            }
         } catch (error) {
-            console.error("[ERROR] Error displaying website links:", error);
-            showNotification('Failed to display website links.', 'error');
+            clearTimeout(timeoutId);
+            console.error(`[ERROR] ${error.message}`, error);
+            showNotification(`Error: ${error.message}`, 'error');
+            return null;
+        }
+    };
+
+    const scrapeWebsiteLinks = (url) => fetchData('/scrape_sub_links', { url });
+
+    const archiveLinks = (url, savePath, selectedLinks) =>
+        fetchData('/archive', { url, save_path: savePath, urls: selectedLinks });
+
+    const clearLinksTable = () => {
+        if (elements.linksTableBody) {
+            elements.linksTableBody.innerHTML = ''; // Clear previous results
+        }
+    };
+
+    const displayWebsiteLinks = async (url) => {
+        try {
+            showProgressBar();
+            clearLinksTable();
+
+            const links = await scrapeWebsiteLinks(url);
+            if (links && links.links && links.links.length > 0) {
+                const fragment = document.createDocumentFragment();
+                links.links.forEach(link => {
+                    const row = createLinkRow(link);
+                    fragment.appendChild(row);
+                });
+                elements.linksTableBody?.appendChild(fragment);
+                showNotification('Links successfully retrieved.', 'success');
+            } else {
+                showNotification('No links found or an error occurred.', 'error');
+            }
+        } catch (error) {
+            console.error("[ERROR] Failed to display website links:", error);
+            showNotification('An unexpected error occurred while displaying links.', 'error');
         } finally {
             hideProgressBar();
         }
-    }
+    };
 
-    scrapeForm.addEventListener('submit', function (event) {
+    const handleScrapeFormSubmit = async (event) => {
         event.preventDefault();
-        const url = document.getElementById('url').value.trim();
-        if (url) {
-            displayWebsiteLinks(url);
+        const url = elements.urlInput?.value.trim();
+
+        if (validateUrl(url)) {
+            await displayWebsiteLinks(url);
         } else {
             showNotification('Please enter a valid URL.', 'error');
         }
-    });
+    };
 
-    archiveForm.addEventListener('submit', async function (event) {
+    const handleArchiveFormSubmit = async (event) => {
         event.preventDefault();
 
-        const url = document.getElementById('url').value.trim();
-        if (!url) {
-            showNotification('Please enter a URL to archive.', 'error');
+        const url = elements.urlInput?.value.trim();
+        if (!validateUrl(url)) {
+            showNotification('Please enter a valid URL to archive.', 'error');
             return;
         }
 
-        // Collect all selected links
-        const selectedLinks = Array.from(linksTableBody.querySelectorAll('input[type="checkbox"]:checked'))
+        const selectedLinks = Array.from(elements.linksTableBody.querySelectorAll('input[type="checkbox"]:checked'))
             .map(input => input.value);
 
         if (selectedLinks.length === 0) {
@@ -107,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        archiveButton.disabled = true;
+        elements.archiveButton.disabled = true;
         showProgressBar();
 
         try {
@@ -117,46 +178,44 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            const response = await fetch('/archive', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ url, save_path: savePath, urls: selectedLinks }),
-            });
-
-            const result = await response.json();
-            if (response.ok) {
+            const result = await archiveLinks(url, savePath, selectedLinks);
+            if (result) {
                 showNotification('Archive created successfully.', 'success');
-                modal.style.display = 'block';
-                archivedLinksList.innerHTML = '';
-                selectedLinks.forEach(link => {
-                    const li = document.createElement('li');
-                    li.textContent = link;
-                    archivedLinksList.appendChild(li);
-                });
-                downloadButton.onclick = () => window.open(result.zip_path, '_blank');
-            } else {
-                showNotification(`Error: ${result.error}`, 'error');
+                elements.modal.style.display = 'block';
+                elements.archivedLinksList.innerHTML = selectedLinks.map(link => `<li>${link}</li>`).join('');
+                elements.downloadButton.onclick = () => window.open(result.zip_path, '_blank');
             }
         } catch (error) {
-            console.error("[ERROR] Error archiving links:", error);
-            showNotification('An error occurred while archiving the links.', 'error');
+            console.error("[ERROR] Failed to archive links:", error);
+            showNotification('An unexpected error occurred while archiving links.', 'error');
         } finally {
             hideProgressBar();
-            archiveButton.disabled = false;
+            elements.archiveButton.disabled = false;
         }
-    });
+    };
 
-    modalCloseButton.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
-    window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.style.display = 'none';
+    const handleModalClose = () => {
+        if (elements.modal) {
+            elements.modal.style.display = 'none';
         }
-    });
+    };
+
+    const handleWindowClick = (event) => {
+        if (event.target === elements.modal) {
+            elements.modal.style.display = 'none';
+        }
+    };
+
+    if (elements.scrapeForm) {
+        elements.scrapeForm.addEventListener('submit', handleScrapeFormSubmit);
+    }
+    if (elements.archiveForm) {
+        elements.archiveForm.addEventListener('submit', handleArchiveFormSubmit);
+    }
+    if (elements.modalCloseButton) {
+        elements.modalCloseButton.addEventListener('click', handleModalClose);
+    }
+    window.addEventListener('click', handleWindowClick);
 
     console.log("[DEBUG] Main script execution completed.");
 });

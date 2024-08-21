@@ -2,6 +2,7 @@ import os
 import logging
 import traceback
 import asyncio
+import uuid
 
 import aiohttp
 from quart import Blueprint, request, jsonify, render_template, send_file, Response
@@ -56,25 +57,22 @@ async def scrape_sub_links():
         logger.warning(f"Invalid URL provided: {url}")
         return jsonify({"error": "Invalid URL provided"}), 400
 
+    session_id = str(uuid.uuid4())  # Generate a unique session_id
+
     logger.info(f"Scrape sub-links request received for URL: {url}")
 
     try:
-        content = await scrape_website_links(url)
+        semaphore = asyncio.Semaphore(10)  # Control concurrency with a semaphore
 
-        if 'error' in content:
-            logger.error(f"Scraping failed with error: {content['error']}")
-            return jsonify(content), 500
+        # Call the scrape_website_links function with the session_id and semaphore
+        content = await scrape_website_links(url, session_id, semaphore=semaphore)
 
-        logger.info(f"Scraping sub-links successful for URL: {url}")
-        return jsonify(content)
+        if not content:
+            logger.error(f"Failed to retrieve content for URL: {url}")
+            return jsonify({"error": "No content retrieved. The server may have blocked the request."}), 403
 
-    except asyncio.TimeoutError:
-        logger.error(f"Timeout occurred while scraping {url}")
-        return jsonify({"error": "Timeout occurred while scraping the website"}), 500
-
-    except aiohttp.ClientError as e:
-        logger.error(f"Network-related error while scraping {url}: {e}")
-        return jsonify({"error": f"Network error occurred: {str(e)}"}), 500
+        logger.info(f"Scraping sub-links completed for URL: {url}")
+        return jsonify(content)  # Return the scraped content as a JSON response
 
     except Exception as e:
         logger.error(f"Unexpected error scraping sub-links: {e}", exc_info=True)
