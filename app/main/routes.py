@@ -66,6 +66,9 @@ async def scrape_sub_links():
     logger.info(f"Scrape sub-links request received for URL: {url}")
 
     try:
+        max_concurrent_tasks = 30
+        semaphore = asyncio.Semaphore(max_concurrent_tasks)
+
         # Verwenden der scrape_url Funktion aus fetch_content.py
         result_structure = await scrape_url(url, session_id)
 
@@ -79,6 +82,7 @@ async def scrape_sub_links():
     except Exception as e:
         logger.error(f"Unexpected error scraping sub-links: {e}", exc_info=True)
         return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
+
 @main.route('/archive', methods=['POST'])
 async def archive():
     """
