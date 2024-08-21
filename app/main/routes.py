@@ -9,7 +9,7 @@ from quart import Blueprint, request, jsonify, render_template, send_file, Respo
 from datetime import datetime
 import zipfile
 
-from scrapers.fetch_content import scrape_website_links
+from scrapers.fetch_content import scrape_website_links, scrape_url
 from scrapers.screenshot import load_cookie_selectors, start_screenshot_process_sequentially, is_valid_url
 
 # Logger configuration
@@ -30,6 +30,11 @@ selectors = load_cookie_selectors(COOKIES_SELECTOR_PATH)
 # Blueprint definition
 main = Blueprint('main', __name__)
 
+import asyncio
+import uuid
+from quart import Blueprint, request, jsonify, render_template
+
+
 @main.route('/')
 async def index():
     """
@@ -39,7 +44,6 @@ async def index():
 
     logger.info("Rendering the homepage")
     return await render_template('index.html', timestamp=timestamp)
-
 
 @main.route('/scrape_sub_links', methods=['POST'])
 async def scrape_sub_links():
@@ -62,23 +66,19 @@ async def scrape_sub_links():
     logger.info(f"Scrape sub-links request received for URL: {url}")
 
     try:
-        semaphore = asyncio.Semaphore(10)  # Control concurrency with a semaphore
+        # Verwenden der scrape_url Funktion aus fetch_content.py
+        result_structure = await scrape_url(url, session_id)
 
-        # Call the scrape_website_links function with the session_id and semaphore
-        content = await scrape_website_links(url, session_id, semaphore=semaphore)
-
-        if not content:
+        if not result_structure:
             logger.error(f"Failed to retrieve content for URL: {url}")
-            return jsonify({"error": "No content retrieved. The server may have blocked the request."}), 403
+            return jsonify({"error": "No content retrieved. The server may have blocked the request or requires authentication."}), 403
 
         logger.info(f"Scraping sub-links completed for URL: {url}")
-        return jsonify(content)  # Return the scraped content as a JSON response
+        return jsonify(result_structure)  # Return the scraped content as a JSON response
 
     except Exception as e:
         logger.error(f"Unexpected error scraping sub-links: {e}", exc_info=True)
         return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
-
-
 @main.route('/archive', methods=['POST'])
 async def archive():
     """

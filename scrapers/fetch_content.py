@@ -157,16 +157,22 @@ async def scrape_website_links(url, session_id, depth=0, semaphore=None):
 
             return hierarchical_links
 
-# Testfunktion
+async def scrape_url(url, session_id, max_concurrent_tasks=30):
+    """
+    Funktion, die die URL entgegennimmt und die Scraping-Logik ausführt.
+    """
+    semaphore = asyncio.Semaphore(max_concurrent_tasks)
+    result_structure = await scrape_website_links(url, session_id, semaphore=semaphore)
+    return result_structure
+
+# Testfunktion (Nur ausführen, wenn dieses Skript direkt gestartet wird)
 if __name__ == "__main__":
     load_taboo_terms()
 
     async def main():
         session_id = str(uuid.uuid4())  # Eindeutige Session-ID generieren
         test_url = "https://www.zh.ch/de.html"
-        max_concurrent_tasks = 30
-        semaphore = asyncio.Semaphore(max_concurrent_tasks)
-        result_structure = await scrape_website_links(test_url, session_id, semaphore=semaphore)
+        result_structure = await scrape_url(test_url, session_id)
 
         logger.info(f"Scraping completed for {test_url}")
         logger.info(f"Resulting structure: {json.dumps(result_structure, indent=4)}")
