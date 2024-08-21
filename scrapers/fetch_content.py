@@ -75,8 +75,19 @@ async def load_cache(url):
     if os.path.exists(global_cache_filename):
         async with aiofiles.open(global_cache_filename, 'r') as f:
             content = await f.read()
-            return json.loads(content)
+            if not content.strip():  # Überprüfen, ob der Inhalt leer ist
+                logger.warning(f"Cache-Datei für {url} ist leer.")
+                os.remove(global_cache_filename)  # Lösche die leere Datei
+                return None
+            try:
+                return json.loads(content)
+            except json.JSONDecodeError:
+                logger.error(f"Cache-Datei für {url} ist ungültig und kann nicht als JSON gelesen werden.")
+                os.remove(global_cache_filename)  # Lösche die ungültige Datei
+                return None
     return None
+
+import chardet
 
 async def fetch_website_links(url, session):
     ssl_context = ssl.create_default_context()
@@ -95,7 +106,9 @@ async def fetch_website_links(url, session):
         async with session.get(url, ssl=ssl_context, timeout=10, headers=headers) as response:
             log_request_details(response, url, start_time)
             response.raise_for_status()
-            content = await response.text()
+            raw_content = await response.read()  # Rohdaten abrufen
+            detected_encoding = chardet.detect(raw_content)['encoding']  # Kodierung erkennen
+            content = raw_content.decode(detected_encoding)  # Dekodieren mit der erkannten Kodierung
             soup = BeautifulSoup(content, 'html.parser')
 
             links = []
@@ -115,7 +128,6 @@ async def fetch_website_links(url, session):
     except (aiohttp.ClientError, asyncio.TimeoutError) as e:
         logger.error(f"Failed to fetch links from {url}: {e}")
     return None
-
 def log_request_details(response, url, start_time):
     elapsed_time = time.time() - start_time
     logger.debug(f"URL: {url} - Status: {response.status} - Time: {elapsed_time:.2f} seconds")

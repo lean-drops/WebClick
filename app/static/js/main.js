@@ -79,15 +79,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    scrapeForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        const url = document.getElementById('url').value.trim();
-        if (url) {
+scrapeForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const url = document.getElementById('url').value.trim(); // trim() entfernt Leerzeichen
+    if (url) {
+        // Weitere einfache Validierung, ob die URL korrekt formatiert ist
+        try {
+            new URL(url); // Versucht, die URL zu parsen
             displayWebsiteLinks(url);
-        } else {
+        } catch (_) {
             showNotification('Please enter a valid URL.', 'error');
         }
-    });
+    } else {
+        showNotification('Please enter a valid URL.', 'error');
+    }
+});
 
     archiveForm.addEventListener('submit', async function (event) {
         event.preventDefault();
