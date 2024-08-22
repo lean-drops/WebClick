@@ -5,6 +5,7 @@ from scrapers.screenshot import take_screenshot
 from scrapers.scraper import run_package_creator
 import os
 import logging
+import asyncio
 
 # Configure logger
 logging.basicConfig(
@@ -20,6 +21,7 @@ logger = logging.getLogger(__name__)
 # Define Blueprint
 main = Blueprint('main', __name__)
 
+
 @main.route('/')
 async def index():
     """
@@ -32,7 +34,7 @@ async def index():
 @main.route('/scrape', methods=['POST'])
 async def scrape():
     """
-    API endpoint to scrape a single webpage.
+    API endpoint to scrape a single webpage and return the list of links.
 
     Expects JSON:
         {
@@ -40,7 +42,7 @@ async def scrape():
         }
 
     Returns:
-        JSON response with the content of the website or an error message.
+        JSON response with the structure of the website or an error message.
     """
     data = await request.json
     url = data.get('url')
@@ -50,17 +52,12 @@ async def scrape():
         return jsonify({"error": "No URL provided"}), 400
 
     try:
-        content = await scrape_website(url)
+        content = await scrape_website(url, url_mapping={})
         logger.info(f"Scraping successful for URL: {url}")
         if 'error' in content:
             return jsonify(content), 500
 
-        # Take a screenshot of the scraped website
-        output_dir = os.path.join('outputs_directory', shorten_url(url))
-        os.makedirs(output_dir, exist_ok=True)
-        screenshot_path = os.path.join(output_dir, 'screenshot.png')
-        take_screenshot(url, screenshot_path, countdown_seconds=3)
-
+        # Return the scraped links to the frontend
         return jsonify(content)
     except Exception as e:
         logger.error(f"Error scraping website: {e}", exc_info=True)
@@ -70,7 +67,7 @@ async def scrape():
 @main.route('/archive', methods=['POST'])
 async def archive():
     """
-    API endpoint to scrape and archive a main webpage and its subpages.
+    API endpoint to archive selected links.
 
     Expects JSON:
         {
@@ -82,20 +79,58 @@ async def archive():
         JSON response with a success message or an error message.
     """
     data = await request.json
-    url = data.get('url')
+    base_url = data.get('url')
     urls = data.get('urls', [])
-    logger.info(f"Archive request received for URL: {url} with subpages: {urls}")
-    if not url:
-        logger.warning("No URL provided in the archive request")
-        return jsonify({"error": "No URL provided"}), 400
+    logger.info(f"Archive request received for URL: {base_url} with selected links: {urls}")
 
-    folder_name = shorten_url(url)
+    if not base_url or not urls:
+        logger.warning("No URL or links provided in the archive request")
+        return jsonify({"error": "No URL or links provided"}), 400
+
+    folder_name = shorten_url(base_url)
     base_folder = os.path.join('outputs_directory', folder_name)
     create_directory(base_folder)
 
     try:
-        # Run the package creator to scrape and archive the website and its subpages
-        zip_file_path = await run_package_creator(url, urls, os.path.join(base_folder, 'website_archive.zip'))
+        # Run the package creator to scrape and archive the selected links
+        zip_file_path = await run_package_creator(base_url, urls, os.path.join(base_folder, 'website_archive.zip'))
+        logger.info(f"Website archived successfully: {zip_file_path}")
+        return jsonify({"message": "Website archived successfully", "zip_path": zip_file_path}), 200
+    except Exception as e:
+        logger.error(f"Error during archiving process: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@main.route('/archive', methods=['POST'])
+async def archive():
+    """
+    API endpoint to archive selected links.
+
+    Expects JSON:
+        {
+            "url": "<URL>",
+            "urls": ["<URL1>", "<URL2>", ...]
+        }
+
+    Returns:
+        JSON response with a success message or an error message.
+    """
+    data = await request.json
+    base_url = data.get('url')
+    urls = data.get('urls', [])
+    logger.info(f"Archive request received for URL: {base_url} with selected links: {urls}")
+
+    if not base_url or not urls:
+        logger.warning("No URL or links provided in the archive request")
+        return jsonify({"error": "No URL or links provided"}), 400
+
+    folder_name = shorten_url(base_url)
+    base_folder = os.path.join('outputs_directory', folder_name)
+    create_directory(base_folder)
+
+    try:
+        # Run the package creator to scrape and archive the selected links
+        zip_file_path = await run_package_creator(base_url, urls, os.path.join(base_folder, 'website_archive.zip'))
         logger.info(f"Website archived successfully: {zip_file_path}")
         return jsonify({"message": "Website archived successfully", "zip_path": zip_file_path}), 200
     except Exception as e:
