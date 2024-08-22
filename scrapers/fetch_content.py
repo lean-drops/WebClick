@@ -5,6 +5,8 @@ import json
 import re
 import time
 import uuid
+
+import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse, urlunparse
 import asyncio
@@ -78,52 +80,29 @@ async def load_cache(url):
             return json.loads(content)
     return None
 
-async def fetch_website_links(url, session):
-    ssl_context = ssl.create_default_context()
-    ssl_context.check_hostname = False
-    ssl_context.verify_mode = ssl.CERT_NONE
+import aiohttp
+import ssl
 
+async def fetch_website_links(url, session, ssl_context=None):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
         'Accept-Language': 'en-US,en;q=0.9',
-        'Referer': 'https://www.zh.ch/',  # Setzen Sie den Referer-Header
-        'DNT': '1',  # Do Not Track
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Referer': 'https://www.zh.ch/',
         'Connection': 'keep-alive',
+        'DNT': '1',  # Do Not Track Header
+        'Upgrade-Insecure-Requests': '1',
     }
 
-    start_time = time.time()
-
-    try:
-        async with session.get(url, ssl=ssl_context, timeout=10, headers=headers) as response:
-            log_request_details(response, url, start_time)
-            response.raise_for_status()
-            content = await response.text()
-            soup = BeautifulSoup(content, 'html.parser')
-
-            links = []
-            for a in soup.find_all('a', href=True):
-                link_url = urljoin(url, a['href'])
-                link_text = a.get_text(strip=True) or a['href']
-
-                if link_url.startswith(('http:', 'https:', 'ftp:', 'ftps:')) and not is_taboo(link_text, link_url):
-                    links.append({
-                        'title': link_text,
-                        'url': normalize_url(link_url)
-                    })
-
-            return links
-    except aiohttp.ClientResponseError as e:
-        logger.error(f"Failed to fetch links from {url}: {e.status}, message='{e.message}', url='{e.request_info.url}'")
-    except (aiohttp.ClientError, asyncio.TimeoutError) as e:
-        logger.error(f"Failed to fetch links from {url}: {e}")
-    return None
+    async with session.get(url, headers=headers, ssl=ssl_context) as response:
+        response.raise_for_status()
+        return await response.text()
 
 def log_request_details(response, url, start_time):
     elapsed_time = time.time() - start_time
     logger.debug(f"URL: {url} - Status: {response.status} - Time: {elapsed_time:.2f} seconds")
 
-async def scrape_website_links(url, session_id, depth=0, semaphore=None):
+async def scrape_website_links(url, session_id, depth=0, semaphore=None, ssl_context=None):
     if semaphore is None:
         raise ValueError("Semaphore must be provided and not None")
 
@@ -139,14 +118,14 @@ async def scrape_website_links(url, session_id, depth=0, semaphore=None):
 
     async with semaphore:
         async with aiohttp.ClientSession() as session:
-            links = await fetch_website_links(url, session)
+            links = await fetch_website_links(url, session, ssl_context=ssl_context)
             if links is None:
                 return {}
 
             hierarchical_links = {'url': url, 'links': []}
 
             if depth < MAX_DEPTH:
-                tasks = [scrape_website_links(link['url'], session_id, depth + 1, semaphore) for link in links if
+                tasks = [scrape_website_links(link['url'], session_id, depth + 1, semaphore, ssl_context=ssl_context) for link in links if
                          link['url'] not in visited_urls]
                 results = await asyncio.gather(*tasks)
 
@@ -168,6 +147,35 @@ async def scrape_url(url, session_id, max_concurrent_tasks=30):
     result_structure = await scrape_website_links(url, session_id, semaphore=semaphore)
     return result_structure
 
+
+def fetch_website_links_simple(url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36'
+    }
+
+    # Bypassing SSL verification for simplicity
+    response = requests.get(url, headers=headers, verify=False)
+    response.raise_for_status()
+
+    # Parse the page content
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # Extract links
+    links = []
+    for a_tag in soup.find_all('a', href=True):
+        link_url = urljoin(url, a_tag['href'])
+        links.append({'url': link_url, 'text': a_tag.get_text(strip=True)})
+
+    return links
+
+
+def scrape_website_links_simple(url):
+    try:
+        links = fetch_website_links_simple(url)
+        return {'url': url, 'links': links}
+    except requests.RequestException as e:
+        logger.error(f"Error fetching links from {url}: {e}")
+        return {'url': url, 'error': str(e)}
 # Testfunktion (Nur ausführen, wenn dieses Skript direkt gestartet wird)
 if __name__ == "__main__":
     load_taboo_terms()

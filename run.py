@@ -23,7 +23,7 @@ if __name__ == '__main__':
     logger.debug(f"Debug mode set to: {debug_mode}")
 
     # Finde einen freien Port, falls der Standardport 5000 belegt ist
-    port = int(os.environ.get('PORT', 5001))
+    port = int(os.environ.get('PORT', 5008))
     if port == 5001:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         result = sock.connect_ex(('127.0.0.1', port))

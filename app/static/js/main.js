@@ -1,152 +1,120 @@
-// main.js
-
-// Event listener für das Scrape-Formular
-document.getElementById('scrape-form').addEventListener('submit', async function (event) {
-    event.preventDefault(); // Verhindert die Standardformularübermittlung
-
-    const urlInput = document.getElementById('url');
-    const url = urlInput.value;
-
-    // Überprüfen, ob die URL eingegeben wurde
-    if (!url) {
-        alert('Bitte geben Sie eine gültige URL ein.');
-        return;
-    }
-
-    // Fortschrittsanzeige initialisieren
+document.addEventListener('DOMContentLoaded', function() {
+    const scrapeForm = document.getElementById('scrape-form');
+    const linksContainer = document.getElementById('links-container');
+    const linksTableBody = document.getElementById('links-table').querySelector('tbody');
     const progressBar = document.getElementById('progress-bar');
-    progressBar.style.width = '0%';
-    progressBar.setAttribute('aria-valuenow', 0);
+    const progressContainer = document.getElementById('progress-container');
 
-  try {
-    console.log('Sending POST request to /scrape_sub_links with URL:', url);
-
-    const response = await fetch('/scrape_sub_links', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ url: url })
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-        console.log('Received response from /scrape_sub_links:', result);
-        populateLinksTable(result); // Füllt die Tabelle mit den gescrapten Links
-    } else {
-        console.error('Error response from /scrape_sub_links:', result);
-        alert('Fehler beim Scrapen der Links: ' + result.error);
-    }
-} catch (error) {
-    console.error('Fehler beim Senden der Anfrage:', error);
-    alert('Ein unerwarteter Fehler ist aufgetreten.');
-}
-
-});
-
-// Funktion zum Füllen der Tabelle mit den gescrapten Links
-function populateLinksTable(links) {
-    const linksTableBody = document.querySelector('#links-table tbody');
-    linksTableBody.innerHTML = ''; // Löscht vorherige Einträge
-
-    links.forEach((link, index) => {
-        const row = document.createElement('tr');
-
-        const selectCell = document.createElement('td');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.name = 'selectedLinks';
-        checkbox.value = link;
-        selectCell.appendChild(checkbox);
-
-        const linkCell = document.createElement('td');
-        linkCell.textContent = link;
-
-        row.appendChild(selectCell);
-        row.appendChild(linkCell);
-
-        linksTableBody.appendChild(row);
-    });
-}
-
-// Event listener für das Archivierungsformular
-document.getElementById('archive-form').addEventListener('submit', async function (event) {
-    event.preventDefault(); // Verhindert die Standardformularübermittlung
-
-    const selectedLinks = Array.from(document.querySelectorAll('input[name="selectedLinks"]:checked'))
-        .map(input => input.value);
-
-    const mainUrl = document.getElementById('url').value;
-    const savePath = prompt('Bitte geben Sie den Speicherpfad an:', 'C:\\Benutzer\\Benutzername\\Speicherort');
-
-    if (!savePath) {
-        alert('Bitte geben Sie einen gültigen Speicherpfad ein.');
-        return;
+    function showError(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error';
+        errorDiv.textContent = message;
+        document.body.prepend(errorDiv);
+        setTimeout(() => errorDiv.remove(), 5000);
     }
 
-    if (selectedLinks.length === 0) {
-        alert('Bitte wählen Sie mindestens einen Link aus.');
-        return;
+    function showSuccess(message) {
+        const successDiv = document.createElement('div');
+        successDiv.className = 'success';
+        successDiv.textContent = message;
+        document.body.prepend(successDiv);
+        setTimeout(() => successDiv.remove(), 5000);
     }
 
-    try {
-        // API-Aufruf zur Archivierung der ausgewählten Links
-        const response = await fetch('/archive', {
+    function normalizeURL(url) {
+        if (!/^https?:\/\//i.test(url)) {
+            url = 'http://' + url;
+        }
+        try {
+            new URL(url);
+            return url;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    async function fetchLinksFromBackend(url) {
+        const response = await fetch('/scrape_sub_links', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                urls: selectedLinks,
-                url: mainUrl,
-                save_path: savePath
-            })
+            body: JSON.stringify({ url: url })
         });
 
-        const result = await response.json();
-
-        if (response.ok) {
-            showModal(result.zip_path); // Zeigt das Modalfenster an
-        } else {
-            alert('Fehler bei der Archivierung: ' + result.error);
+        if (!response.ok) {
+            throw new Error('Failed to fetch links from backend');
         }
-    } catch (error) {
-        console.error('Fehler beim Senden der Anfrage:', error);
-        alert('Ein unerwarteter Fehler ist aufgetreten.');
+
+        const result = await response.json();
+        return result.links;  // Assuming the backend returns the links in this structure
+    }
+
+    scrapeForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        let url = document.getElementById('url').value.trim();
+
+        if (!url) {
+            showError('Bitte geben Sie eine gültige URL ein.');
+            return;
+        }
+
+        url = normalizeURL(url);
+        if (!url) {
+            showError('Ungültige URL. Bitte geben Sie eine gültige URL ein.');
+            return;
+        }
+
+        showProgressBar();
+
+        try {
+            const links = await fetchLinksFromBackend(url);
+            hideProgressBar();
+            linksTableBody.innerHTML = '';
+            links.forEach(link => {
+                const row = createLinkRow(link);
+                linksTableBody.appendChild(row);
+            });
+            linksContainer.classList.add('fade-in');
+            linksContainer.style.display = 'block';
+            showSuccess('Links erfolgreich abgerufen.');
+        } catch (error) {
+            hideProgressBar();
+            console.error('Error:', error);
+            showError('Ein Fehler ist beim Abrufen der Links aufgetreten.');
+        }
+    });
+
+    function showProgressBar() {
+        progressContainer.style.display = 'block';
+        progressBar.style.width = '100%';
+    }
+
+    function hideProgressBar() {
+        progressContainer.style.display = 'none';
+    }
+
+    function createLinkRow(link) {
+        const row = document.createElement('tr');
+
+        const cellSelect = document.createElement('td');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = link.url;
+        cellSelect.appendChild(checkbox);
+
+        const cellLink = document.createElement('td');
+        const linkElement = document.createElement('a');
+        linkElement.href = '#';
+        linkElement.textContent = link.title || link.url; // Falls kein Titel vorhanden ist, URL anzeigen
+        linkElement.addEventListener('click', (event) => {
+            event.preventDefault();
+            window.open(link.url, '_blank');
+        });
+
+        cellLink.appendChild(linkElement);
+        row.appendChild(cellSelect);
+        row.appendChild(cellLink);
+        return row;
     }
 });
-
-// Funktion zum Anzeigen des Modalfensters
-function showModal(zipPath) {
-    const modal = document.getElementById('modal');
-    const modalContent = modal.querySelector('.modal-content');
-    const archivedLinksList = modalContent.querySelector('#archived-links-list');
-
-    archivedLinksList.innerHTML = '';
-
-    // Archivierte Links anzeigen
-    const listItem = document.createElement('li');
-    listItem.textContent = zipPath;
-    archivedLinksList.appendChild(listItem);
-
-    // Download-Button konfigurieren
-    const downloadButton = modalContent.querySelector('#download-button');
-    downloadButton.addEventListener('click', function () {
-        window.location.href = zipPath; // Download-Link
-    });
-
-    modal.style.display = 'block';
-
-    // Schließen-Button für das Modalfenster
-    modal.querySelector('.close').addEventListener('click', function () {
-        modal.style.display = 'none';
-    });
-}
-
-// Fortschrittsbalken-Funktionalität aktualisieren
-function updateProgressBar(percent) {
-    const progressBar = document.getElementById('progress-bar');
-    progressBar.style.width = `${percent}%`;
-    progressBar.setAttribute('aria-valuenow', percent);
-}

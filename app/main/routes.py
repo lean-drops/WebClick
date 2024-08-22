@@ -3,13 +3,14 @@ import logging
 import traceback
 import asyncio
 import uuid
+import ssl
 
 import aiohttp
 from quart import Blueprint, request, jsonify, render_template, send_file, Response
 from datetime import datetime
 import zipfile
 
-from scrapers.fetch_content import scrape_website_links, scrape_url
+from scrapers.fetch_content import scrape_website_links, scrape_url, scrape_website_links_simple
 from scrapers.screenshot import load_cookie_selectors, start_screenshot_process_sequentially, is_valid_url
 
 # Logger configuration
@@ -29,11 +30,6 @@ selectors = load_cookie_selectors(COOKIES_SELECTOR_PATH)
 
 # Blueprint definition
 main = Blueprint('main', __name__)
-
-import asyncio
-import uuid
-from quart import Blueprint, request, jsonify, render_template
-
 
 @main.route('/')
 async def index():
@@ -61,27 +57,17 @@ async def scrape_sub_links():
         logger.warning(f"Invalid URL provided: {url}")
         return jsonify({"error": "Invalid URL provided"}), 400
 
-    session_id = str(uuid.uuid4())  # Generate a unique session_id
-
     logger.info(f"Scrape sub-links request received for URL: {url}")
 
     try:
-        max_concurrent_tasks = 30
-        semaphore = asyncio.Semaphore(max_concurrent_tasks)
-
-        # Verwenden der scrape_url Funktion aus fetch_content.py
-        result_structure = await scrape_url(url, session_id)
-
-        if not result_structure:
-            logger.error(f"Failed to retrieve content for URL: {url}")
-            return jsonify({"error": "No content retrieved. The server may have blocked the request or requires authentication."}), 403
-
-        logger.info(f"Scraping sub-links completed for URL: {url}")
-        return jsonify(result_structure)  # Return the scraped content as a JSON response
-
+        result_structure = scrape_website_links_simple(url)
+        if 'error' in result_structure:
+            return jsonify({"error": result_structure['error']}), 500
+        return jsonify(result_structure)
     except Exception as e:
         logger.error(f"Unexpected error scraping sub-links: {e}", exc_info=True)
         return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
+
 
 @main.route('/archive', methods=['POST'])
 async def archive():
