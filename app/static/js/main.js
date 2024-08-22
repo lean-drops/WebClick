@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const scrapeForm = document.getElementById('scrape-form');
     const archiveForm = document.getElementById('archive-form');
-    const linksContainer = document.getElementById('links-container');
     const linksTableBody = document.getElementById('links-table').querySelector('tbody');
     const archiveButton = document.getElementById('archive-button');
     const progressBar = document.getElementById('progress-bar');
@@ -35,20 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function openInNewWindow(url, windowFeatures) {
-        const newWindow = window.open(url, '_blank', windowFeatures);
-        if (newWindow) {
-            newWindow.focus();
-        } else {
-            showError('Failed to open the link in a new window.');
-        }
-    }
-
-    function createLinkRow(page, isSubLink = false) {
+    function createLinkRow(page) {
         const row = document.createElement('tr');
-        if (isSubLink) {
-            row.classList.add('sub-link');
-        }
 
         const cellSelect = document.createElement('td');
         const cellLink = document.createElement('td');
@@ -60,53 +47,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const link = document.createElement('a');
         link.href = '#';
         link.textContent = page.title;
-        link.addEventListener('dblclick', (event) => {
-            event.preventDefault();
-            const windowFeatures = `width=${window.screen.width / 2},height=${window.screen.height},left=${window.screen.width / 2},top=0,scrollbars=yes,resizable=yes`;
-            openInNewWindow(page.url, windowFeatures);
-        });
-
         link.addEventListener('click', (event) => {
             event.preventDefault();
-            if (page.subLinks) {
-                toggleSubLinks(row, page.subLinks);
-            }
+            // Optionally, add code here to handle clicks (e.g., expanding sub-links)
         });
 
         cellLink.appendChild(link);
         row.appendChild(cellSelect);
         row.appendChild(cellLink);
         return row;
-    }
-
-    function toggleSubLinks(parentRow, subLinks) {
-        if (parentRow.classList.contains('expanded')) {
-            const nextSibling = parentRow.nextSibling;
-            while (nextSibling && nextSibling.classList.contains('sub-link')) {
-                nextSibling.remove();
-            }
-            parentRow.classList.remove('expanded');
-        } else {
-            subLinks.forEach(subLink => {
-                const subLinkRow = createLinkRow(subLink, true);
-                parentRow.after(subLinkRow);
-            });
-            parentRow.classList.add('expanded');
-        }
-    }
-
-    function adjustMainWindow() {
-        if (window.screen.width > 1280) {
-            window.moveTo(0, 0);
-            window.resizeTo(window.screen.width / 2, window.screen.height);
-        } else {
-            showError('Your screen resolution is too low to adjust the window.');
-        }
-    }
-
-    function openWebsiteOnRight(url) {
-        const windowFeatures = `width=${window.screen.width / 2},height=${window.screen.height},left=${window.screen.width / 2},top=0,scrollbars=yes,resizable=yes`;
-        openInNewWindow(url, windowFeatures);
     }
 
     function showProgressBar() {
@@ -123,18 +72,15 @@ document.addEventListener('DOMContentLoaded', function() {
         let url = document.getElementById('url').value.trim();
 
         if (!url) {
-            showError('Bitte geben Sie eine gültige URL ein.');
+            showError('Please enter a valid URL.');
             return;
         }
 
         url = normalizeURL(url);
         if (!url) {
-            showError('Ungültige URL. Bitte geben Sie eine gültige URL ein.');
+            showError('Invalid URL. Please enter a valid URL.');
             return;
         }
-
-        adjustMainWindow();
-        openWebsiteOnRight(url);
 
         showProgressBar();
 
@@ -156,15 +102,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     const row = createLinkRow(page);
                     linksTableBody.appendChild(row);
                 });
-                linksContainer.classList.add('fade-in');
-                linksContainer.style.display = 'block';
-                showSuccess('Links erfolgreich abgerufen.');
+                showSuccess('Links successfully retrieved.');
             }
         })
         .catch(error => {
             hideProgressBar();
             console.error('Error:', error);
-            showError('Ein Fehler ist beim Abrufen der Links aufgetreten.');
+            showError('An error occurred while retrieving the links.');
         });
     });
 
@@ -174,12 +118,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const urls = Array.from(checkboxes).map(checkbox => checkbox.value);
 
         if (urls.length === 0) {
-            showError('Bitte wählen Sie mindestens einen Link zum Archivieren aus.');
+            showError('Please select at least one link to archive.');
             return;
         }
 
-        archiveButton.textContent = 'Archivierung läuft...';
-        archiveButton.classList.add('pulsing');
+        archiveButton.textContent = 'Archiving...';
+        archiveButton.disabled = true;
 
         fetch('/archive', {
             method: 'POST',
@@ -190,23 +134,23 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            archiveButton.classList.remove('pulsing');
+            archiveButton.disabled = false;
             if (data.error) {
                 showError(data.error);
-                archiveButton.textContent = 'Website archivieren';
+                archiveButton.textContent = 'Archive Website';
             } else {
-                archiveButton.textContent = 'Website Downloaden';
+                archiveButton.textContent = 'Download Archive';
                 archiveButton.addEventListener('click', () => {
                     window.location.href = `/download/${data.zip_path}`;
                 });
-                showSuccess('Website erfolgreich archiviert!');
+                showSuccess('Website successfully archived!');
             }
         })
         .catch(error => {
-            archiveButton.classList.remove('pulsing');
+            archiveButton.disabled = false;
             console.error('Error:', error);
-            showError('Ein Fehler ist beim Archivieren der Website aufgetreten.');
-            archiveButton.textContent = 'Website archivieren';
+            showError('An error occurred during archiving.');
+            archiveButton.textContent = 'Archive Website';
         });
     });
 });
