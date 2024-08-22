@@ -4,6 +4,9 @@ import logging
 import traceback
 from app import create_app
 
+# Deactivate SSL warnings for unverified HTTPS requests
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # Erstelle die Quart-Anwendung
 app = create_app()
 

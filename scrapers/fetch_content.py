@@ -21,39 +21,38 @@ def sanitize_filename(filename):
     return "".join(x for x in filename if (x.isalnum() or x in "._- "))
 
 # Function to fetch website content with caching and error handling
-async def fetch_website_content(url):
-    # Generate cache filename based on URL
-    cache_file = os.path.join(CACHE_DIR, f"{sanitize_filename(url)}.html")
+import aiohttp
+import ssl
 
-    # Ensure cache directory exists
-    os.makedirs(CACHE_DIR, exist_ok=True)
+import aiohttp
+import ssl
+import asyncio
 
+
+async def fetch_website_content(url, retries=3):
     ssl_context = ssl.create_default_context()
     ssl_context.check_hostname = False
     ssl_context.verify_mode = ssl.CERT_NONE
 
-    try:
+    for attempt in range(retries):
         async with aiohttp.ClientSession() as session:
-            async with session.get(url, ssl=ssl_context, timeout=10) as response:
-                response.raise_for_status()
+            try:
+                async with session.get(url, ssl=ssl_context, timeout=10) as response:
+                    if response.status == 200:
+                        content = await response.text()
+                        return content, ""
+                    else:
+                        return None, f"Failed to fetch content from {url}: HTTP {response.status}"
+            except aiohttp.ClientConnectorError as e:
+                print(f"Attempt {attempt + 1} failed: Cannot connect to host {url}: {str(e)}")
+                await asyncio.sleep(2)  # Wartezeit zwischen den Versuchen
+            except aiohttp.ClientError as e:
+                return None, f"Aiohttp client error {url}: {str(e)}"
+            except Exception as e:
+                return None, f"An unexpected error occurred: {str(e)}"
 
-                # Determine encoding
-                content_type = response.headers.get('Content-Type', '').lower()
-                encoding = 'utf-8'  # Default encoding
-                if 'charset=' in content_type:
-                    encoding = content_type.split('charset=')[-1]
+    return None, f"Failed to fetch content from {url} after {retries} attempts"
 
-                # Decode content and save to cache
-                content = await response.text(encoding=encoding, errors='replace')
-
-                async with aiofiles.open(cache_file, 'w', encoding='utf-8') as f:
-                    await f.write(content)
-
-                logger.info(f"Successfully fetched content from {url} and cached it")
-                return content, ""
-    except aiohttp.ClientError as e:
-        logger.error(f"Failed to fetch content from {url}: {e}", exc_info=True)
-        return None, f"Failed to fetch content from {url}: {e}"
 
 # Function to extract links and structure from the HTML content
 def extract_links(soup, base_url, url_mapping):
