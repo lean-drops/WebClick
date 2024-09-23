@@ -6,18 +6,15 @@ import zipfile
 import psutil
 import random
 from urllib.parse import urlparse
-from PIL import Image
-from io import BytesIO
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, WebDriverException
 from datetime import datetime
-from utils.naming_utils import sanitize_filename, shorten_url
+from app.utils.naming_utils import sanitize_filename, shorten_url
 import requests
 from requests.exceptions import RequestException
-from concurrent.futures import ThreadPoolExecutor
 
 # Pfad zur cookies_selector.json
 COOKIES_SELECTOR_PATH = r"/app/static/js/cookies_selector.json"
@@ -27,7 +24,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("screenshot.log"),
+        logging.FileHandler("../../logs/screenshot.log"),
         logging.StreamHandler()
     ]
 )
@@ -232,7 +229,8 @@ async def main():
                 ] + random_gov_urls
 
     run_number = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_dir = os.path.join(os.getcwd(), f'screenshots_run_{run_number}')
+    single_dir = r"C:\Users\BZZ1391\Bingo\WebClick\output directory\single screenshots"
+    output_dir = os.path.join(single_dir, f'screenshots_run_{run_number}')
     os.makedirs(output_dir, exist_ok=True)
 
     cookie_selectors = load_cookie_selectors(COOKIES_SELECTOR_PATH)
@@ -251,9 +249,9 @@ async def main():
 
     await take_screenshot(test_urls, output_dir, cookie_selectors, driver_paths,
                           chrome_binary_paths)
-
+    zip_dir = r"C:\Users\BZZ1391\Bingo\WebClick\output directory\zipped screenshots"
     zip_filename = f"screenshots_run_{run_number}.zip"
-    zip_filepath = os.path.join(os.getcwd(), zip_filename)
+    zip_filepath = os.path.join(zip_dir, zip_filename)
 
     with zipfile.ZipFile(zip_filepath, 'w') as zipf:
         for root, dirs, files in os.walk(output_dir):

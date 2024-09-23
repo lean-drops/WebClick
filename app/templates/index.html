@@ -9,11 +9,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <!-- JavaScript-Dateien einbinden -->
-    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='js/progress.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='js/modal.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='js/screenshot.js') }}" defer></script>
 </head>
 <body>
     <!-- Top-Bar -->
@@ -22,9 +17,22 @@
     </div>
 
     <div id="main-container">
+        <!-- Display Success/Error Messages -->
+        {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if message %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+        {% endif %}
+
         <!-- Formular und URL-Eingabe Container -->
         <div id="left-container">
-            <form id="scrape-form">
+            <form id="scrape-form" method="POST" action="/scrape">
                 <label for="url">Geben Sie die URL der Website ein, die Sie archivieren möchten:</label>
                 <div class="input-container">
                     <i class="fa fa-link icon"></i>
@@ -41,24 +49,39 @@
 
         <!-- Link-Liste Container -->
         <div id="right-container">
-            <div id="links-container" style="display:none;">
-                <form id="archive-form">
-                    <div class="table-container">
-                        <table id="links-table">
-                            <thead>
-                                <tr>
-                                    <th>Auswählen</th>
-                                    <th>Link</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Hyperlinks werden hier eingefügt -->
-                            </tbody>
-                        </table>
+            {% if links %}
+            <div id="links-container">
+                <form id="archive-form" method="POST" action="/archive">
+                    <input type="hidden" name="url" value="{{ url }}">
+                    <div class="accordion-container">
+                        <!-- Accordion button -->
+                        <button type="button" class="accordion">Zeige/Verberge Links</button>
+                        <!-- Panel that holds the links table -->
+                        <div class="panel">
+                            <div class="table-container">
+                                <table id="links-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Auswählen</th>
+                                            <th>Link Title</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for link in links %}
+                                        <tr>
+                                            <td><input type="checkbox" name="urls" value="{{ link['url'] }}"></td>
+                                            <td><a href="{{ link['url'] }}" target="_blank">{{ link['title'] }}</a></td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" id="archive-button">Website archivieren</button>
                 </form>
             </div>
+            {% endif %}
         </div>
     </div>
 
@@ -69,9 +92,15 @@
             <h2>Website wurde erfolgreich gespeichert</h2>
             <p>Die folgenden Links wurden archiviert:</p>
             <ul id="archived-links-list">
-                <!-- Archivierte Links werden hier eingefügt -->
+                {% if archived_urls %}
+                    {% for link in archived_urls %}
+                    <li>{{ link }}</li>
+                    {% endfor %}
+                {% endif %}
             </ul>
-            <button id="download-button">Herunterladen</button>
+            {% if zip_path %}
+            <a href="{{ zip_path }}" id="download-button">Herunterladen</a>
+            {% endif %}
         </div>
     </div>
 </body>

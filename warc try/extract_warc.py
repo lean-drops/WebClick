@@ -10,13 +10,11 @@ import re
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
 def sanitize_filename(filename):
     """
     Remove invalid characters from filenames.
     """
     return re.sub(r'[<>:"/\\|?*\x00-\x1F]', '_', filename)
-
 
 def extract_warc(warc_file, output_dir, original_url):
     """
@@ -36,8 +34,9 @@ def extract_warc(warc_file, output_dir, original_url):
 
                 parsed_url = urllib.parse.urlparse(url)
                 url_path = parsed_url.netloc + parsed_url.path
-                sanitized_filename = sanitize_filename(url_path)
-                file_extension = content_type.split('/')[-1] if content_type else 'bin'
+                filename = Path(url_path).name or "index"
+                sanitized_filename = sanitize_filename(filename)
+                file_extension = content_type.split('/')[-1].split(';')[0] if content_type else 'bin'
 
                 output_file_path = output_dir / f"{sanitized_filename}.{file_extension}"
                 extracted_files.append(output_file_path)
@@ -54,11 +53,9 @@ def extract_warc(warc_file, output_dir, original_url):
 
     return main_html_file, extracted_files
 
-
 def create_zip_from_directory(directory, zip_name):
     shutil.make_archive(zip_name, 'zip', directory)
     logging.info(f"ZIP archive {zip_name}.zip created.")
-
 
 def start_server(directory, port=8080):
     os.chdir(directory)
@@ -74,7 +71,6 @@ def start_server(directory, port=8080):
     logging.info(f"Serving on port {port}")
     webbrowser.open(f"http://localhost:{port}")
     httpd.serve_forever()
-
 
 def move_file(src, dst):
     src = Path(src)
@@ -95,7 +91,6 @@ def move_file(src, dst):
     except Exception as e:
         logging.error(f"Unexpected error: {e}")
 
-
 def create_unique_directory(base_dir, base_name):
     """
     Create a unique directory based on the base name and a counter if necessary.
@@ -109,10 +104,9 @@ def create_unique_directory(base_dir, base_name):
     output_dir.mkdir()
     return output_dir
 
-
 def main():
     warc_file = Path(r"C:\Users\BZZ1391\Bingo\WebClick\warc try\scrapers\archives\www_bs_ch_20240822154517.warc.gz")
-    base_output_dir = Path(r"/warc try/output")
+    base_output_dir = Path(r"C:\Users\BZZ1391\Bingo\WebClick\warc try\output")
     original_url = "https://www.bs.ch"
 
     temp_output_dir = base_output_dir / "temp_extract"
@@ -135,7 +129,6 @@ def main():
     webbrowser.open(str(session_output_dir / "index.html"))
 
     start_server(session_output_dir)
-
 
 if __name__ == "__main__":
     main()

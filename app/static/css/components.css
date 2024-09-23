@@ -221,3 +221,40 @@ td a:hover {
 .download-link:hover {
     background-color: #0056b3;
 }
+
+/* Notification Box Styling */
+.notification-container {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+    width: 300px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.notification {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #444;
+    color: #fff;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out, bottom 0.5s ease-in-out;
+}
+
+.notification.success {
+    background-color: #4CAF50;
+}
+
+.notification.error {
+    background-color: #F44336;
+}
+
+.notification.show {
+    opacity: 1;
+    bottom: 30px;
+}

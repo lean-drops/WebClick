@@ -2,14 +2,12 @@ import asyncio
 import subprocess
 import logging
 import os
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from scrapers.create_directory import create_directory
-from scrapers.link_processor import create_zip_file
-from utils.naming_utils import sanitize_filename  # Import the sanitize function
 
-# Logger konfigurieren
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from app.create_package.create_directory import create_directory
+from app.create_package.create_zipfile import create_zip_file
+from app.utils.naming_utils import sanitize_filename, logger  # Import the sanitize function
+
+
 
 async def run_screenshot_script(url, screenshot_path, countdown_seconds=0):
     """
