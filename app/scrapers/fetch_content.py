@@ -2,15 +2,25 @@ import hashlib
 import os
 import json
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 import aiofiles
 from collections import defaultdict
+import asyncio
+import aiohttp
 
 from app.create_package.create_directory import logger
 
 # Cache directories
 CACHE_DIR = "../../cache"
 MAPPING_DIR = "../../cache/mapping_cache"
+
+# Tabu-Begriffe aus der JSON-Datei laden
+TABOO_JSON_PATH = os.path.join(os.path.dirname(__file__), '..', 'static', 'json', 'taboo.json')
+with open(TABOO_JSON_PATH, 'r', encoding='utf-8') as f:
+    taboo_data = json.load(f)
+    TABOO_TERMS = taboo_data.get('taboo_terms', [])
+    # Alle Tabu-Begriffe in Kleinbuchstaben umwandeln für case-insensitive Vergleich
+    TABOO_TERMS = [term.lower() for term in TABOO_TERMS]
 
 # Utility functions
 def url_to_filename(url):
@@ -19,86 +29,176 @@ def url_to_filename(url):
 def sanitize_filename(filename):
     return "".join(x for x in filename if (x.isalnum() or x in "._- "))
 
-# Function to fetch website content with caching and error handling
+def is_valid_url(url, base_netloc):
+    parsed_url = urlparse(url)
+    # Nur Links innerhalb derselben Domain und mit http/https verfolgen
+    return parsed_url.scheme in ('http', 'https') and parsed_url.netloc == base_netloc
 
-import aiohttp
-import ssl
+def is_html_content(content_type):
+    return content_type and 'text/html' in content_type.lower()
 
+def is_binary_file(url):
+    # Binärdateien anhand gängiger Dateiendungen ignorieren
+    binary_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip', '.rar', '.exe', '.svg', '.mp3', '.mp4', '.avi', '.mov', '.wmv')
+    return url.lower().endswith(binary_extensions)
 
-async def fetch_website_content(url, retries=3):
-    ssl_context = ssl.create_default_context()
-    ssl_context.check_hostname = False
-    ssl_context.verify_mode = ssl.CERT_NONE
+def contains_taboo_term(text):
+    text_lower = text.lower()
+    for term in TABOO_TERMS:
+        if term in text_lower:
+            return True
+    return False
 
-    for attempt in range(retries):
-        async with aiohttp.ClientSession() as session:
-            try:
-                async with session.get(url, ssl=ssl_context, timeout=10) as response:
-                    if response.status == 200:
-                        content = await response.text()
-                        return content, ""
-                    else:
-                        return None, f"Failed to fetch content from {url}: HTTP {response.status}"
-            except aiohttp.ClientConnectorError as e:
-                print(f"Attempt {attempt + 1} failed: Cannot connect to host {url}: {str(e)}")
-                await asyncio.sleep(2)  # Wartezeit zwischen den Versuchen
-            except aiohttp.ClientError as e:
-                return None, f"Aiohttp client error {url}: {str(e)}"
-            except Exception as e:
-                return None, f"An unexpected error occurred: {str(e)}"
+# Funktion zum Abrufen von Webseiteninhalten mit Fehlerbehandlung
+async def fetch_website_content(session, url):
+    try:
+        async with session.get(url, timeout=10) as response:
+            if response.status != 200:
+                logger.error(f"Failed to fetch content from {url}: HTTP {response.status}")
+                return None
+            content_type = response.headers.get('Content-Type', '').lower()
+            if is_html_content(content_type):
+                content = await response.text()
+                return content
+            else:
+                # Nicht-HTML-Inhalte ignorieren
+                return None
+    except Exception as e:
+        logger.error(f"Error fetching {url}: {str(e)}")
+        return None
 
-    return None, f"Failed to fetch content from {url} after {retries} attempts"
+# Asynchrone Funktion zum Extrahieren von Links und Struktur aus dem HTML-Inhalt
+async def extract_links(url, session, url_mapping, base_netloc, parent_id=None, max_depth=2, current_depth=0, visited_urls=None, semaphore=None):
+    if visited_urls is None:
+        visited_urls = set()
 
+    if current_depth > max_depth:
+        return
 
-# Function to extract links and structure from the HTML content
-def extract_links(soup, base_url, url_mapping):
-    pages = []
-    for link in soup.find_all('a', href=True):
-        href = link['href']
-        full_url = urljoin(base_url, href)
-        title = sanitize_filename(link.text.strip() or full_url)
+    # URL normalisieren, um Duplikate zu vermeiden
+    parsed_url = urlparse(url)
+    normalized_url = parsed_url._replace(fragment='').geturl()
 
-        # Create hashtable entry
-        page_id = url_to_filename(full_url)
+    # Vermeiden, dieselbe URL mehrfach zu verarbeiten
+    if normalized_url in visited_urls:
+        return
+
+    visited_urls.add(normalized_url)
+
+    # Binärdateien ignorieren
+    if is_binary_file(normalized_url):
+        return
+
+    # Semaphore verwenden, um die Anzahl gleichzeitiger Verbindungen zu begrenzen
+    async with semaphore:
+        content = await fetch_website_content(session, normalized_url)
+
+    if content is None:
+        return
+
+    soup = BeautifulSoup(content, 'lxml')  # lxml Parser ist schneller
+
+    page_id = url_to_filename(normalized_url)
+    title = sanitize_filename(soup.title.string.strip() if soup.title else normalized_url)
+
+    # Prüfen, ob der Titel Tabu-Begriffe enthält
+    if contains_taboo_term(title):
+        # Diesen Link überspringen und keine Sublinks sammeln
+        logger.info(f"Skipping link due to taboo term in title: {title} ({normalized_url})")
+        return
+
+    # Seite zur Mapping-Struktur hinzufügen
+    if page_id not in url_mapping:
         url_mapping[page_id] = {
             'title': title,
-            'url': full_url,
-            'parent': url_to_filename(base_url)
+            'url': normalized_url,
+            'parent': [] if parent_id is None else [parent_id],
+            'children': []
         }
+    else:
+        # Parent-ID hinzufügen, falls noch nicht vorhanden
+        if parent_id and parent_id not in url_mapping[page_id]['parent']:
+            url_mapping[page_id]['parent'].append(parent_id)
 
-        pages.append({'id': page_id, 'title': title, 'url': full_url})
+    # Diese Seite zu den Kindern des Parents hinzufügen
+    if parent_id:
+        if page_id not in url_mapping[parent_id]['children']:
+            url_mapping[parent_id]['children'].append(page_id)
 
-    return pages
+    tasks = []
+    # Links extrahieren und verarbeiten
+    for link in soup.find_all('a', href=True):
+        href = link['href']
+        full_url = urljoin(normalized_url, href)
 
-# Function to scrape a website and store the structure in a cache
-async def scrape_website(url, url_mapping):
+        # Nur Links innerhalb derselben Domain verarbeiten
+        if not is_valid_url(full_url, base_netloc):
+            continue
+
+        # Binärdateien ignorieren
+        if is_binary_file(full_url):
+            continue
+
+        # Linktext für Tabu-Begriffsprüfung erhalten
+        link_text = link.get_text(strip=True)
+        if contains_taboo_term(link_text):
+            # Diesen Link überspringen und keine Sublinks sammeln
+            logger.info(f"Skipping link due to taboo term in link text: {link_text} ({full_url})")
+            continue
+
+        task = extract_links(
+            full_url,
+            session,
+            url_mapping,
+            base_netloc,
+            parent_id=page_id,
+            max_depth=max_depth,
+            current_depth=current_depth+1,
+            visited_urls=visited_urls,
+            semaphore=semaphore
+        )
+        tasks.append(task)
+
+    # Aufgaben gleichzeitig ausführen
+    if tasks:
+        await asyncio.gather(*tasks)
+
+# Funktion zum Scrapen einer Website und Speichern der Struktur im Cache
+async def scrape_website(url, max_depth=2, max_concurrency=100):
     logger.debug(f"Starting to scrape website: {url}")
-    content, message = await fetch_website_content(url)
-    if content is None:
-        logger.error(f"Failed to scrape website: {url}, Error: {message}")
-        return {'error': message}
+    url_mapping = defaultdict(dict)
 
-    # Hash the URL to create a unique filename for the mapping cache
-    mapping_file = os.path.join(MAPPING_DIR, f"{hashlib.md5(url.encode()).hexdigest()}.json")
+    # Semaphore erstellen, um die Anzahl gleichzeitiger Verbindungen zu begrenzen
+    semaphore = asyncio.Semaphore(max_concurrency)
 
-    # Ensure the mapping cache directory exists
-    os.makedirs(MAPPING_DIR, exist_ok=True)
+    parsed_base_url = urlparse(url)
+    base_netloc = parsed_base_url.netloc
 
-    # Process the content and extract links
-    soup = BeautifulSoup(content, 'html.parser')
-    pages = extract_links(soup, url, url_mapping)
+    timeout = aiohttp.ClientTimeout(total=30)
+    connector = aiohttp.TCPConnector(limit_per_host=max_concurrency, ssl=False)
 
-    # Save the mapping information to the mapping cache
-    async with aiofiles.open(mapping_file, 'w', encoding='utf-8') as f:
-        await f.write(json.dumps(pages, indent=4))
-
-    logger.info(f"Successfully scraped and cached website mapping for {url}")
-    return {
-        'url': url,
-        'pages': pages
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (compatible; Bot/1.0; +http://yourwebsite.com/bot)'
     }
 
-# Test block
+    async with aiohttp.ClientSession(timeout=timeout, connector=connector, headers=headers) as session:
+        await extract_links(url, session, url_mapping, base_netloc, parent_id=None, max_depth=max_depth, semaphore=semaphore)
+
+    # Mapping-Informationen im Cache speichern
+    mapping_file = os.path.join(MAPPING_DIR, f"{hashlib.md5(url.encode()).hexdigest()}.json")
+    os.makedirs(MAPPING_DIR, exist_ok=True)
+    async with aiofiles.open(mapping_file, 'w', encoding='utf-8') as f:
+        await f.write(json.dumps(url_mapping, indent=4))
+
+    logger.info(f"Successfully scraped and cached website mapping for {url}")
+    base_page_id = url_to_filename(url)
+    return {
+        'url': url,
+        'url_mapping': url_mapping,
+        'base_page_id': base_page_id
+    }
+
+# Testblock
 if __name__ == "__main__":
     import asyncio
 
@@ -106,15 +206,18 @@ if __name__ == "__main__":
         os.makedirs(CACHE_DIR, exist_ok=True)
         os.makedirs(MAPPING_DIR, exist_ok=True)
 
-        test_url = "https://www.walternagel.de/webarchivierung?keyword=internetseiten%20archivieren&device=c&network=g&gad_source=1&gclid=Cj0KCQjww5u2BhDeARIsALBuLnMAf__pqsYDTWVd-J7eouzpTVlFYJiR4qeg0qBJuQSZJtMYD58RF5caArKLEALw_wcB"
-        url_mapping = defaultdict(dict)
-
-        result = await scrape_website(test_url, url_mapping)
+        test_url = "https://www.walternagel.de/webarchivierung"
+        # max_depth und max_concurrency nach Bedarf anpassen
+        result = await scrape_website(test_url, max_depth=2, max_concurrency=100)
 
         if 'error' in result:
             print(f"Error scraping website: {result['error']}")
         else:
             print(f"Scraping successful for {result['url']}")
-            print(json.dumps(url_mapping, indent=4))
+            # Optional: Ergebnis in Datei speichern
+            output_file = "output.json"
+            with open(output_file, 'w', encoding='utf-8') as f:
+                json.dump(result['url_mapping'], f, indent=4)
+            print(f"Result saved to {output_file}")
 
     asyncio.run(main())

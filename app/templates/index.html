@@ -9,6 +9,25 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .nested {
+            display: none;
+        }
+        .active > .nested {
+            display: block;
+        }
+        .toggle {
+            cursor: pointer;
+        }
+        .toggle::before {
+            content: '\25B6'; /* Right arrow */
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .active > .toggle::before {
+            content: '\25BC'; /* Down arrow */
+        }
+    </style>
 </head>
 <body>
     <!-- Top-Bar -->
@@ -56,25 +75,27 @@
                     <div class="accordion-container">
                         <!-- Accordion button -->
                         <button type="button" class="accordion">Zeige/Verberge Links</button>
-                        <!-- Panel that holds the links table -->
+                        <!-- Panel that holds the links tree -->
                         <div class="panel">
-                            <div class="table-container">
-                                <table id="links-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Auswählen</th>
-                                            <th>Link Title</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for link in links %}
-                                        <tr>
-                                            <td><input type="checkbox" name="urls" value="{{ link['url'] }}"></td>
-                                            <td><a href="{{ link['url'] }}" target="_blank">{{ link['title'] }}</a></td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+                            <div class="tree-container">
+                                {% macro render_tree(node, links) %}
+                                    <li>
+                                        <span class="toggle" onclick="toggleChildren(this.parentNode)">
+                                            <input type="checkbox" name="urls" value="{{ node['url'] }}">
+                                            <a href="{{ node['url'] }}" target="_blank">{{ node['title'] }}</a>
+                                        </span>
+                                        {% if node['children'] %}
+                                        <ul class="nested">
+                                            {% for child_id in node['children'] %}
+                                                {{ render_tree(links[child_id], links) }}
+                                            {% endfor %}
+                                        </ul>
+                                        {% endif %}
+                                    </li>
+                                {% endmacro %}
+                                <ul id="tree-root">
+                                    {{ render_tree(links[base_page_id], links) }}
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -103,5 +124,11 @@
             {% endif %}
         </div>
     </div>
+
+    <script>
+        function toggleChildren(element) {
+            element.classList.toggle('active');
+        }
+    </script>
 </body>
 </html>
