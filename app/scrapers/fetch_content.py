@@ -1,17 +1,16 @@
 import hashlib
 import os
 import json
-import aiohttp
-import ssl
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import aiofiles
 from collections import defaultdict
-from scrapers.create_zipfile import logger
+
+from app.create_package.create_directory import logger
 
 # Cache directories
-CACHE_DIR = "../app/cache"
-MAPPING_DIR = "mapping_cache"
+CACHE_DIR = "../../cache"
+MAPPING_DIR = "../../cache/mapping_cache"
 
 # Utility functions
 def url_to_filename(url):
@@ -21,12 +20,9 @@ def sanitize_filename(filename):
     return "".join(x for x in filename if (x.isalnum() or x in "._- "))
 
 # Function to fetch website content with caching and error handling
-import aiohttp
-import ssl
 
 import aiohttp
 import ssl
-import asyncio
 
 
 async def fetch_website_content(url, retries=3):

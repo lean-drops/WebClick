@@ -1,6 +1,6 @@
 from quart import Quart
 
-from app.main.routes import main
+from app.routes import main
 
 
 def create_app():

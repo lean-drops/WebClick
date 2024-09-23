@@ -1,27 +1,38 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const scrapeForm = document.getElementById('scrape-form');
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('modal');
+    const closeModalButton = document.querySelector('.close');
+    const downloadButton = document.getElementById('download-button');
     const archiveForm = document.getElementById('archive-form');
-    const linksTableBody = document.getElementById('links-table').querySelector('tbody');
+    const archivedLinksList = document.getElementById('archived-links-list');
     const archiveButton = document.getElementById('archive-button');
+    const linksTableBody = document.getElementById('links-table').querySelector('tbody');
     const progressBar = document.getElementById('progress-bar');
     const progressContainer = document.getElementById('progress-container');
 
+    // Function to show a pop-up notification in the bottom-left corner
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        // Automatically remove the notification after 5 seconds
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 500);
+        }, 5000);
+    }
+
+    // Show error or success messages using the notification
     function showError(message) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error';
-        errorDiv.textContent = message;
-        document.body.prepend(errorDiv);
-        setTimeout(() => errorDiv.remove(), 5000);
+        showNotification(message, 'error');
     }
 
     function showSuccess(message) {
-        const successDiv = document.createElement('div');
-        successDiv.className = 'success';
-        successDiv.textContent = message;
-        document.body.prepend(successDiv);
-        setTimeout(() => successDiv.remove(), 5000);
+        showNotification(message, 'success');
     }
 
+    // URL normalizer
     function normalizeURL(url) {
         if (!/^https?:\/\//i.test(url)) {
             url = 'http://' + url;
@@ -34,9 +45,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Create a table row for each scraped link
     function createLinkRow(page) {
         const row = document.createElement('tr');
-
         const cellSelect = document.createElement('td');
         const cellLink = document.createElement('td');
         const checkbox = document.createElement('input');
@@ -49,7 +60,6 @@ document.addEventListener('DOMContentLoaded', function() {
         link.textContent = page.title;
         link.addEventListener('click', (event) => {
             event.preventDefault();
-            // Optionally, add code here to handle clicks (e.g., expanding sub-links)
         });
 
         cellLink.appendChild(link);
@@ -58,42 +68,56 @@ document.addEventListener('DOMContentLoaded', function() {
         return row;
     }
 
+    // Progress bar functions
     function showProgressBar() {
         progressContainer.style.display = 'block';
         progressBar.style.width = '0%';
+
+        let width = 0;
+        const interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+            } else {
+                width++;
+                progressBar.style.width = width + '%';
+            }
+        }, 100); // Adjust the interval as needed
     }
 
     function hideProgressBar() {
         progressContainer.style.display = 'none';
     }
 
-    scrapeForm.addEventListener('submit', function(event) {
+    // Scrape form submission handler
+    document.getElementById('scrape-form').addEventListener('submit', async function(event) {
         event.preventDefault();
         let url = document.getElementById('url').value.trim();
 
         if (!url) {
-            showError('Please enter a valid URL.');
+            showError('Bitte geben Sie eine gültige URL ein.');
             return;
         }
 
         url = normalizeURL(url);
         if (!url) {
-            showError('Invalid URL. Please enter a valid URL.');
+            showError('Ungültige URL. Bitte geben Sie eine gültige URL ein.');
             return;
         }
 
         showProgressBar();
 
-        fetch('/scrape', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ url: url }),
-        })
-        .then(response => response.json())
-        .then(data => {
+        try {
+            const response = await fetch('/scrape', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: url }),
+            });
+
+            const data = await response.json();
             hideProgressBar();
+
             if (data.error) {
                 showError(data.error);
             } else {
@@ -102,55 +126,78 @@ document.addEventListener('DOMContentLoaded', function() {
                     const row = createLinkRow(page);
                     linksTableBody.appendChild(row);
                 });
-                showSuccess('Links successfully retrieved.');
+                showSuccess('Links erfolgreich abgerufen.');
             }
-        })
-        .catch(error => {
+        } catch (error) {
             hideProgressBar();
             console.error('Error:', error);
-            showError('An error occurred while retrieving the links.');
-        });
+            showError('Ein Fehler ist beim Abrufen der Links aufgetreten.');
+        }
     });
 
-    archiveForm.addEventListener('submit', function(event) {
-        event.preventDefault();
+    // Archive form submission handler
+    archiveForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
         const checkboxes = linksTableBody.querySelectorAll('input[type="checkbox"]:checked');
         const urls = Array.from(checkboxes).map(checkbox => checkbox.value);
 
         if (urls.length === 0) {
-            showError('Please select at least one link to archive.');
+            showError('Bitte wählen Sie mindestens einen Link zum Archivieren aus.');
             return;
         }
 
-        archiveButton.textContent = 'Archiving...';
-        archiveButton.disabled = true;
+        archiveButton.textContent = 'Archivierung läuft...';
+        archiveButton.classList.add('pulsing');
 
-        fetch('/archive', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ url: document.getElementById('url').value, urls: urls }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            archiveButton.disabled = false;
+        try {
+            const response = await fetch('/archive', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: document.getElementById('url').value, urls: urls }),
+            });
+
+            const data = await response.json();
+            archiveButton.classList.remove('pulsing');
+
             if (data.error) {
                 showError(data.error);
-                archiveButton.textContent = 'Archive Website';
+                archiveButton.textContent = 'Website archivieren';
             } else {
-                archiveButton.textContent = 'Download Archive';
-                archiveButton.addEventListener('click', () => {
+                archiveButton.textContent = 'Website archivieren'; // Reset button text
+                downloadButton.onclick = () => {
                     window.location.href = `/download/${data.zip_path}`;
+                };
+                showSuccess('Website erfolgreich archiviert!');
+
+                // Liste der archivierten Links anzeigen
+                archivedLinksList.innerHTML = '';
+                urls.forEach(link => {
+                    const li = document.createElement('li');
+                    li.textContent = link;
+                    archivedLinksList.appendChild(li);
                 });
-                showSuccess('Website successfully archived!');
+
+                // Modal anzeigen
+                modal.style.display = 'block';
             }
-        })
-        .catch(error => {
-            archiveButton.disabled = false;
+        } catch (error) {
+            archiveButton.classList.remove('pulsing');
             console.error('Error:', error);
-            showError('An error occurred during archiving.');
-            archiveButton.textContent = 'Archive Website';
-        });
+            showError('Ein Fehler ist beim Archivieren der Website aufgetreten.');
+            archiveButton.textContent = 'Website archivieren';
+        }
     });
+
+    // Modal closing logic
+    closeModalButton.onclick = () => {
+        modal.style.display = 'none';
+    };
+
+    window.onclick = (event) => {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
 });
