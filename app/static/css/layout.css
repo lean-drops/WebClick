@@ -1,49 +1,74 @@
+/* Grundlegende Einstellungen */
+body {
+    font-family: 'Roboto', sans-serif; /* Einheitliche Schriftart */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #fff url('../img/background.png') repeat; /* Kombinierte Eigenschaften */
+    background-size: 100px 100px;
+    color: #333;
+}
+
+/* Farbvariablen für einfache Anpassung */
+:root {
+    --primary-color: #007BFF;
+    --primary-hover: #0056b3;
+    --primary-active: #003f7f;
+    --white-color: #fff;
+    --light-grey: #f0f0f0;
+    --dark-grey: rgba(0, 0, 0, 0.1);
+    --error-color: #ff0000;
+    --success-color: #008000;
+}
+
+/* Box-Sizing Reset für alle Elemente */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Allgemeine Stile */
+h1, h2, h3, h4, h5, h6, p, div, form {
+    margin: 0;
+    padding: 0;
+}
+
 /* Top-Bar */
 #top-bar {
     width: 100%;
-    background-color: #007BFF;
-    color: #fff;
-    padding: 20px 0;
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    padding: 1.25rem 0;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    font-family: 'Roboto', sans-serif;
-    font-size: 24px;
+    box-shadow: 0 2px 5px var(--dark-grey);
+    font-size: 1.5rem;
 }
 
-/* Main Container */
+/* Main-Container */
 #main-container {
     display: flex;
     flex: 1;
     width: 100%;
-    box-sizing: border-box;
-    padding: 20px;
-    gap: 20px;
+    padding: 1.25rem;
+    gap: 1.25rem;
 }
 
-/* Link-Liste Container */
-#right-container {
+/* Container */
+#left-container, #right-container {
     flex: 1;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9); /* Etwas Transparenz hinzufügen */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px; /* Abrundung der Ecken */
-    overflow-y: auto; /* Scrollbar für den rechten Container */
-    font-family: 'Roboto', sans-serif;
+    padding: 1.25rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 10px var(--dark-grey);
+    border-radius: 0.5rem;
+    overflow-y: auto;
 }
 
-/* Formular und URL-Eingabe Container */
 #left-container {
-    flex: 1;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9); /* Etwas Transparenz hinzufügen */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px; /* Abrundung der Ecken */
-    border: 1px solid #ccc; /* Feiner Rahmen um den linken Container */
+    border: 1px solid #ccc;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    overflow-y: auto; /* Scrollbar für den linken Container */
-    font-family: 'Roboto', sans-serif;
 }
 
 /* Formular und Eingabeelemente */
@@ -54,92 +79,63 @@ form {
 
 label {
     font-weight: bold;
-    margin-bottom: 20px;
-    color: #007BFF;
-    font-size: 18px; /* Schriftgröße erhöhen */
+    margin-bottom: 1.25rem;
+    color: var(--primary-color);
+    font-size: 1.125rem;
 }
 
 .input-container {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
 }
 
 .input-container .icon {
-    padding: 10px;
-    background: #007BFF;
-    color: white;
-    min-width: 50px;
+    padding: 0.625rem;
+    background: var(--primary-color);
+    color: var(--white-color);
+    min-width: 3.125rem;
     text-align: center;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
+    border-radius: 0.25rem 0 0 0.25rem;
 }
 
 input[type="text"] {
     width: 100%;
-    padding: 10px;
-    border: 2px solid #007BFF;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    font-size: 16px;
+    padding: 0.625rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 0 0.25rem 0.25rem 0;
+    font-size: 1rem;
     transition: border-color 0.3s;
 }
 
 input[type="text"]:focus {
-    border-color: #0056b3;
+    border-color: var(--primary-hover);
     outline: none;
 }
 
 button {
-    padding: 15px;
-    font-size: 18px;
-    color: #fff;
-    background-color: #007BFF;
+    padding: 0.9375rem;
+    font-size: 1.125rem;
+    color: var(--white-color);
+    background-color: var(--primary-color);
     border: none;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
-    margin-top: 20px;
+    margin-top: 1.25rem;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: var(--primary-hover);
     transform: translateY(-2px);
 }
 
 button:active {
-    background-color: #003f7f;
+    background-color: var(--primary-active);
     transform: translateY(0);
 }
 
-/* Fortschrittsanzeige */
-#progress-container {
-    display: none;
-    width: 100%;
-    background-color: #e0e0e0;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 20px;
-}
-
-#progress-bar {
-    width: 0;
-    height: 30px;
-    background: repeating-linear-gradient(
-        45deg,
-        #e0e0e0,
-        #e0e0e0 10px,
-        #ffffff 10px,
-        #ffffff 20px
-    );
-    transition: width 0.3s;
-}
-
-/* Link-Liste Container */
-#links-container {
-    margin-top: 20px;
-}
-
+/* Tabellen-Stile */
 .table-container {
     max-height: 600px;
     overflow-y: auto;
@@ -148,63 +144,45 @@ button:active {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
-    font-family: 'Roboto', sans-serif;
+    margin-bottom: 1.25rem;
 }
 
 th, td {
-    padding: 10px;
+    padding: 0.625rem;
     text-align: left;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid var(--light-grey);
 }
 
 th {
-    background-color: #007BFF;
-    color: #fff;
-    font-size: 18px;
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    font-size: 1.125rem;
     font-weight: bold;
 }
 
 td a {
-    color: #007BFF;
+    color: var(--primary-color);
     text-decoration: none;
     transition: color 0.3s;
 }
 
 td a:hover {
-    color: #0056b3;
-}
-
-/* Fehler- und Erfolgsmeldungen */
-.error {
-    color: #ff0000;
-    background-color: #ffe6e6;
-    padding: 10px;
-    border-left: 4px solid #ff0000;
-    margin-bottom: 20px;
-}
-
-.success {
-    color: #008000;
-    background-color: #e6ffe6;
-    padding: 10px;
-    border-left: 4px solid #008000;
-    margin-bottom: 20px;
+    color: var(--primary-hover);
 }
 
 /* Download-Link */
 .download-link {
     display: block;
-    padding: 10px;
-    background-color: #007BFF;
-    color: #fff;
+    padding: 0.625rem;
+    background-color: var(--primary-color);
+    color: var(--white-color);
     text-align: center;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     text-decoration: none;
-    margin-top: 20px;
+    margin-top: 1.25rem;
     transition: background-color 0.3s;
 }
 
 .download-link:hover {
-    background-color: #0056b3;
+    background-color: var(--primary-hover);
 }
