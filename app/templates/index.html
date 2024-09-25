@@ -1,170 +1,101 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Website Archiver</title>
-    <!-- CSS einbinden -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Externe CSS-Dateien -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/tree.css') }}">
-    <style>
-        /* Zusätzliche Styles, falls erforderlich */
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraper</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <!-- Top-Bar -->
-    <div id="top-bar">
-        <h1>Website Archiver</h1>
+
+<h2>Web Scraper</h2>
+
+<!-- Formular zum Starten des Scraping-Prozesses -->
+<form id="scrapeForm">
+    <label for="url">Gib die URL zum Scrapen ein:</label>
+    <input type="text" id="url" name="url" required>
+    <button type="submit">Scraping starten</button>
+</form>
+
+<!-- Modal zum Anzeigen der gescrapten Links -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Gescrapte Links</h2>
+        <ul id="linksList"></ul>
     </div>
+</div>
 
-    <div id="main-container" class="{% if links %}hide-left{% endif %}">
-        <!-- Formular und URL-Eingabe Container -->
-        <div id="left-container">
-            <form id="scrape-form" method="POST" action="/scrape">
-                <label for="url">Geben Sie die URL der Website ein, die Sie archivieren möchten:</label>
-                <div class="input-container">
-                    <i class="fa fa-link icon"></i>
-                    <input type="text" id="url" name="url" placeholder="https://example.com" required>
-                </div>
-                <button type="submit">Website öffnen</button>
-            </form>
+<script>
+    // Modal-Elemente definieren
+    var modal = document.getElementById("myModal");
+    var span = document.getElementsByClassName("close")[0];
 
-            <!-- Fortschrittsanzeige -->
-            <div id="progress-container" style="display:none;">
-                <div id="progress-bar"></div>
-            </div>
-        </div>
+    // Modal schließen, wenn das "X" geklickt wird
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
 
-        <!-- Link-Liste Container -->
-        <div id="right-container">
-            {% if links %}
-            <div id="links-container" style="width: 100%; overflow-y: auto;">
-                <form id="archive-form" method="POST" action="/archive">
-                    <input type="hidden" name="url" value="{{ url }}">
-                    <div class="accordion-container">
-                        <!-- Accordion Button -->
-                        <button type="button" class="accordion">Zeige/Verberge Links</button>
-                        <!-- Panel mit der Linkliste -->
-                        <div class="panel">
-                            <div class="tree-container">
-                                {% macro render_tree(node, links) %}
-                                    <li id="node-{{ node['id'] }}">
-                                        <span class="toggle" onclick="toggleChildren(this.parentNode)">
-                                            <input type="checkbox" name="urls" value="{{ node['url'] }}" onchange="updateSelectedLinks(this, '{{ node['title'] }}', '{{ node['url'] }}')">
-                                            <span>{{ node['title'] }}</span>
-                                        </span>
-                                        {% if node['children'] %}
-                                        <ul class="nested">
-                                            {% for child_id in node['children'] %}
-                                                {{ render_tree(links[child_id], links) }}
-                                            {% endfor %}
-                                        </ul>
-                                        {% endif %}
-                                    </li>
-                                {% endmacro %}
-                                <ul id="tree-root">
-                                    {{ render_tree(links[base_page_id], links) }}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="submit" id="archive-button">Website archivieren</button>
-                </form>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-    <!-- Modal Fenster -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Website wurde erfolgreich gespeichert</h2>
-            <p>Die folgenden Links wurden archiviert:</p>
-            <ul id="archived-links-list">
-                {% if archived_urls %}
-                    {% for link in archived_urls %}
-                    <li>{{ link }}</li>
-                    {% endfor %}
-                {% endif %}
-            </ul>
-            {% if zip_path %}
-            <a href="{{ zip_path }}" id="download-button">Herunterladen</a>
-            {% endif %}
-        </div>
-    </div>
-
- <!-- JavaScript -->
-    <script>
-        // Objekt zum Verfolgen der geöffneten Fenster
-        var openedWindows = {};
-
-        function toggleChildren(element) {
-            element.classList.toggle('active');
+    // Modal schließen, wenn außerhalb des Modals geklickt wird
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
         }
+    }
 
-        function updateSelectedLinks(checkbox, title, url) {
-            if (checkbox.checked) {
-                // Neues Fenster öffnen
-                var screenWidth = window.screen.width;
-                var screenHeight = window.screen.height;
-                var windowWidth = Math.floor(screenWidth / 2);
-                var windowHeight = screenHeight;
-                var windowLeft = screenWidth - windowWidth;
-                var windowTop = 0;
+    // Scraping-Formular verarbeiten
+    document.getElementById("scrapeForm").onsubmit = async function(e) {
+        e.preventDefault();
+        const url = document.getElementById("url").value;
 
-                var features = 'toolbar=0,location=0,menubar=0,resizable=1,scrollbars=1';
-                features += ',width=' + windowWidth;
-                features += ',height=' + windowHeight;
-                features += ',left=' + windowLeft;
-                features += ',top=' + windowTop;
+        // Sende POST-Anfrage zum Starten des Scrapings
+        const response = await fetch('/scrape_links', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url })
+        });
 
-                // Neues Fenster öffnen und speichern
-                var newWindow = window.open(url, '_blank', features);
-                if (newWindow) {
-                    openedWindows[url] = newWindow;
-                    // Den Fokus auf das Hauptfenster zurücksetzen
-                    window.focus();
-                } else {
-                    alert('Das Öffnen von Pop-ups ist in Ihrem Browser blockiert. Bitte erlauben Sie Pop-ups für diese Website.');
-                    // Checkbox deaktivieren
-                    checkbox.checked = false;
-                }
-            } else {
-                // Fenster schließen
-                if (openedWindows[url]) {
-                    openedWindows[url].close();
-                    delete openedWindows[url];
-                }
-            }
+        const data = await response.json();
+
+        if (data.task_id) {
+            checkScrapingStatus(data.task_id);
+        } else {
+            alert('Fehler beim Starten des Scrapings. Bitte versuche es erneut.');
         }
+    };
 
-        // Schließen aller geöffneten Fenster beim Verlassen der Seite
-        window.onbeforeunload = function() {
-            for (var url in openedWindows) {
-                if (openedWindows[url] && !openedWindows[url].closed) {
-                    openedWindows[url].close();
-                }
-            }
-        };
+    // Status des Scraping-Tasks abfragen
+    async function checkScrapingStatus(taskId) {
+        const statusResponse = await fetch(`/scrape/status/${taskId}`);
+        const statusData = await statusResponse.json();
 
-        // Accordion-Funktionalität
-        var accordions = document.getElementsByClassName("accordion");
-        for (var i = 0; i < accordions.length; i++) {
-            accordions[i].onclick = function() {
-                this.classList.toggle("active");
-                var panel = this.nextElementSibling;
-                if (panel.style.display === "block") {
-                    panel.style.display = "none";
-                } else {
-                    panel.style.display = "block";
-                }
-            };
+        if (statusData.status === 'completed') {
+            // Wenn der Task abgeschlossen ist, zeige die gescrapten Links an
+            const resultResponse = await fetch(`/scrape_result/${taskId}`);
+            const resultHtml = await resultResponse.text();
+            displayLinks(resultHtml);
+        } else if (statusData.status === 'running') {
+            // Warte kurz und frage den Status erneut ab
+            setTimeout(() => checkScrapingStatus(taskId), 2000);
+        } else {
+            alert('Fehler beim Scraping. Bitte versuche es erneut.');
         }
-    </script>
+    }
+
+    // Links im Modal anzeigen
+    function displayLinks(resultHtml) {
+        const linksList = document.getElementById('linksList');
+        linksList.innerHTML = ''; // Leere die Liste
+
+        // HTML-Inhalt von scrape_result.html in das Modal einfügen
+        document.getElementById('linksList').innerHTML = resultHtml;
+
+        // Öffne das Modal
+        modal.style.display = "block";
+    }
+</script>
+
 </body>
 </html>
