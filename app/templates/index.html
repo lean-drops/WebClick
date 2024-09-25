@@ -3,47 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Scraper</title>
+    <title>Perfekter Web Scraper</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            padding: 20px;
+        }
+
+        .scraper-form {
+            width: 30%;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .scraper-results {
+            width: 70%;
+            margin-left: 20px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .scraper-results h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            max-height: 400px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f8f8;
+        }
+
+        .toggle-btn {
+            cursor: pointer;
+        }
+
+        .child-row {
+            display: none;
+        }
+
+        #selectedLinksContainer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #selectedLinksContainer ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #selectedLinksContainer ul li {
+            margin-bottom: 5px;
+        }
+
+        /* Modal für angezeigte Websites */
+        #siteModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        #siteModal .modal-header {
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #siteModal .modal-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        #siteModal .modal-content {
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
 
-<h2>Web Scraper</h2>
+<div class="container">
+    <div class="scraper-form">
+        <h2>Web Scraper</h2>
+        <form id="scrapeForm">
+            <label for="url">Gib die URL zum Scrapen ein:</label>
+            <input type="text" id="url" name="url" required>
+            <button type="submit">Scraping starten</button>
+        </form>
 
-<!-- Formular zum Starten des Scraping-Prozesses -->
-<form id="scrapeForm">
-    <label for="url">Gib die URL zum Scrapen ein:</label>
-    <input type="text" id="url" name="url" required>
-    <button type="submit">Scraping starten</button>
-</form>
+        <!-- Dynamisch ausgewählte Links anzeigen -->
+        <div id="selectedLinksContainer">
+            <h3>Ausgewählte Links</h3>
+            <ul id="selectedLinksList"></ul>
+        </div>
+    </div>
 
-<!-- Modal zum Anzeigen der gescrapten Links -->
-<div id="myModal" class="modal">
+    <div class="scraper-results">
+        <h2>Scraping-Ergebnisse</h2>
+        <div id="resultsContainer"></div>
+    </div>
+</div>
+
+<!-- Modal zum Anzeigen der gescrapten Websites -->
+<div id="siteModal">
+    <div class="modal-header">
+        <h3>Website Vorschau</h3>
+        <button onclick="toggleModal()">Schließen</button>
+    </div>
     <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Gescrapte Links</h2>
-        <ul id="linksList"></ul>
+        <iframe id="siteIframe" style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
 </div>
 
 <script>
-    // Modal-Elemente definieren
-    var modal = document.getElementById("myModal");
-    var span = document.getElementsByClassName("close")[0];
+    const modal = document.getElementById("siteModal");
+    const iframe = document.getElementById("siteIframe");
 
-    // Modal schließen, wenn das "X" geklickt wird
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    // Modal schließen, wenn außerhalb des Modals geklickt wird
-    window.onclick = function(event) {
-        if (event.target == modal) {
+    // Modal ein-/ausblenden
+    function toggleModal(url = null) {
+        if (modal.style.display === "none" && url) {
+            iframe.src = url;
+            modal.style.display = "block";
+        } else {
             modal.style.display = "none";
+            iframe.src = "";
         }
     }
 
-    // Scraping-Formular verarbeiten
+    // Formularverarbeitung
     document.getElementById("scrapeForm").onsubmit = async function(e) {
         e.preventDefault();
         const url = document.getElementById("url").value;
@@ -75,7 +203,7 @@
             // Wenn der Task abgeschlossen ist, zeige die gescrapten Links an
             const resultResponse = await fetch(`/scrape_result/${taskId}`);
             const resultHtml = await resultResponse.text();
-            displayLinks(resultHtml);
+            displayResults(resultHtml);
         } else if (statusData.status === 'running') {
             // Warte kurz und frage den Status erneut ab
             setTimeout(() => checkScrapingStatus(taskId), 2000);
@@ -84,16 +212,42 @@
         }
     }
 
-    // Links im Modal anzeigen
-    function displayLinks(resultHtml) {
-        const linksList = document.getElementById('linksList');
-        linksList.innerHTML = ''; // Leere die Liste
+    // Ergebnisse anzeigen
+    function displayResults(resultHtml) {
+        document.getElementById("resultsContainer").innerHTML = resultHtml;
 
-        // HTML-Inhalt von scrape_result.html in das Modal einfügen
-        document.getElementById('linksList').innerHTML = resultHtml;
+        // Checkbox-Handler hinzufügen
+        document.querySelectorAll('.link-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateSelectedLinks(checkbox.dataset.url, checkbox.checked);
+            });
+        });
 
-        // Öffne das Modal
-        modal.style.display = "block";
+        // Link-Handler hinzufügen
+        document.querySelectorAll('.link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                toggleModal(link.href);
+            });
+        });
+    }
+
+    // Ausgewählte Links aktualisieren
+    function updateSelectedLinks(url, isSelected) {
+        const list = document.getElementById("selectedLinksList");
+        if (isSelected) {
+            const li = document.createElement('li');
+            li.textContent = url;
+            li.dataset.url = url;
+            list.appendChild(li);
+        } else {
+            const items = list.querySelectorAll('li');
+            items.forEach(item => {
+                if (item.dataset.url === url) {
+                    item.remove();
+                }
+            });
+        }
     }
 </script>
 
