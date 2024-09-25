@@ -123,6 +123,7 @@ async def scrape_status(task_id):
     return jsonify(task_info)
 
 # Route für das Anzeigen der gescrapten Links
+# Route für das Anzeigen der gescrapten Links
 @main.route('/scrape_result/<task_id>', methods=['GET'])
 async def scrape_result(task_id):
     task_info = scrape_tasks.get(task_id)
@@ -131,6 +132,6 @@ async def scrape_result(task_id):
         return jsonify({'error': 'Task noch nicht abgeschlossen oder nicht gefunden.'}), 404
 
     # Extrahiere die Links aus dem Task-Ergebnis und zeige sie an
-    links = [page_info['url'] for page_id, page_info in task_info['result']['url_mapping'].items()]
+    url_mapping = task_info['result']['url_mapping']
 
-    return await render_template('scrape_result.html', links=links)
+    return await render_template('scrape_result.html', url_mapping=url_mapping)
