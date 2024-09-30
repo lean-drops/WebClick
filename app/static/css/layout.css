@@ -6,7 +6,6 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background: #fff url('../img/background.png') repeat; /* Kombinierte Eigenschaften */
     background-size: 100px 100px;
     color: #333;
 }
