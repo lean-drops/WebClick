@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Screenshot Status</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <h1>Screenshots werden erstellt...</h1>
+    <p>Bitte warten Sie, während die Screenshots erstellt werden.</p>
+    <div class="spinner"></div>
+
+    <script>
+        function checkStatus() {
+            fetch('{{ url_for("main.get_screenshot_status", task_id=task_id) }}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'completed') {
+                    window.location.href = '{{ url_for("main.screenshot_result", task_id=task_id) }}';
+                } else if (data.status === 'failed') {
+                    alert('Fehler beim Erstellen der Screenshots.');
+                } else {
+                    setTimeout(checkStatus, 3000);
+                }
+            });
+        }
+        setTimeout(checkStatus, 3000);
+    </script>
+</body>
+</html>

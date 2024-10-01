@@ -4,66 +4,88 @@ import logging
 import asyncio
 import zipfile
 import psutil
-import random
 from urllib.parse import urlparse
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, WebDriverException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    ElementNotInteractableException,
+    WebDriverException,
+)
 from datetime import datetime
 from app.utils.naming_utils import sanitize_filename, shorten_url
 import requests
 from requests.exceptions import RequestException
+from PIL import Image
+import traceback  # Neu hinzugefügt
+import asyncio
+
+# ...
+
+screenshot_tasks = {}
+screenshot_lock = asyncio.Lock()
 
 # Pfad zur cookies_selector.json
 COOKIES_SELECTOR_PATH = r"/app/static/js/cookies_selector.json"
 
-# Logging configuration
+# Logging-Konfiguration
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
+    level=logging.DEBUG,  # Level auf DEBUG setzen
+    format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("../../logs/screenshot.log"),
-        logging.StreamHandler()
-    ]
+        logging.FileHandler("screenshot.log"),
+        logging.StreamHandler(),
+    ],
 )
 logger = logging.getLogger(__name__)
 
+# Globale Variablen zur Verfolgung von Aufgaben und Thread-Sicherheit
+screenshot_tasks = {}
+screenshot_lock = asyncio.Lock()
+
 
 def load_cookie_selectors(file_path):
-    """Lädt die Cookie-Selektoren aus der JSON-Datei."""
+    """Lädt die Cookie-Selektoren aus einer JSON-Datei."""
+    if not os.path.exists(file_path):
+        logger.warning(f"Cookie-Selektoren-Datei nicht gefunden unter {file_path}. Cookie-Behandlung wird übersprungen.")
+        return []
+
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             selectors = json.load(f)
-            logger.info(f"Loaded {len(selectors)} cookie selectors from {file_path}")
+            logger.info(f"{len(selectors)} Cookie-Selektoren von {file_path} geladen.")
             return selectors
     except Exception as e:
-        logger.error(f"Error loading cookie selectors from {file_path}: {e}")
+        logger.error(f"Fehler beim Laden der Cookie-Selektoren von {file_path}: {e}")
         return []
 
 
 def normalize_url(url):
-    """Normalize the URL to ensure it includes the protocol."""
+    """Normalisiert die URL, um sicherzustellen, dass sie das Protokoll enthält."""
     parsed_url = urlparse(url)
     if not parsed_url.scheme:
-        url = 'https://' + url
+        url = "https://" + url
     return url
 
 
 def is_valid_url(url):
-    """Check if the URL is reachable with SSL verification disabled."""
+    """Überprüft, ob die URL erreichbar ist, mit deaktivierter SSL-Verifizierung."""
     try:
-        response = requests.get(url, timeout=5, verify=False)
+        response = requests.get(url, timeout=3, verify=False)
         response.raise_for_status()
         return True
     except RequestException as e:
-        logger.error(f"URL validation failed: {e}")
+        logger.error(f"URL-Validierung fehlgeschlagen für {url}: {e}")
         return False
 
 
 def handle_cookies(driver, selectors):
-    """Automatically reject cookies using selectors loaded from a JSON file."""
+    """Automatisches Ablehnen von Cookies mithilfe von Selektoren aus einer JSON-Datei."""
+    if not selectors:
+        return  # Keine Selektoren vorhanden
+
     for selector in selectors:
         try:
             if selector["type"] == "css":
@@ -73,197 +95,302 @@ def handle_cookies(driver, selectors):
 
             if button:
                 button.click()
-                logger.info(f"Cookies rejected using selector: {selector['selector']}")
+                logger.info(f"Cookies abgelehnt mit Selektor: {selector['selector']}")
                 break
         except (NoSuchElementException, ElementNotInteractableException) as ex:
-            logger.debug(f"Selector {selector['selector']} not found or not interactable: {ex}")
+            logger.debug(f"Selektor {selector['selector']} nicht gefunden oder nicht interagierbar: {ex}")
             continue
         except WebDriverException as ex:
-            logger.error(f"WebDriver exception: {ex}")
+            logger.error(f"WebDriver-Ausnahme: {ex}")
             break
 
 
 def optimize_media_display(driver):
-    """Optimize the display of images and videos for the screenshot."""
+    """Optimiert die Darstellung von Bildern und Videos für den Screenshot."""
     try:
-        driver.execute_script("""
-            let images = document.querySelectorAll('img');
-            for (let img of images) {
-                img.style.maxWidth = '100%';
-                img.style.height = 'auto';
-                img.style.objectFit = 'contain';
+        driver.execute_script(
+            """
+            let elements = document.querySelectorAll('img, video');
+            for (let el of elements) {
+                el.style.maxWidth = '100%';
+                el.style.height = 'auto';
+                el.style.objectFit = 'contain';
+                if (el.tagName.toLowerCase() === 'video') {
+                    el.controls = false;
+                }
             }
-
-            let videos = document.querySelectorAll('video');
-            for (let video of videos) {
-                video.style.maxWidth = '100%';
-                video.style.height = 'auto';
-                video.style.objectFit = 'contain';
-                video.controls = false;
-            }
-        """)
-        logger.info("Media elements optimized for display.")
+        """
+        )
+        logger.info("Medienelemente für die Anzeige optimiert.")
     except WebDriverException as e:
-        logger.error(f"Error optimizing media display: {e}")
+        logger.error(f"Fehler bei der Optimierung der Medienelemente: {e}")
 
 
 def wait_for_page_load(driver):
-    """Wait until the page has completely loaded."""
+    """Wartet, bis die Seite vollständig geladen ist."""
     try:
-        page_state = driver.execute_script('return document.readyState;')
-        while page_state != 'complete':
-            page_state = driver.execute_script('return document.readyState;')
-        logger.info("Page fully loaded.")
+        page_state = driver.execute_script("return document.readyState;")
+        while page_state != "complete":
+            asyncio.sleep(0.1)  # Kurze Pause hinzufügen
+            page_state = driver.execute_script("return document.readyState;")
+        logger.info("Seite vollständig geladen.")
     except WebDriverException as e:
-        logger.error(f"Error waiting for page to load: {e}")
+        logger.error(f"Fehler beim Warten auf das Laden der Seite: {e}")
 
 
 def take_full_page_screenshot(driver, output_path):
-    """Takes a full-page screenshot by setting the window size to the page's total height."""
+    """Erstellt einen Vollbild-Screenshot, indem die Fenstergröße auf die Gesamthöhe der Seite eingestellt wird."""
     try:
         total_width = driver.execute_script("return document.body.scrollWidth")
         total_height = driver.execute_script("return document.body.scrollHeight")
 
-        # Set window size to capture full page in one screenshot
+        # Fenstergröße einstellen, um die gesamte Seite in einem Screenshot zu erfassen
         driver.set_window_size(total_width, total_height)
-        driver.execute_script("window.scrollTo(0, 0);")  # Scroll to the top of the page
-        wait_for_page_load(driver)  # Ensure the page is fully loaded
+        driver.execute_script("window.scrollTo(0, 0);")  # Nach oben scrollen
+        wait_for_page_load(driver)  # Sicherstellen, dass die Seite vollständig geladen ist
 
         driver.save_screenshot(output_path)
-        logger.info(f"Full page screenshot saved at {output_path}")
+        logger.info(f"Vollbild-Screenshot gespeichert unter {output_path}")
+
+        # Überprüfen, ob die Datei tatsächlich existiert
+        if not os.path.exists(output_path):
+            logger.error(f"Screenshot wurde nicht gespeichert: {output_path}")
+        else:
+            logger.debug(f"Screenshot erfolgreich gespeichert: {output_path}")
+
     except Exception as e:
-        logger.error(f"Error taking full page screenshot: {e}")
+        logger.error(f"Fehler beim Erstellen des Vollbild-Screenshots: {e}")
+        logger.debug(traceback.format_exc())
 
 
-def sync_take_screenshot(url, output_path, selectors, driver_path, chrome_binary_path):
+def sync_take_screenshot(
+    url, output_path, selectors, driver_path, chrome_binary_path
+):
     chrome_options = Options()
     chrome_options.binary_location = chrome_binary_path
-    chrome_options.add_argument("--headless=new")
+    # Headless-Modus vorübergehend deaktivieren für Debugging
+    # chrome_options.add_argument("--headless")  # Headless-Modus aktivieren
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument("--disable-extensions")
     chrome_options.add_argument("--window-size=1920,1080")
-    chrome_options.add_argument("--window-position=-10000,-10000")  # Fenster unsichtbar machen
+    # chrome_options.add_argument("--window-position=-10000,-10000")  # Fenster unsichtbar machen
 
-    service = ChromeService(executable_path=os.path.join(driver_path, "chromedriver.exe"))
+    service = ChromeService(
+        executable_path=os.path.join(driver_path, "chromedriver.exe")
+    )
 
-    logger.info(f"Using ChromeDriver path: {driver_path}")
-    logger.info(f"Using Chrome binary path: {chrome_binary_path}")
+    logger.info(f"Verwende ChromeDriver-Pfad: {driver_path}")
+    logger.info(f"Verwende Chrome-Binary-Pfad: {chrome_binary_path}")
 
-    with webdriver.Chrome(service=service, options=chrome_options) as driver:
-        try:
-            driver.get(url)
-            handle_cookies(driver, selectors)
-            optimize_media_display(driver)
-            take_full_page_screenshot(driver, output_path)
-        except Exception as e:
-            logger.error(f"Error during screenshot process for URL {url}: {e}")
+    try:
+        driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver.set_page_load_timeout(15)
+        driver.get(url)
+        handle_cookies(driver, selectors)
+        optimize_media_display(driver)
+        take_full_page_screenshot(driver, output_path)
+    except Exception as e:
+        logger.error(f"Fehler während des Screenshot-Prozesses für URL {url}: {e}")
+        logger.debug(traceback.format_exc())
+    finally:
+        driver.quit()
 
 
-async def take_screenshot_sequentially(url, output_path, selectors, driver_path, chrome_binary_path):
-    """Takes screenshots sequentially without overlapping."""
+async def take_screenshot_sequentially(
+    url, output_path, selectors, driver_path, chrome_binary_path
+):
+    """Erstellt Screenshots sequentiell ohne Überlappungen."""
     loop = asyncio.get_event_loop()
-    await loop.run_in_executor(None, sync_take_screenshot, url, output_path, selectors, driver_path, chrome_binary_path)
+    await loop.run_in_executor(
+        None,
+        sync_take_screenshot,
+        url,
+        output_path,
+        selectors,
+        driver_path,
+        chrome_binary_path,
+    )
     await adjust_pause_based_on_system_load()
 
 
-async def take_screenshot(urls, base_folder, selectors, driver_paths, chrome_binary_paths):
-    """Process a list of URLs and take screenshots sequentially, storing them in the specified folder."""
+async def take_screenshot_parallel(urls, base_folder, selectors, driver_paths, chrome_binary_paths):
+    """Verarbeitet eine Liste von URLs und erstellt Screenshots parallel, speichert sie im angegebenen Ordner."""
     tasks = []
     for i, url in enumerate(urls):
+        url = normalize_url(url)
         if is_valid_url(url):
             sanitized_name = sanitize_filename(shorten_url(url))
             output_path = os.path.join(base_folder, f"{sanitized_name}.png")
             driver_path = driver_paths[i % len(driver_paths)]
             chrome_binary_path = chrome_binary_paths[i % len(chrome_binary_paths)]
-            tasks.append(take_screenshot_sequentially(url, output_path, selectors, driver_path, chrome_binary_path))
+            # Aufgaben zur parallelen Ausführung planen
+            tasks.append(
+                asyncio.create_task(
+                    take_screenshot_sequentially(
+                        url, output_path, selectors, driver_path, chrome_binary_path
+                    )
+                )
+            )
         else:
-            logger.warning(f"Invalid URL skipped: {url}")
+            logger.warning(f"Ungültige URL übersprungen: {url}")
 
-    await asyncio.gather(*tasks)
-    logger.info("All screenshots have been taken.")
+    if tasks:
+        await asyncio.gather(*tasks)  # Alle Aufgaben parallel ausführen
+        logger.info("Alle Screenshots wurden erstellt.")
+    else:
+        logger.warning("Keine gültigen URLs zum Verarbeiten vorhanden.")
 
 
 async def adjust_pause_based_on_system_load():
-    """Dynamically adjust the pause based on current system load."""
-    cpu_usage = psutil.cpu_percent(interval=1)
+    """Passt die Pause dynamisch basierend auf der aktuellen Systemauslastung an."""
+    cpu_usage = psutil.cpu_percent(interval=0.5)
     memory_usage = psutil.virtual_memory().percent
 
+    # Schwellenwerte für aggressivere Leistung anpassen
     if cpu_usage > 80 or memory_usage > 80:
-        pause_duration = 10
+        pause_duration = 2
     elif cpu_usage > 50 or memory_usage > 50:
-        pause_duration = 1.5
+        pause_duration = 0.5
     else:
-        pause_duration = 1
+        pause_duration = 0.1
 
-    logger.info(f"System load: CPU={cpu_usage}%, Memory={memory_usage}%. Pausing for {pause_duration} seconds.")
+    logger.info(
+        f"Systemauslastung: CPU={cpu_usage}%, Speicher={memory_usage}%. Pausiere für {pause_duration} Sekunden."
+    )
     await asyncio.sleep(pause_duration)
 
 
-def select_random_gov_urls():
-    """Select 2-3 random Swiss government URLs."""
-    swiss_gov_urls = [
-        "https://www.admin.ch/",
-        "https://www.eda.admin.ch/",
-        "https://www.efv.admin.ch/",
-        "https://www.bag.admin.ch/",
-        "https://www.zh.ch/",
-        "https://www.be.ch/",
-        "https://www.baselland.ch/",
-        "https://www.lu.ch/",
-        "https://www.ti.ch/",
-        "https://www.ag.ch/"
-    ]
-    return random.sample(swiss_gov_urls, random.randint(2, 3))
+def combine_images(image_folder, output_path, direction='vertical'):
+    """Fügt Bilder im angegebenen Ordner zu einem einzigen Bild zusammen."""
+    images = []
+    for file_name in sorted(os.listdir(image_folder)):
+        if file_name.endswith('.png') and not file_name.startswith('combined_'):
+            image_path = os.path.join(image_folder, file_name)
+            if os.path.exists(image_path):
+                images.append(Image.open(image_path))
+            else:
+                logger.warning(f"Bilddatei nicht gefunden: {image_path}")
+
+    if not images:
+        logger.warning("Keine Bilder zum Zusammenfügen gefunden.")
+        return
+
+    # Gesamte Breite und Höhe bestimmen
+    widths, heights = zip(*(img.size for img in images))
+
+    if direction == 'vertical':
+        total_width = max(widths)
+        total_height = sum(heights)
+        combined_image = Image.new('RGB', (total_width, total_height))
+        y_offset = 0
+        for img in images:
+            combined_image.paste(img, (0, y_offset))
+            y_offset += img.size[1]
+    else:  # horizontal
+        total_width = sum(widths)
+        total_height = max(heights)
+        combined_image = Image.new('RGB', (total_width, total_height))
+        x_offset = 0
+        for img in images:
+            combined_image.paste(img, (x_offset, 0))
+            x_offset += img.size[0]
+
+    combined_image.save(output_path)
+    logger.info(f"Kombiniertes Bild gespeichert unter {output_path}")
 
 
-async def main():
-    # Zufällige Auswahl von Schweizer Verwaltungswebseiten
-    random_gov_urls = select_random_gov_urls()
+async def run_screenshot_task(task_id, urls):
+    logger.info(f"Starte Screenshot-Aufgabe {task_id} für URLs: {urls}")
+    try:
+        # Aufgabenstatus auf 'running' setzen
+        async with screenshot_lock:
+            screenshot_tasks[task_id] = {'status': 'running', 'result': None}
 
-    test_urls = [
-                    "https://www.zh.ch/de/direktion-der-justiz-und-des-innern/justizvollzug-wiedereingliederung/untersuchungsgefaengnisse-zuerich/gefaengnis-zuerich.html",
-                    "https://www.wikipedia.org"
-                ] + random_gov_urls
+        run_number = task_id
+        single_dir = r"C:\Users\BZZ1391\Bingo\WebClick\output directory\single screenshots"
+        output_dir = os.path.join(single_dir, f'screenshots_run_{run_number}')
+        os.makedirs(output_dir, exist_ok=True)
 
-    run_number = datetime.now().strftime("%Y%m%d_%H%M%S")
-    single_dir = r"C:\Users\BZZ1391\Bingo\WebClick\output directory\single screenshots"
-    output_dir = os.path.join(single_dir, f'screenshots_run_{run_number}')
-    os.makedirs(output_dir, exist_ok=True)
+        cookie_selectors = load_cookie_selectors(COOKIES_SELECTOR_PATH)
 
-    cookie_selectors = load_cookie_selectors(COOKIES_SELECTOR_PATH)
+        driver_paths = [
+            r"C:\Google Neu\chromedriver-win32",
+            # Nur einen Pfad verwenden, um CPU-Auslastung zu reduzieren
+            # Fügen Sie weitere Pfade hinzu, wenn Sie mehrere Instanzen möchten
+        ]
 
-    driver_paths = [
-        r"C:\Google Neu\chromedriver-win32",
-        r"C:\Google Neu\chromedriver-win32 Parallel 1",
-        r"C:\Google Neu\chromedriver-win32 Parallel 2"
-    ]
+        chrome_binary_paths = [
+            r"C:\Google Neu\chrome-win32\chrome.exe",
+            # Entsprechend anpassen, falls mehrere Chrome-Instanzen verwendet werden
+        ]
 
-    chrome_binary_paths = [
-        r"C:\Google Neu\chrome-win32\chrome.exe",
-        r"C:\Google Neu\chrome-win32 Parallel 1\chrome.exe",
-        r"C:\Google Neu\chrome-win32 Parallel 2\chrome.exe"
-    ]
+        # Anzahl paralleler Aufgaben reduzieren
+        await take_screenshot_parallel(urls, output_dir, cookie_selectors, driver_paths, chrome_binary_paths)
 
-    await take_screenshot(test_urls, output_dir, cookie_selectors, driver_paths,
-                          chrome_binary_paths)
-    zip_dir = r"C:\Users\BZZ1391\Bingo\WebClick\output directory\zipped screenshots"
-    zip_filename = f"screenshots_run_{run_number}.zip"
-    zip_filepath = os.path.join(zip_dir, zip_filename)
+        # Bilder zusammenführen
+        combined_image_path = os.path.join(output_dir, f"combined_{run_number}.png")
+        combine_images(output_dir, combined_image_path, direction='vertical')  # 'vertical' oder 'horizontal'
 
-    with zipfile.ZipFile(zip_filepath, 'w') as zipf:
-        for root, dirs, files in os.walk(output_dir):
-            for file in files:
-                file_path = os.path.join(root, file)
-                zipf.write(file_path, os.path.relpath(file_path, output_dir))
+        zip_dir = r"C:\Users\BZZ1391\Bingo\WebClick\output directory\zipped screenshots"
+        os.makedirs(zip_dir, exist_ok=True)
+        zip_filename = f"screenshots_run_{run_number}.zip"
+        zip_filepath = os.path.join(zip_dir, zip_filename)
 
-    logger.info(f"All screenshots have been taken and zipped into {zip_filepath}")
+        with zipfile.ZipFile(zip_filepath, "w") as zipf:
+            for root, dirs, files in os.walk(output_dir):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    zipf.write(file_path, os.path.relpath(file_path, output_dir))
+
+        logger.info(f"Alle Screenshots wurden erstellt und in {zip_filepath} gezippt.")
+
+        # Aufgabenstatus auf 'completed' setzen
+        async with screenshot_lock:
+            screenshot_tasks[task_id]['status'] = 'completed'
+            screenshot_tasks[task_id]['result'] = {
+                'zip_file': zip_filename,
+                'combined_image': combined_image_path  # Pfad zum kombinierten Bild
+            }
+
+    except Exception as e:
+        logger.error(f"Fehler während der Screenshot-Aufgabe {task_id}: {e}", exc_info=True)
+        logger.debug(traceback.format_exc())
+        async with screenshot_lock:
+            screenshot_tasks[task_id]['status'] = 'failed'
+            screenshot_tasks[task_id]['error'] = str(e)
 
 
+# Hauptblock zur Ausführung des Skripts
 if __name__ == "__main__":
     try:
+        # Hauptfunktion definieren
+        async def main():
+            # Beispiel-Task-ID basierend auf Zeitstempel
+            task_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+            # Liste der URLs der Zürcher Kantonsverwaltung
+            urls = [
+                "https://www.zh.ch/",
+                # Fügen Sie hier weniger URLs hinzu, um die CPU-Auslastung zu reduzieren
+            ]
+
+            # Screenshot-Aufgabe starten
+            await run_screenshot_task(task_id, urls)
+
+            # Ergebnis abrufen
+            async with screenshot_lock:
+                result = screenshot_tasks.get(task_id)
+
+            if result and result['status'] == 'completed':
+                combined_image_path = result['result']['combined_image']
+                print(f"Kombiniertes Bild verfügbar unter: {combined_image_path}")
+            else:
+                print("Die Screenshot-Aufgabe wurde nicht erfolgreich abgeschlossen.")
+
+        # Ausführung starten
         asyncio.run(main())
     except Exception as e:
-        logger.error(f"An unexpected error occurred: {e}")
+        logger.error(f"Ein unerwarteter Fehler ist aufgetreten: {e}")

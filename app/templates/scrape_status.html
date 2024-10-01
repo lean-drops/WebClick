@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Daten werden gesammelt...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Grundlegende Einstellungen */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            font-family: 'Montserrat', sans-serif;
+            color: #2c3e50;
+            overflow: hidden;
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 12px solid #f3f3f3;
+            border-top: 12px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+            margin: 0 auto 30px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        h1 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1em;
+            color: #34495e;
+            line-height: 1.5;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        /* Responsive Anpassungen */
+        @media (max-width: 480px) {
+            .loading-container {
+                padding: 30px 20px;
+            }
+
+            .loader {
+                width: 60px;
+                height: 60px;
+                border-width: 8px;
+                border-top-width: 8px;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            p {
+                font-size: 0.95em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-container">
+        <div class="loader"></div>
+        <h1>Wir sammeln deine gesuchten Daten!</h1>
+        <p>Bitte hab einen Moment Geduld. Wir sind dabei, alle Informationen für dich zusammenzustellen.</p>
+        <p class="error" style="display: none;">Ups! Etwas ist schiefgelaufen. Bitte versuche es später erneut.</p>
+    </div>
+
+    <script>
+        async function checkStatus() {
+            try {
+                const response = await fetch(`/get_status/{{ task_id }}`);
+                if (!response.ok) {
+                    throw new Error('Fehlerhafte Antwort vom Server');
+                }
+
+                const data = await response.json();
+                console.log('Status:', data.status);
+
+                if (data.status === "completed") {
+                    window.location.href = `/scrape_result/{{ task_id }}`;
+                } else if (data.status === "failed") {
+                    const errorMsg = document.querySelector('.error');
+                    errorMsg.style.display = 'block';
+                    errorMsg.innerText = "Ups! Beim Sammeln der Daten ist ein Fehler aufgetreten.";
+                } else {
+                    setTimeout(checkStatus, 2000);  // Alle 2 Sekunden Status überprüfen
+                }
+            } catch (error) {
+                console.error('Fehler beim Abrufen des Status:', error);
+                const errorMsg = document.querySelector('.error');
+                errorMsg.style.display = 'block';
+                errorMsg.innerText = "Ups! Beim Verbinden ist ein Fehler aufgetreten. Bitte versuche es später erneut.";
+            }
+        }
+
+        // Initialen Status-Check starten
+        checkStatus();
+    </script>
+
+</body>
+</html>

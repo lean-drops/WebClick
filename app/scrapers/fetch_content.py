@@ -13,13 +13,16 @@ import aiofiles
 
 # Logging konfigurieren
 logging.basicConfig(
-    level=logging.DEBUG,  # Ändern Sie dies zu logging.INFO, um weniger Ausgaben zu erhalten
+    level=logging.INFO,  # Ändere zu logging.DEBUG für detailliertere Ausgaben
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler()
     ]
 )
 logger = logging.getLogger(__name__)
+
+# Fehlerverfolgung
+error_counts = defaultdict(int)
 
 # Cache-Verzeichnisse
 CACHE_DIR = "../static/cache"
@@ -34,7 +37,7 @@ with open(TABOO_JSON_PATH, 'r', encoding='utf-8') as f:
 # Utility-Funktionen
 def url_to_filename(url):
     filename = hashlib.md5(url.encode('utf-8')).hexdigest()
-    logger.debug(f"Generierte Dateiname für URL {url}: {filename}")
+    logger.debug(f"Generierter Dateiname für URL {url}: {filename}")
     return filename
 
 def sanitize_filename(filename):
@@ -49,7 +52,11 @@ def is_valid_url(url, base_netloc):
     return is_valid
 
 def is_binary_file(url):
-    binary_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip', '.rar', '.exe', '.svg', '.mp3', '.mp4', '.avi', '.mov', '.wmv')
+    binary_extensions = (
+        '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.pdf', '.doc', '.docx', '.xls',
+        '.xlsx', '.zip', '.rar', '.exe', '.svg', '.mp3', '.mp4', '.avi', '.mov', '.wmv',
+        '.php', '.aspx', '.jsp'  # Füge hier weitere unerwünschte Endungen hinzu
+    )
     is_binary = url.lower().endswith(binary_extensions)
     logger.debug(f"URL {url} ist {'eine Binärdatei' if is_binary else 'keine Binärdatei'}")
     return is_binary
@@ -66,7 +73,7 @@ def contains_taboo_term(text):
 async def fetch_website_content(client, url, retries=5, delay=1):
     for i in range(retries):
         try:
-            await asyncio.sleep(random.uniform(1, 3))  # Zufällige Wartezeit zwischen den Anfragen
+            await asyncio.sleep(random.uniform(0.5, 1.5))  # Zufällige Wartezeit zwischen den Anfragen
             response = await client.get(url, timeout=10)
             if response.status_code == 429:  # Falls Rate Limit erreicht wird
                 logger.warning(f"Rate Limit erreicht für {url}. Wartezeit: {delay} Sekunden.")
@@ -74,7 +81,9 @@ async def fetch_website_content(client, url, retries=5, delay=1):
                 delay *= 2  # Exponentielles Backoff
                 continue
             if response.status_code != 200:
-                logger.warning(f"Fehler beim Abrufen von {url}: HTTP {response.status_code}")
+                error_message = f"Fehler beim Abrufen von {url}: HTTP {response.status_code}"
+                logger.warning(error_message)
+                error_counts[error_message] += 1  # Fehler zählen
                 return None, None
             content_type = response.headers.get('Content-Type', '').lower()
             logger.debug(f"Inhaltstyp von {url}: {content_type}")
@@ -86,12 +95,14 @@ async def fetch_website_content(client, url, retries=5, delay=1):
                 logger.debug(f"Kein HTML-Inhalt bei {url}")
                 return None, content_type
         except Exception as e:
-            logger.error(f"Fehler beim Abrufen von {url}: {e}")
+            error_message = f"Fehler beim Abrufen von {url}: {e}"
+            logger.error(error_message)
+            error_counts[error_message] += 1  # Fehler zählen
             return None, None
     return None, None
 
 # Asynchrone Funktion zum Extrahieren von Links und Struktur aus dem HTML-Inhalt
-async def extract_links(url, client, url_mapping, base_netloc, level=0, max_depth=2, visited_urls=None):
+async def extract_links(url, client, url_mapping, base_netloc, level=0, max_depth=2, visited_urls=None, parent_id=None):
     if visited_urls is None:
         visited_urls = set()
 
@@ -134,15 +145,16 @@ async def extract_links(url, client, url_mapping, base_netloc, level=0, max_dept
         logger.info(f"Überspringe Seite wegen Tabu-Begriff im Titel: {title} ({normalized_url})")
         return
 
-    # Füge die Seite zur Mapping-Struktur hinzu
+    # Füge die Seite zur Mapping-Struktur hinzu und setze den parent_id
     if page_id not in url_mapping:
         url_mapping[page_id] = {
             'title': title,
             'url': normalized_url,
             'children': [],
-            'level': level
+            'level': level,
+            'parent_id': parent_id  # Hier setzen wir den parent_id
         }
-        logger.debug(f"Seite hinzugefügt: {title} (ID: {page_id})")
+        logger.debug(f"Seite hinzugefügt: {title} (ID: {page_id}) mit parent_id: {parent_id}")
 
     # Nur weiter extrahieren, wenn die Seite HTML ist
     if parser is not None:
@@ -157,6 +169,7 @@ async def extract_links(url, client, url_mapping, base_netloc, level=0, max_dept
                 continue
 
             if is_binary_file(full_url):
+                logger.debug(f"Überspringe Binärdatei oder unerwünschte Endung: {full_url}")
                 continue
 
             link_text = element.text_content().strip()
@@ -174,6 +187,7 @@ async def extract_links(url, client, url_mapping, base_netloc, level=0, max_dept
                 url_mapping[page_id]['children'].append(child_id)
                 logger.debug(f"Link hinzugefügt: {full_url} als Kind von {normalized_url}")
 
+            # Rekursiver Aufruf mit dem aktuellen page_id als parent_id
             task = extract_links(
                 full_url,
                 client,
@@ -181,7 +195,8 @@ async def extract_links(url, client, url_mapping, base_netloc, level=0, max_dept
                 base_netloc,
                 level=level+1,
                 max_depth=max_depth,
-                visited_urls=visited_urls
+                visited_urls=visited_urls,
+                parent_id=page_id  # Übergebe den parent_id an das Kind
             )
             tasks.append(task)
 
@@ -189,17 +204,10 @@ async def extract_links(url, client, url_mapping, base_netloc, level=0, max_dept
             await asyncio.gather(*tasks)
 
 # Funktion zum Scrapen einer Website und Speichern der Struktur im Cache
-import os
-import json
-import aiofiles
-
-
-# Stelle sicher, dass das Verzeichnis existiert
 def ensure_directory_exists(path):
     if not os.path.exists(path):
         os.makedirs(path)
         logger.info(f"Verzeichnis erstellt: {path}")
-
 
 # Asynchrone Funktion zum Scrapen einer Website und Speichern der Struktur im Cache
 async def scrape_website(url, max_depth=2, max_concurrency=500, use_cache=True):
@@ -226,26 +234,36 @@ async def scrape_website(url, max_depth=2, max_concurrency=500, use_cache=True):
         logger.info(f"Verwende gecachte Daten für {url}")
         async with aiofiles.open(cache_file, 'r', encoding='utf-8') as f:
             cached_data = await f.read()
+            logger.debug(f"Gecachte Daten geladen: {cached_data[:100]}...")  # Zeige die ersten 100 Zeichen
             url_mapping.update(json.loads(cached_data))
+
             # Überprüfen, ob der Cache Daten enthält
             if url_mapping:
+                logger.info(f"Cache erfolgreich geladen für {url}")
                 return {
                     'url': url,
                     'url_mapping': url_mapping,
                     'base_page_id': base_page_id
                 }
             else:
-                logger.info(f"Cache ist leer. Starte erneutes Scraping für {url}")
+                logger.info(f"Cache ist leer oder ungültig für {url}. Starte erneutes Scraping.")
 
     # SSL-Überprüfung deaktivieren mit verify=False
     async with httpx.AsyncClient(headers=headers, limits=limits, http2=True, verify=False) as client:
         await extract_links(url, client, url_mapping, base_netloc, level=0, max_depth=max_depth)
 
+    # Überprüfe, ob das Scraping erfolgreich war
+    if not url_mapping:
+        logger.warning(f"Keine Daten nach Scraping gefunden für {url}.")
+    else:
+        logger.info(f"Scraping abgeschlossen. Gefundene Seiten: {len(url_mapping)}")
+
     # Speichere den Cache am Ende
     ensure_directory_exists(MAPPING_DIR)  # Überprüfe und erstelle das Cache-Verzeichnis
     async with aiofiles.open(cache_file, 'w', encoding='utf-8') as f:
-        await f.write(json.dumps(url_mapping, indent=4))
-    logger.info(f"Scraping abgeschlossen für {url}")
+        cache_data = json.dumps(url_mapping, indent=4)
+        await f.write(cache_data)
+        logger.debug(f"Cache gespeichert für {url}: {cache_data[:100]}...")  # Zeige die ersten 100 Zeichen
 
     return {
         'url': url,
@@ -253,6 +271,14 @@ async def scrape_website(url, max_depth=2, max_concurrency=500, use_cache=True):
         'base_page_id': base_page_id
     }
 
+# Funktion zur Ausgabe des Fehlerberichts
+def log_error_summary():
+    if error_counts:
+        logger.info("\n--- Fehlerbericht ---")
+        for error_message, count in error_counts.items():
+            logger.info(f"{error_message} - aufgetreten {count} mal")
+    else:
+        logger.info("Keine Fehler aufgetreten.")
 
 if __name__ == "__main__":
     async def main():
@@ -281,5 +307,8 @@ if __name__ == "__main__":
             with open(output_file, 'w', encoding='utf-8') as f:
                 json.dump(result['url_mapping'], f, indent=4)
             logger.info(f"Ergebnis gespeichert in {output_file}")
+
+        # Am Ende den Fehlerbericht ausgeben
+        log_error_summary()
 
     asyncio.run(main())

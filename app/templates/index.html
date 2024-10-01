@@ -1,24 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfekter Web Scraper</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css', v=version) }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css', v=version) }}">
 </head>
 <body>
 
     <div class="container">
-        <!-- Web Scraper Form -->
-        <div class="scraper-form">
-            <h2>Web Scraper</h2>
-            <form action="/scrape_links" method="post">
-                <label for="url">URL eingeben:</label>
-                <input type="text" id="url" name="url" required>
-                <button type="submit">Scraping starten</button>
-            </form>
-        </div>
+        <!-- Schimmernder Lade-Rahmen um den Container -->
+        <div class="loading-wrapper" id="loadingBar" aria-hidden="true"></div>
+
+        <!-- Hauptinhalt -->
+        <main>
+            <!-- Web Scraper Formular -->
+            <section class="scraper-form">
+                <h2>Web Scraper</h2>
+                <form id="scrapeForm" action="/scrape_links" method="post">
+                    <div class="form-group">
+                        <label for="url">URL eingeben:</label>
+                        <input type="url" id="url" name="url" placeholder="https://example.com" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit">Scraping starten</button>
+                    </div>
+                </form>
+            </section>
+        </main>
     </div>
+
+    <script>
+        // Zeige den Lade-Rahmen, wenn das Formular abgeschickt wird
+        document.getElementById('scrapeForm').addEventListener('submit', function (event) {
+            // Verhindere mehrfache Abschickungen, falls nötig
+            // event.preventDefault();
+
+            // Zeige die Ladeanimation (Border)
+            document.getElementById('loadingBar').style.display = 'block';
+        });
+    </script>
 
 </body>
 </html>

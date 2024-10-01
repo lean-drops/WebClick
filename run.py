@@ -5,23 +5,32 @@ from importlib import reload
 from app import create_app
 import urllib3
 from contextlib import closing
+import hypercorn.asyncio
+from dotenv import load_dotenv
+import asyncio
 
-# Disable SSL warnings for unverified HTTPS requests, ensuring this is done carefully
+# Load environment variables from .env file
+load_dotenv()
+
+# Disable SSL warnings for unverified HTTPS requests
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Initialize the application
+# Initialize the Quart app with debug mode based on environment
 app = create_app()
+app.debug = os.getenv('DEBUG', 'True').lower() in ['true', '1', 't']
 
-# Centralized logging configuration following industry best practices
+# Centralized logging configuration with file handler
 def configure_logging():
     """Configure logging with a structured and scalable format."""
     logging.basicConfig(
-        level=logging.DEBUG if os.getenv('FLASK_DEBUG', 'True').lower() in ['true', '1', 't'] else logging.INFO,
+        level=logging.DEBUG if app.debug else logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[logging.StreamHandler()],
+        handlers=[
+            logging.StreamHandler(),
+            logging.FileHandler("app.log", mode='a')  # Logs to a file for persistence
+        ],
     )
-    logger = logging.getLogger(__name__)
-    return logger
+    return logging.getLogger(__name__)
 
 logger = configure_logging()
 
@@ -46,25 +55,24 @@ def find_free_port(default_port=5000, max_attempts=10):
             default_port += 1
     raise RuntimeError(f"Could not find a free port after {max_attempts} attempts.")
 
-def start_application():
-    """Start the Quart application."""
+async def start_application():
+    """Start the Quart application using Hypercorn in an async environment."""
     # Ensure 'app' module is reloaded to reflect any recent changes
     ensure_module_reloaded('app')
-
-    # Get debug mode from environment or default to True
-    debug_mode = os.getenv('FLASK_DEBUG', 'True').lower() in ['true', '1', 't']
-    logger.debug(f"Debug mode is {'enabled' if debug_mode else 'disabled'}")
 
     # Find an available port or default to 5000
     port = find_free_port(int(os.getenv('PORT', 5000)))
 
+    # Start the app using Hypercorn ASGI server
+    config = hypercorn.Config()
+    config.bind = [f"127.0.0.1:{port}"]
+
     try:
-        # Start the application with logging on port and mode
-        logger.info(f"Starting application on port {port} with debug mode {'enabled' if debug_mode else 'disabled'}.")
-        app.run(debug=debug_mode, port=port)
+        logger.info(f"Starting application on port {port} with debug mode {'enabled' if app.debug else 'disabled'}.")
+        await hypercorn.asyncio.serve(app, config)
     except Exception as e:
         logger.exception(f"Failed to start application: {e}", exc_info=True)
         raise
 
 if __name__ == '__main__':
-    start_application()
+    asyncio.run(start_application())
