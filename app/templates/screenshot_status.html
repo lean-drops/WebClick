@@ -1,10 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Screenshot Status</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screenshots werden erstellt...</title>
     <style>
-        /* Add your CSS styles here */
+        /* Grundlegende Stilierung für das Layout */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            color: #34495e;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #008cba;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* Spinner Animation */
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            animation: spin 1.5s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -26,6 +65,8 @@
                 }
             });
         }
+
+        // Startet die Statusüberprüfung nach 3 Sekunden
         setTimeout(checkStatus, 3000);
     </script>
 </body>
