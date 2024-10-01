@@ -1,0 +1,157 @@
+  /* Grundlegende Einstellungen */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f4f7f9;
+            color: #2c3e50;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Navbar-Stil */
+        .navbar {
+            background-color: #3498db;
+            padding: 15px;
+            color: white;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* Container-Stil */
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .list-container {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .selected-links-container {
+            flex: 1;
+            padding-left: 20px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2em;
+            color: #3498db;
+        }
+
+        /* Stil für die Tabelle */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        /* Kinder-Elemente verstecken */
+        .child-row {
+            display: none;
+        }
+
+        /* Stil für das Label (Pfeil) */
+        .toggle-btn-label {
+            cursor: pointer;
+        }
+
+        .toggle-btn-label::before {
+            content: "►"; /* Pfeil für geschlossenes Menü */
+            display: inline-block;
+            margin-right: 10px;
+            color: #3498db;
+        }
+
+        .toggle-btn-label.expanded::before {
+            content: "▼"; /* Pfeil für geöffnetes Menü */
+        }
+
+        /* Links in der Tabelle */
+        a.toggle-link {
+            color: #2980b9;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a.toggle-link:hover {
+            text-decoration: underline;
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        /* Stil für den Screenshot-Button */
+        #screenshot-button {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 20px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #screenshot-button:hover {
+            background-color: #1e8449;
+        }
+
+        /* Responsive Anpassungen */
+        @media (max-width: 768px) {
+            th, td {
+                padding: 10px;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            #screenshot-button {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .container {
+                flex-direction: column;
+            }
+        }

@@ -125,25 +125,33 @@ async def scrape_result(task_id):
     if task_info['status'] != 'completed':
         return redirect(url_for('main.scrape_status', task_id=task_id))
 
+    # Überprüfe, ob url_mapping vorhanden ist
     url_mapping = task_info['result'].get('url_mapping', {})
+    if not url_mapping:
+        logger.error(f"URL Mapping nicht vorhanden für Task {task_id}")
+        return await render_template('error.html', message='Keine Daten gefunden.'), 404
 
     # Erzeuge die Baumstruktur für das Template
     tree_html = render_links_recursive(url_mapping)
 
+    # Render the template and pass the 'tree_html' and 'version'
     return await render_template(
         'scrape_result.html',
         tree_html=tree_html,
+        url_mapping=url_mapping,  # Füge url_mapping hinzu
         version=version
     )
 
 # Route zum Starten des Screenshot-Tasks
+# Route zum Starten des Screenshot-Tasks
 @main.route('/start_screenshot_task', methods=['POST'])
 async def start_screenshot_task():
-    form = await request.form
-    selected_links_json = form.get('selected_links')
-    if not selected_links_json:
+    data = await request.get_json()  # JSON-Daten von der Anfrage erhalten
+    selected_links = data.get('selected_links', [])
+
+    if not selected_links:
         return await render_template('error.html', message='Keine Links ausgewählt.'), 400
-    selected_links = json.loads(selected_links_json)
+
     logger.info(f"Screenshots werden erstellt für Links: {selected_links}")
 
     # Generiere eine eindeutige Task-ID basierend auf den ausgewählten Links
@@ -154,7 +162,8 @@ async def start_screenshot_task():
     logger.info(f"Screenshot-Task gestartet für Task-ID: {task_id}")
 
     # Weiterleitung zur Status-Seite
-    return redirect(url_for('main.screenshot_status', task_id=task_id))
+    return jsonify({'redirect': url_for('main.screenshot_status', task_id=task_id)}), 200
+
 
 # Route zur Anzeige des Screenshot-Status
 @main.route('/screenshot_status/<task_id>', methods=['GET'])
@@ -178,6 +187,7 @@ async def screenshot_status(task_id):
         # Zeige die Ladeanzeige
         return await render_template('screenshot_status.html', task_id=task_id)
 
+
 # API-Endpunkt zum Abrufen des Screenshot-Status
 @main.route('/get_screenshot_status/<task_id>', methods=['GET'])
 async def get_screenshot_status(task_id):
@@ -190,6 +200,7 @@ async def get_screenshot_status(task_id):
 
     logger.debug(f"Screenshot Task {task_id} Status: {task_info['status']}")
     return jsonify({'status': task_info['status']})
+
 
 # Route zur Anzeige des Screenshot-Ergebnisses
 @main.route('/screenshot_result/<task_id>', methods=['GET'])
@@ -220,6 +231,7 @@ async def screenshot_result(task_id):
 
     return await render_template('screenshot_result.html', zip_filename=zip_filename, task_id=task_id)
 
+
 # Route zum Herunterladen der Screenshots
 @main.route('/download_screenshots/<task_id>', methods=['GET'])
 async def download_screenshots(task_id):
@@ -244,6 +256,7 @@ async def download_screenshots(task_id):
         as_attachment=True,
         attachment_filename=zip_filename
     )
+
 
 # Route zur Anzeige des kombinierten Bildes
 @main.route('/combined_image/<task_id>', methods=['GET'])
