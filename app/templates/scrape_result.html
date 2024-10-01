@@ -2,121 +2,302 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scraping Ergebnisse (Level 1 Links)</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css', v=version) }}">
+    <title>Scrape Result</title>
+    <!-- Include CSS for styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/scrape_result.css') }}?v={{ version }}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <!-- Include any additional CSS needed for the design -->
     <style>
-        /* Verstecke die Kinder standardmäßig */
-        .child-row {
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        /* Header Container */
+        .header-container {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+        .header-container h1 {
+            margin: 0;
+            font-size: 36px;
+            font-weight: 300;
+        }
+        .header-container p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            font-weight: 300;
+        }
+        .header-container button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #2980b9;
+            color: #ecf0f1;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            outline: none;
+            transition: background-color 0.3s ease;
+        }
+        .header-container button:hover {
+            background-color: #1f6286;
+        }
+        /* Main Container */
+        .main-container {
+            display: flex;
+            flex-wrap: nowrap;
+            margin: 20px;
+            gap: 20px;
+        }
+        .tree-container {
+            flex: 2;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            max-height: 70vh;
+        }
+        .selected-container {
+            flex: 1;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 4px;
+            max-height: 70vh;
+            overflow-y: auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .selected-container h2 {
+            margin-top: 0;
+            font-weight: 300;
+        }
+        /* Tree styles */
+        ul.tree {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        .tree li {
+            margin: 5px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+        .tree li::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 5px;
+            width: 10px;
+            height: 1px;
+            background: #bdc3c7;
+        }
+        .tree li::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 5px;
+            width: 1px;
+            height: 24px;
+            background: #bdc3c7;
+        }
+        .tree li:first-child::after {
             display: none;
         }
-
-        /* Stil für das Label */
-        .toggle-btn-label {
+        .toggle-icon {
+            cursor: pointer;
+            margin-right: 5px;
+            color: #2980b9;
+            font-size: 14px;
+        }
+        .hidden {
+            display: none;
+        }
+        /* Checkbox styles */
+        .link-checkbox {
+            margin-left: 5px;
             cursor: pointer;
         }
-
-        /* Optische Anpassung des Labels (Pfeil) */
-        .toggle-btn-label::before {
-            content: "►"; /* Pfeil für geschlossenes Menü */
-            display: inline-block;
-            width: 10px;
-            margin-right: 5px;
+        /* Link styles */
+        .link-item {
+            color: #34495e;
+            text-decoration: none;
+            font-weight: 400;
         }
-
-        /* Wenn das Menü offen ist, Pfeil nach unten */
-        .toggle-btn-label.expanded::before {
-            content: "▼";
+        .link-item:hover {
+            text-decoration: underline;
         }
-
+        /* Child count styles */
+        .child-count {
+            margin-left: 5px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        /* Selected links styles */
+        #selected-links {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        #selected-links li {
+            margin: 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        #selected-links a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+        #selected-links a:hover {
+            text-decoration: underline;
+        }
+        /* Screenshot Button */
+        #screenshot-button {
+            margin-top: 20px;
+            background-color: #27ae60;
+            color: #ecf0f1;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            outline: none;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        #screenshot-button:hover {
+            background-color: #1e8449;
+        }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h2>Scraping Ergebnisse (Level 1 Links)</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Link</th>
-                    <th>Anzahl Kinder</th>
-                    <th>Auswahl</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for page_id, page_data in url_mapping.items() %}
-                    {% if page_data.level == 1 %}
-                    <tr class="parent-row">
-                        <td>
-                            {% if page_data.children|length > 0 %}
-                            <!-- Zeige den Toggle-Pfeil nur, wenn es Kinder gibt -->
-                            <span class="toggle-btn-label" data-page-id="{{ page_id }}"></span>
-                            {% endif %}
-                            <a href="{{ page_data.url }}" target="_blank" class="toggle-link" data-page-id="{{ page_id }}">{{ page_data.title }} ({{ page_id }})</a>
-                        </td>
-                        <td>{{ page_data.children|length }} Kinder</td> <!-- Zeigt die Anzahl der Kinder an -->
-                        <td><input type="checkbox" name="selected_links" value="{{ page_data.url }}"></td>
-                    </tr>
-                    <!-- Kinder-Elemente -->
-                    {% for child_id in page_data.children %}
-                        {% if child_id in url_mapping %}
-                        <tr class="child-row child-of-{{ page_id }}">
-                            <td style="padding-left: 20px;">
-                                <a href="{{ url_mapping[child_id].url }}" target="_blank">{{ url_mapping[child_id].title }} ({{ child_id }})</a>
-                            </td>
-                            <td colspan="2"><input type="checkbox" name="selected_links" value="{{ url_mapping[child_id].url }}"></td>
-                        </tr>
-                        {% endif %}
-                    {% endfor %}
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-        <tfoot>
-            <tr>
-                <td colspan="3">Ende der Tabelle</td>
-            </tr>
-        </tfoot>
+    <!-- Top container with explanation and back to home button -->
+    <div class="header-container">
+        <button onclick="window.location.href='{{ url_for('main.index') }}'"><i class="fas fa-home"></i> Back to Home</button>
+        <h1>Scrape Result</h1>
+        <p>Explore the scraped links below. Use the tree view to navigate through the website structure.</p>
     </div>
 
+    <!-- Main container with two columns -->
+    <div class="main-container">
+        <!-- Large container with the tree view -->
+        <div class="tree-container">
+            <ul class="tree">
+                {{ tree_html|safe }}
+            </ul>
+        </div>
+        <!-- Second container with selected links -->
+        <div class="selected-container">
+            <h2>Selected Links</h2>
+            <ul id="selected-links">
+                <!-- Selected links will be displayed here -->
+            </ul>
+            <!-- Screenshot Button -->
+            <button id="screenshot-button">Take Screenshots</button>
+        </div>
+    </div>
+
+    <!-- JavaScript goes here -->
     <script>
-        // Script zum Ein- und Ausblenden der Kinder-Elemente
-        document.addEventListener('DOMContentLoaded', function () {
-            const toggleButtons = document.querySelectorAll('.toggle-btn-label');
-            const toggleLinks = document.querySelectorAll('.toggle-link');
-
-            toggleButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const pageId = this.getAttribute('data-page-id');
-                    toggleChildren(pageId, this);
-                });
-            });
-
-            // Auch die Links toggeln die Kinder, wenn sie angeklickt werden
-            toggleLinks.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    const pageId = this.getAttribute('data-page-id');
-                    toggleChildren(pageId, this.previousElementSibling); // Verwende das vorherige Element (den Pfeil)
-                    e.preventDefault(); // Verhindere das Standardverhalten, wenn der Link geklickt wird
-                });
-            });
-
-            function toggleChildren(pageId, toggleElement) {
-                const childRows = document.querySelectorAll('.child-of-' + pageId);
-
-                // Toggle die Sichtbarkeit der Kind-Elemente
-                childRows.forEach(row => {
-                    if (row.style.display === 'none' || row.style.display === '') {
-                        row.style.display = 'table-row'; // Zeige die Kinder
-                        if (toggleElement) toggleElement.classList.add('expanded'); // Pfeil nach unten anzeigen
-                    } else {
-                        row.style.display = 'none'; // Verstecke die Kinder
-                        if (toggleElement) toggleElement.classList.remove('expanded'); // Pfeil nach rechts anzeigen
+        // JavaScript for toggling tree nodes and handling link clicks
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle functionality
+            document.querySelectorAll('.toggle-icon').forEach(function(toggle) {
+                var parentLi = toggle.closest('li');
+                var childUl = parentLi.querySelector('ul');
+                if (childUl) {
+                    // Collapse by default
+                    childUl.classList.add('hidden');
+                    toggle.classList.remove('fa-minus-square');
+                    toggle.classList.add('fa-plus-square');
+                }
+                toggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (childUl) {
+                        childUl.classList.toggle('hidden');
+                        toggle.classList.toggle('fa-minus-square');
+                        toggle.classList.toggle('fa-plus-square');
                     }
                 });
-            }
+            });
+
+            // Open links in a new window without covering the current window
+            document.querySelectorAll('.link-item').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var url = e.target.getAttribute('href');
+                    window.open(url, '_blank', 'width=800,height=600,left=100,top=100');
+                });
+            });
+
+            // Handle checkbox selection
+            var selectedLinksList = document.getElementById('selected-links');
+            var selectedLinksData = [];
+            document.querySelectorAll('.link-checkbox').forEach(function(checkbox) {
+                checkbox.addEventListener('change', function(e) {
+                    var url = e.target.getAttribute('data-url');
+                    var title = e.target.getAttribute('data-title');
+                    if (e.target.checked) {
+                        // Add to selected links
+                        var li = document.createElement('li');
+                        li.innerHTML = '<a href="' + url + '" target="_blank">' + title + '</a>';
+                        li.setAttribute('data-url', url);
+                        selectedLinksList.appendChild(li);
+                        selectedLinksData.push(url);
+                    } else {
+                        // Remove from selected links
+                        var items = selectedLinksList.querySelectorAll('li');
+                        items.forEach(function(item) {
+                            if (item.getAttribute('data-url') === url) {
+                                selectedLinksList.removeChild(item);
+                            }
+                        });
+                        selectedLinksData = selectedLinksData.filter(function(itemUrl) {
+                            return itemUrl !== url;
+                        });
+                    }
+                });
+            });
+
+            // Screenshot selected links
+            document.getElementById('screenshot-button').addEventListener('click', function() {
+                if (selectedLinksData.length === 0) {
+                    alert('Please select at least one link to take screenshots.');
+                    return;
+                }
+
+                // Send the selected links to the server for screenshotting
+                fetch('{{ url_for('main.screenshot') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ 'urls': selectedLinksData })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Redirect to the download page or display success message
+                        alert('Screenshots are being processed. You will be notified when they are ready.');
+                    } else {
+                        alert('An error occurred: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An unexpected error occurred.');
+                });
+            });
         });
     </script>
-
 </body>
 </html>
