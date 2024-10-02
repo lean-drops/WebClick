@@ -3,71 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Screenshots werden erstellt...</title>
+    <title>Screenshot-Status</title>
     <style>
-        /* Grundlegende Stilierung für das Layout */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f7f6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-            color: #34495e;
+        .error {
+            display: none;
+            color: red;
         }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            color: #008cba;
-        }
-
-        p {
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-
-        /* Spinner Animation */
-        .spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #3498db;
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            animation: spin 1.5s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .loading {
+            display: block;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <h1>Screenshots werden erstellt...</h1>
-    <p>Bitte warten Sie, während die Screenshots erstellt werden.</p>
-    <div class="spinner"></div>
+    <div class="loading">
+        <h2>Screenshots werden erstellt. Bitte warten...</h2>
+        <div class="spinner">
+            <!-- Optional: Ladeanimation -->
+        </div>
+    </div>
+    <div class="error"></div>
 
-    <script>
-        function checkStatus() {
-            fetch('{{ url_for("main.get_screenshot_status", task_id=task_id) }}')
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'completed') {
-                    window.location.href = '{{ url_for("main.screenshot_result", task_id=task_id) }}';
-                } else if (data.status === 'failed') {
-                    alert('Fehler beim Erstellen der Screenshots.');
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleButtons = document.querySelectorAll('.toggle-btn-label');
+        const toggleLinks = document.querySelectorAll('.toggle-link');
+        const selectedLinksContainer = document.getElementById('selected-links');
+
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const pageId = this.getAttribute('data-page-id');
+                toggleChildren(pageId, this);
+            });
+        });
+
+        toggleLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault(); // Verhindere das Standardverhalten
+                const pageUrl = this.getAttribute('href'); // Korrigiert: href anstelle von data-page-url
+
+                // Öffne das Fenster in der rechten Bildschirmhälfte
+                const width = window.screen.width / 2;
+                const height = window.screen.height;
+                window.open(pageUrl, '_blank', `width=${width},height=${height},left=${width},top=0`);
+
+                // Füge den ausgewählten Link zum rechten Container hinzu
+                const selectedLink = document.createElement('div');
+                selectedLink.textContent = pageUrl;
+                selectedLinksContainer.appendChild(selectedLink);
+            });
+        });
+
+        function toggleChildren(pageId, toggleElement) {
+            const childRows = document.querySelectorAll('.child-of-' + pageId);
+
+            childRows.forEach(row => {
+                if (row.style.display === 'none' || row.style.display === '') {
+                    row.style.display = 'table-row';
+                    if (toggleElement) toggleElement.classList.add('expanded');
                 } else {
-                    setTimeout(checkStatus, 3000);
+                    row.style.display = 'none';
+                    if (toggleElement) toggleElement.classList.remove('expanded');
                 }
             });
         }
+    });
 
-        // Startet die Statusüberprüfung nach 3 Sekunden
-        setTimeout(checkStatus, 3000);
-    </script>
+    function takeScreenshot() {
+        const checkboxes = document.querySelectorAll('input[name="selected_links"]:checked');
+        let selectedLinks = [];
+
+        checkboxes.forEach((checkbox) => {
+            selectedLinks.push(checkbox.value);
+        });
+
+        if (selectedLinks.length === 0) {
+            alert('Bitte wählen Sie mindestens einen Link aus.');
+            return;
+        }
+
+        // AJAX-Anfrage, um die ausgewählten Links an den Server zu senden
+        fetch('/start_screenshot_task', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ selected_links: selectedLinks }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.task_id) {
+                // Weiterleitung zur Screenshot-Statusseite mit der task_id
+                window.location.href = `/screenshot_status/${data.task_id}`;
+            } else {
+                alert('Fehler beim Starten des Screenshot-Tasks.');
+            }
+        })
+        .catch(error => {
+            console.error('Fehler beim Erstellen des Screenshot-Tasks:', error);
+            alert('Es gab ein Problem beim Erstellen der Screenshots.');
+        });
+    }
+</script>
+
 </body>
 </html>

@@ -161,8 +161,8 @@ async def start_screenshot_task():
     asyncio.create_task(run_screenshot_task(task_id, selected_links))
     logger.info(f"Screenshot-Task gestartet für Task-ID: {task_id}")
 
-    # Weiterleitung zur Status-Seite
-    return jsonify({'redirect': url_for('main.screenshot_status', task_id=task_id)}), 200
+    # Rückgabe der task_id an den Client
+    return jsonify({'task_id': task_id}), 200
 
 
 # Route zur Anzeige des Screenshot-Status
