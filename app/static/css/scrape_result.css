@@ -1,157 +1,247 @@
-  /* Grundlegende Einstellungen */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+/* Grundlegende Einstellungen */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #f4f7f9;
-            color: #2c3e50;
-            margin: 0;
-            padding: 20px;
-        }
+html, body {
+    height: 100%;
+}
 
-        /* Navbar-Stil */
-        .navbar {
-            background-color: #3498db;
-            padding: 15px;
-            color: white;
-            text-align: center;
-            font-size: 1.5em;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f4f7f9;
+    color: #2c3e50;
+    margin: 0;
+    padding: 0; /* Entferne Padding, um Flexbox korrekt zu nutzen */
+}
 
-        /* Container-Stil */
-        .container {
-            display: flex;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+/* Navbar-Stil */
+.navbar {
+    background-color: #3498db;
+    padding: 15px;
+    color: white;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-bottom: 0; /* Entferne margin-bottom */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        .list-container {
-            flex: 1;
-            padding-right: 20px;
-        }
+.back-button {
+    color: white;
+    text-decoration: underline;
+    margin-left: 20px;
+    font-size: 0.8em;
+    cursor: pointer;
+}
 
-        .selected-links-container {
-            flex: 1;
-            padding-left: 20px;
-            background-color: #ecf0f1;
-            border-radius: 10px;
-            padding: 20px;
-            position: relative;
-        }
+.back-button:hover {
+    color: #ecf0f1;
+}
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 2em;
-            color: #3498db;
-        }
+/* Container-Stil */
+.container {
+    display: flex;
+    gap: 20px;
+    flex: 1; /* Nimmt den verbleibenden Platz ein */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Verhindert Überlauf */
+}
 
-        /* Stil für die Tabelle */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+.list-container, .selected-links-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto; /* Ermöglicht Scrollen bei Überlauf */
+}
 
-        th, td {
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
+.selected-links-container {
+    background-color: #ecf0f1;
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+}
 
-        th {
-            background-color: #ecf0f1;
-            color: #2c3e50;
-            font-weight: 600;
-        }
+/* Überschriften */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2em;
+    color: #3498db;
+}
 
-        /* Kinder-Elemente verstecken */
-        .child-row {
-            display: none;
-        }
+/* Stil für die Tabelle */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
 
-        /* Stil für das Label (Pfeil) */
-        .toggle-btn-label {
-            cursor: pointer;
-        }
+th, td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
 
-        .toggle-btn-label::before {
-            content: "►"; /* Pfeil für geschlossenes Menü */
-            display: inline-block;
-            margin-right: 10px;
-            color: #3498db;
-        }
+th {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    font-weight: 600;
+}
 
-        .toggle-btn-label.expanded::before {
-            content: "▼"; /* Pfeil für geöffnetes Menü */
-        }
+/* Kinder-Elemente verstecken */
+.child-row {
+    display: none;
+}
 
-        /* Links in der Tabelle */
-        a.toggle-link {
-            color: #2980b9;
-            text-decoration: none;
-            font-weight: 500;
-        }
+/* Stil für das Label (Pfeil) */
+.toggle-btn-label {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 5px;
+}
 
-        a.toggle-link:hover {
-            text-decoration: underline;
-        }
+.toggle-btn-label::before {
+    content: "►"; /* Pfeil für geschlossenes Menü */
+    display: inline-block;
+    margin-right: 10px;
+    color: #3498db;
+}
 
-        input[type="checkbox"] {
-            transform: scale(1.2);
-            cursor: pointer;
-        }
+.toggle-btn-label.expanded::before {
+    content: "▼"; /* Pfeil für geöffnetes Menü */
+}
 
-        /* Stil für den Screenshot-Button */
-        #screenshot-button {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            text-align: center;
-            margin-top: 20px;
-            width: 100%;
-            transition: background-color 0.3s ease;
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
+/* Links in der Tabelle */
+a.toggle-link {
+    color: #2980b9;
+    text-decoration: none;
+    font-weight: 500;
+}
 
-        #screenshot-button:hover {
-            background-color: #1e8449;
-        }
+a.toggle-link:hover {
+    text-decoration: underline;
+}
 
-        /* Responsive Anpassungen */
-        @media (max-width: 768px) {
-            th, td {
-                padding: 10px;
-            }
+input[type="checkbox"] {
+    transform: scale(1.2);
+    cursor: pointer;
+}
 
-            h2 {
-                font-size: 1.5em;
-            }
+/* Stil für den Screenshot-Button */
+#screenshot-button {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 20px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
-            #screenshot-button {
-                padding: 10px;
-                font-size: 14px;
-            }
+#screenshot-button:hover {
+    background-color: #1e8449;
+}
 
-            .container {
-                flex-direction: column;
-            }
-        }
+/* Responsive Anpassungen */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .container {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .list-container, .selected-links-container {
+        padding: 10px;
+    }
+
+    th, td {
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+    #screenshot-button {
+        padding: 10px;
+        font-size: 14px;
+        position: static;
+        transform: none;
+        margin-top: 20px;
+    }
+
+    .selected-links-container {
+        padding-bottom: 60px; /* Platz für den Screenshot-Button */
+    }
+}
+
+/* Zusätzliche Stile für ausgewählte Links */
+.selected-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #dff0d8;
+    border: 1px solid #d6e9c6;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.selected-link a {
+    flex: 1;
+    margin-right: 10px;
+    color: #27ae60;
+    text-decoration: none;
+}
+
+.selected-link a:hover {
+    text-decoration: underline;
+}
+
+.remove-link {
+    background: none;
+    border: none;
+    color: #c0392b;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+.remove-link:hover {
+    color: #e74c3c;
+}
+
+/* Ladeindikator Stil */
+#loading-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+}

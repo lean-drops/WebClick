@@ -10,50 +10,52 @@
 <body>
 
     <!-- Navbar -->
-    <div class="navbar">
-        Scraping Ergebnisse
+    <header class="navbar">
+        <div>Scraping Ergebnisse</div>
+        <!-- Zurück zum Index Button -->
+        <a href="{{ url_for('main.index') }}" class="back-button">Zurück zum Index</a>
+    </header>
+
+<main class="container">
+    <!-- Container für die Liste -->
+    <div class="list-container">
+        <h2>{{ main_link_title }}</h2> <!-- Dynamischer Titel aus dem Hauptlink -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Link</th>
+                    <th>Auswahl</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Hauptseite zuerst immer anzeigen -->
+                <tr class="parent-row">
+                    <td>
+                        <a href="{{ main_link_url }}" class="toggle-link" target="_blank">{{ main_link_title }}</a>
+                    </td>
+                    <td><input type="checkbox" name="selected_links" value="{{ main_link_url }}"></td>
+                </tr>
+
+                <!-- Andere Seiten (ohne Redundanz) -->
+                {% set displayed_pages = [] %}
+                {% for page_id, page_data in url_mapping.items() %}
+                    {% if page_data.level == 1 and page_data.url not in displayed_pages %}
+                    <tr class="parent-row">
+                        <td>
+                            {% if page_data.children|length > 0 %}
+                            <span class="toggle-btn-label" data-page-id="{{ page_id }}" role="button" aria-expanded="false" aria-controls="child-{{ page_id }}"></span>
+                            {% endif %}
+                            <a href="{{ page_data.url }}" class="toggle-link" target="_blank">{{ page_data.title }}</a>
+                        </td>
+                        <td><input type="checkbox" name="selected_links" value="{{ page_data.url }}"></td>
+                    </tr>
+                    {% set displayed_pages = displayed_pages.append(page_data.url) %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
-    <div class="container">
-        <!-- Container für die Liste -->
-        <div class="list-container">
-            <h2>Liste der Links</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Link</th>
-                        <th>Auswahl</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for page_id, page_data in url_mapping.items() %}
-                        {% if page_data.level == 1 %}
-                        <tr class="parent-row">
-                            <td>
-                                {% if page_data.children|length > 0 %}
-                                <!-- Zeige den Toggle-Pfeil nur, wenn es Kinder gibt -->
-                                <span class="toggle-btn-label" data-page-id="{{ page_id }}"></span>
-                                {% endif %}
-                                <a href="{{ page_data.url }}" class="toggle-link" target="_blank" data-page-id="{{ page_id }}">{{ page_data.title }} ({{ page_id }})</a>
-                            </td>
-                            <td><input type="checkbox" name="selected_links" value="{{ page_data.url }}"></td>
-                        </tr>
-                        <!-- Kinder-Elemente -->
-                        {% for child_id in page_data.children %}
-                            {% if child_id in url_mapping %}
-                            <tr class="child-row child-of-{{ page_id }}">
-                                <td style="padding-left: 40px;">
-                                    <a href="{{ url_mapping[child_id].url }}" class="toggle-link" target="_blank">{{ url_mapping[child_id].title }} ({{ child_id }})</a>
-                                </td>
-                                <td><input type="checkbox" name="selected_links" value="{{ url_mapping[child_id].url }}"></td>
-                            </tr>
-                            {% endif %}
-                        {% endfor %}
-                        {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
 
         <!-- Container für die ausgewählten Links -->
         <div class="selected-links-container">
@@ -66,88 +68,185 @@
             <!-- Screenshot-Button -->
             <button id="screenshot-button" onclick="takeScreenshot()">Screenshots erstellen</button>
         </div>
-    </div>
+    </main>
 
     <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const toggleButtons = document.querySelectorAll('.toggle-btn-label');
-    const toggleLinks = document.querySelectorAll('.toggle-link');
-    const selectedLinksContainer = document.getElementById('selected-links');
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButtons = document.querySelectorAll('.toggle-btn-label');
+            const selectedLinksContainer = document.getElementById('selected-links');
+            const checkboxes = document.querySelectorAll('input[name="selected_links"]');
 
-    toggleButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const pageId = this.getAttribute('data-page-id');
-            toggleChildren(pageId, this);
-        });
+            // Event-Listener für Toggle-Buttons
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const pageId = this.getAttribute('data-page-id');
+                    toggleChildren(pageId, this);
+                });
+            });
+
+            // Event-Listener für Checkboxen
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+        const linkUrl = this.value;
+        const linkId = `selected-${hashCode(linkUrl)}`;
+
+        if (this.checked) {
+            // Link hinzufügen
+            const linkDiv = document.createElement('div');
+            linkDiv.classList.add('selected-link');
+            linkDiv.id = linkId;
+
+            const linkAnchor = document.createElement('a');
+            linkAnchor.href = linkUrl;
+            linkAnchor.textContent = linkUrl;
+            linkAnchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                openWindowHalfScreen(linkUrl);
+            });
+
+            const removeButton = document.createElement('button');
+            removeButton.classList.add('remove-link');
+            removeButton.innerHTML = '&times;';
+            removeButton.addEventListener('click', function() {
+                checkbox.checked = false; // Checkbox deaktivieren
+                selectedLinksContainer.removeChild(linkDiv);
+            });
+
+            linkDiv.appendChild(linkAnchor);
+            linkDiv.appendChild(removeButton);
+            selectedLinksContainer.appendChild(linkDiv);
+        } else {
+            // Link entfernen
+            const linkDiv = document.getElementById(linkId);
+            if (linkDiv) {
+                selectedLinksContainer.removeChild(linkDiv);
+            }
+        }
     });
+});
 
-    toggleLinks.forEach(link => {
-        link.addEventListener('click', function (e) {
-            e.preventDefault(); // Verhindere das Standardverhalten
-            const pageUrl = this.getAttribute('data-page-url');
+            function toggleChildren(pageId, toggleElement) {
+                const childRows = document.querySelectorAll('.child-of-' + pageId);
+                const isExpanded = toggleElement.classList.toggle('expanded');
+                toggleElement.setAttribute('aria-expanded', isExpanded);
 
-            // Öffne das Fenster in der rechten Bildschirmhälfte
-            const width = window.screen.width / 2;
-            const height = window.screen.height;
-            const newWindow = window.open(pageUrl, '_blank', `width=${width},height=${height},left=${width},top=0`);
+                childRows.forEach(row => {
+                    row.style.display = isExpanded ? 'table-row' : 'none';
+                });
+            }
 
-            // Füge den ausgewählten Link zum rechten Container hinzu
-            const selectedLink = document.createElement('div');
-            selectedLink.textContent = pageUrl;
-            selectedLinksContainer.appendChild(selectedLink);
-        });
-    });
+            // Funktion zur Generierung eines einfachen Hashcodes für eindeutige IDs
+            function hashCode(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    hash = (hash << 5) - hash + str.charCodeAt(i);
+                    hash |= 0; // Convert to 32bit integer
+                }
+                return Math.abs(hash).toString();
+            }
 
-    function toggleChildren(pageId, toggleElement) {
-        const childRows = document.querySelectorAll('.child-of-' + pageId);
-
-        childRows.forEach(row => {
-            if (row.style.display === 'none' || row.style.display === '') {
-                row.style.display = 'table-row';
-                if (toggleElement) toggleElement.classList.add('expanded');
-            } else {
-                row.style.display = 'none';
-                if (toggleElement) toggleElement.classList.remove('expanded');
+            // Funktion zum Öffnen eines Fensters, das die rechte Hälfte des Bildschirms abdeckt
+            function openWindowHalfScreen(url) {
+                const width = window.screen.width / 2;
+                const height = window.screen.height;
+                window.open(url, '_blank', `width=${width},height=${height},left=${width},top=0`);
             }
         });
-    }
-});
-    function takeScreenshot() {
-        const checkboxes = document.querySelectorAll('input[name="selected_links"]:checked');
-        let selectedLinks = [];
 
-        checkboxes.forEach((checkbox) => {
-            selectedLinks.push(checkbox.value);
-        });
+        async function takeScreenshot() {
+            const checkboxes = document.querySelectorAll('input[name="selected_links"]:checked');
+            let selectedLinks = [];
 
-        if (selectedLinks.length === 0) {
-            alert('Bitte wählen Sie mindestens einen Link aus.');
-            return;
+            checkboxes.forEach((checkbox) => {
+                selectedLinks.push(checkbox.value);
+            });
+
+            if (selectedLinks.length === 0) {
+                alert('Bitte wählen Sie mindestens einen Link aus.');
+                return;
+            }
+
+            // Ladeanzeige einblenden
+            const loadingIndicator = document.createElement('div');
+            loadingIndicator.id = 'loading-indicator';
+            loadingIndicator.textContent = 'Erstelle Screenshots...';
+            document.body.appendChild(loadingIndicator);
+
+            try {
+                // AJAX-Anfrage, um die ausgewählten Links an den Server zu senden
+                const response = await fetch('/start_screenshot_task', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ selected_links: selectedLinks }),
+                });
+
+                const data = await response.json();
+
+                if (data.task_id) {
+                    const taskId = data.task_id;
+                    // Beginne mit dem Polling des Task-Status
+                    await pollTaskStatus(taskId);
+                } else {
+                    document.body.removeChild(loadingIndicator);
+                    alert('Fehler beim Starten des Screenshot-Tasks.');
+                }
+            } catch (error) {
+                document.body.removeChild(loadingIndicator);
+                console.error('Fehler beim Erstellen des Screenshot-Tasks:', error);
+                alert('Es gab ein Problem beim Erstellen der Screenshots.');
+            }
         }
 
-        // AJAX-Anfrage, um die ausgewählten Links an den Server zu senden
-        fetch('/start_screenshot_task', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ selected_links: selectedLinks }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.task_id) {
-                // Weiterleitung zur Screenshot-Statusseite mit der task_id
-                window.location.href = `/screenshot_result/${data.task_id}`;
-            } else {
-                alert('Fehler beim Starten des Screenshot-Tasks.');
-            }
-        })
-        .catch(error => {
-            console.error('Fehler beim Erstellen des Screenshot-Tasks:', error);
-            alert('Es gab ein Problem beim Erstellen der Screenshots.');
-        });
-    }
-</script>
+        function pollTaskStatus(taskId) {
+            const pollingInterval = 3000; // 3 Sekunden
+            const maxAttempts = 20; // Maximal 20 Versuche (60 Sekunden)
+            let attempts = 0;
+
+            return new Promise((resolve, reject) => {
+                const intervalId = setInterval(async () => {
+                    try {
+                        const response = await fetch(`/get_screenshot_status/${taskId}`);
+                        const data = await response.json();
+                        const status = data.status;
+
+                        if (status === 'completed') {
+                            clearInterval(intervalId);
+                            window.location.href = `/screenshot_status/${taskId}`;
+                            resolve();
+                        } else if (status === 'failed') {
+                            clearInterval(intervalId);
+                            document.body.removeChild(document.getElementById('loading-indicator'));
+                            alert('Der Screenshot-Task ist fehlgeschlagen.');
+                            reject('Task failed');
+                        } else if (status === 'not_found') {
+                            clearInterval(intervalId);
+                            document.body.removeChild(document.getElementById('loading-indicator'));
+                            alert('Task nicht gefunden.');
+                            reject('Task not found');
+                        } else {
+                            attempts++;
+                            if (attempts >= maxAttempts) {
+                                clearInterval(intervalId);
+                                document.body.removeChild(document.getElementById('loading-indicator'));
+                                alert('Der Screenshot-Task hat zu lange gedauert. Bitte versuche es erneut.');
+                                reject('Task timed out');
+                            }
+                            // Optional: Update des Ladeindikators mit Statusinformationen
+                            console.log(`Task Status: ${status}`);
+                        }
+                    } catch (error) {
+                        clearInterval(intervalId);
+                        document.body.removeChild(document.getElementById('loading-indicator'));
+                        console.error('Fehler beim Abrufen des Task-Status:', error);
+                        alert('Es gab ein Problem beim Überprüfen des Task-Status.');
+                        reject(error);
+                    }
+                }, pollingInterval);
+            });
+        }
+    </script>
 
 </body>
 </html>

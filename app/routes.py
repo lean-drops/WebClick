@@ -106,6 +106,7 @@ async def get_status(task_id):
     return jsonify(response_data)
 
 # Route zur Anzeige des Scraping-Ergebnisses
+# Route zur Anzeige des Scraping-Ergebnisses
 @main.route('/scrape_result/<task_id>', methods=['GET'])
 async def scrape_result(task_id):
     version = str(int(time.time()))  # Zeitstempel für Caching
@@ -134,12 +135,19 @@ async def scrape_result(task_id):
     # Erzeuge die Baumstruktur für das Template
     tree_html = render_links_recursive(url_mapping)
 
+    # Extrahiere den Hauptlink (erste Seite im Mapping)
+    main_link_id = list(url_mapping.keys())[0]  # Annahme: Der Hauptlink ist der erste Eintrag
+    main_link_title = url_mapping[main_link_id].get('title')
+    main_link_url = url_mapping[main_link_id].get('url')
+
     # Render the template and pass the 'tree_html' and 'version'
     return await render_template(
         'scrape_result.html',
         tree_html=tree_html,
         url_mapping=url_mapping,  # Füge url_mapping hinzu
-        version=version
+        version=version,
+        main_link_title=main_link_title,  # Hauptlink-Titel an das Template übergeben
+        main_link_url=main_link_url  # Hauptlink-URL an das Template übergeben
     )
 
 # Route zum Starten des Screenshot-Tasks
