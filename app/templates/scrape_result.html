@@ -112,38 +112,42 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
-        function takeScreenshot() {
-            const checkboxes = document.querySelectorAll('input[name="selected_links"]:checked');
-            let selectedLinks = [];
+    function takeScreenshot() {
+        const checkboxes = document.querySelectorAll('input[name="selected_links"]:checked');
+        let selectedLinks = [];
 
-            checkboxes.forEach((checkbox) => {
-                selectedLinks.push(checkbox.value);
-            });
+        checkboxes.forEach((checkbox) => {
+            selectedLinks.push(checkbox.value);
+        });
 
-            if (selectedLinks.length === 0) {
-                alert('Bitte wählen Sie mindestens einen Link aus.');
-                return;
-            }
-
-            // AJAX-Anfrage, um die ausgewählten Links an den Server zu senden
-            fetch('/start_screenshot_task', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ selected_links: selectedLinks }),
-            })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                }
-            })
-            .catch(error => {
-                console.error('Fehler beim Erstellen des Screenshot-Tasks:', error);
-                alert('Es gab ein Problem beim Erstellen der Screenshots.');
-            });
+        if (selectedLinks.length === 0) {
+            alert('Bitte wählen Sie mindestens einen Link aus.');
+            return;
         }
-    </script>
+
+        // AJAX-Anfrage, um die ausgewählten Links an den Server zu senden
+        fetch('/start_screenshot_task', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ selected_links: selectedLinks }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.task_id) {
+                // Weiterleitung zur Screenshot-Statusseite mit der task_id
+                window.location.href = `/screenshot_result/${data.task_id}`;
+            } else {
+                alert('Fehler beim Starten des Screenshot-Tasks.');
+            }
+        })
+        .catch(error => {
+            console.error('Fehler beim Erstellen des Screenshot-Tasks:', error);
+            alert('Es gab ein Problem beim Erstellen der Screenshots.');
+        });
+    }
+</script>
 
 </body>
 </html>
