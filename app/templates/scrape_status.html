@@ -4,15 +4,104 @@
     <meta charset="UTF-8">
     <title>Daten werden gesammelt...</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Perfektes Status-Design */
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 1.2px;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        .error {
+            color: #ff4d4f;
+            font-weight: 600;
+            display: none;
+        }
+
+        .loader {
+            border: 8px solid rgba(255, 255, 255, 0.2);
+            border-top: 8px solid #fff;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Anpassungen */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            p {
+                font-size: 1em;
+            }
+
+            .loader {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
 </head>
 <body>
 
     <div class="loading-container">
         <div class="loader"></div>
-        <h1>Wir sammeln deine gesuchten Daten!</h1>
-        <p>Bitte hab einen Moment Geduld. Wir sind dabei, alle Informationen für dich zusammenzustellen.</p>
-        <p class="error" style="display: none;">Ups! Etwas ist schiefgelaufen. Bitte versuche es später erneut.</p>
+        <h1>Wir sammeln deine Daten!</h1>
+        <p>Bitte hab einen Moment Geduld. Wir stellen alle Informationen für dich zusammen.</p>
+        <p class="error">Ups! Etwas ist schiefgelaufen. Bitte versuche es später erneut.</p>
     </div>
 
     <script>
