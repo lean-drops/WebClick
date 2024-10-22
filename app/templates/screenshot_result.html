@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <title>Screenshot Result</title>
     <style>
-        /* screenshot_ready.css */
-
-        /* Basis-Reset für konsistente Darstellung */
+        /* Reset */
         * {
             margin: 0;
             padding: 0;
@@ -14,8 +12,8 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #89f7fe, #96b8e3);
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -24,72 +22,53 @@
             padding: 20px;
         }
 
-        .container {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            padding: 50px;
-            border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            max-width: 600px;
-            width: 100%;
-            transition: transform 0.3s ease;
-        }
-
         h1 {
-            font-size: 2.5em;
+            font-size: 2.2em;
             margin-bottom: 20px;
-            color: #4a90e2;
-            letter-spacing: 1.5px;
+            color: #3b3b3b;
         }
 
         p {
-            font-size: 1.3em;
-            margin-bottom: 30px;
-            color: #444;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #555;
         }
 
         a.button {
             display: inline-block;
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #67b26f, #4ca2cd);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            opacity: 0.9;
+            padding: 10px 30px;
+            background-color: transparent;
+            color: #0073e6;
+            text-decoration: underline;
+            font-size: 1em;
+            transition: color 0.2s ease, text-decoration 0.2s ease;
         }
 
         a.button:hover {
-            transform: translateY(-5px);
-            opacity: 1;
+            color: #005bb5;
+            text-decoration: none;
         }
 
-        a.button:active {
-            background: linear-gradient(135deg, #45834b, #3571a5);
-            transform: translateY(0);
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
         }
 
         /* Responsive Design */
         @media (max-width: 600px) {
-            .container {
-                padding: 30px;
-            }
-
             h1 {
                 font-size: 1.8em;
             }
 
             p {
-                font-size: 1.1em;
+                font-size: 1em;
             }
 
             a.button {
-                padding: 12px 25px;
-                font-size: 1em;
+                padding: 8px 25px;
+                font-size: 0.9em;
             }
         }
     </style>
@@ -106,12 +85,18 @@
     </script>
 </head>
 <body>
-    <div class="container">
+    <div>
         <h1>Screenshots sind bereit!</h1>
         <p>Geben Sie einen Ordner- und Dateinamen ein und laden Sie die Screenshots als PDF herunter.</p>
-        <a href="{{ url_for('main.download_screenshots', task_id=task_id) }}" class="button" onclick="promptFileName(event)">Screenshots herunterladen</a>
-        <br><br>
-        <a href="{{ url_for('main.index') }}" class="button">Zurück zum Index</a>
+
+        <div class="button-group">
+            <!-- Button zum Herunterladen der Screenshots -->
+            <a href="{{ url_for('main.download_screenshots', task_id=task_id) }}" class="button" onclick="promptFileName(event)">Screenshots herunterladen</a>
+            <!-- Button zum Zurückkehren zur Scrape-Result-Seite -->
+            <a href="{{ url_for('main.scrape_result', task_id=task_id) }}" class="button">Zurück zu den Scraping-Ergebnissen</a>
+            <!-- Button zum Zurückkehren zum Index -->
+            <a href="{{ url_for('main.index') }}" class="button">Zurück zum Index</a>
+        </div>
     </div>
 </body>
 </html>
