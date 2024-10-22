@@ -1,21 +1,12 @@
 import os
-import socket
 import logging
-from importlib import reload
 from app import create_app
-import urllib3
-from contextlib import closing
-import hypercorn.asyncio
 from dotenv import load_dotenv
-import asyncio
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Disable SSL warnings for unverified HTTPS requests
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-# Initialize the Quart app with debug mode based on environment
+# Initialize the Flask app with debug mode based on environment
 app = create_app()
 app.debug = os.getenv('DEBUG', 'True').lower() in ['true', '1', 't']
 
@@ -34,45 +25,6 @@ def configure_logging():
 
 logger = configure_logging()
 
-def ensure_module_reloaded(module_name):
-    """Reload a module to ensure the latest version is used."""
-    try:
-        logger.debug(f"Reloading module: {module_name}")
-        module = __import__(module_name)
-        reload(module)
-        logger.debug(f"Successfully reloaded module: {module_name}")
-    except Exception as e:
-        logger.exception(f"Failed to reload module {module_name}", exc_info=True)
-
-def find_free_port(default_port=5000, max_attempts=10):
-    """Find an available port starting from the default, with retries."""
-    for attempt in range(max_attempts):
-        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-            if sock.connect_ex(('127.0.0.1', default_port)) != 0:
-                logger.info(f"Port {default_port} is free.")
-                return default_port
-            logger.warning(f"Port {default_port} is occupied. Trying port {default_port + 1}.")
-            default_port += 1
-    raise RuntimeError(f"Could not find a free port after {max_attempts} attempts.")
-
-async def start_application():
-    """Start the Quart application using Hypercorn in an async environment."""
-    # Ensure 'app' module is reloaded to reflect any recent changes
-    ensure_module_reloaded('app')
-
-    # Find an available port or default to 5000
-    port = find_free_port(int(os.getenv('PORT', 5000)))
-
-    # Start the app using Hypercorn ASGI server
-    config = hypercorn.Config()
-    config.bind = [f"127.0.0.1:{port}"]
-
-    try:
-        logger.info(f"Starting application on port {port} with debug mode {'enabled' if app.debug else 'disabled'}.")
-        await hypercorn.asyncio.serve(app, config)
-    except Exception as e:
-        logger.exception(f"Failed to start application: {e}", exc_info=True)
-        raise
-
 if __name__ == '__main__':
-    asyncio.run(start_application())
+    logger.info(f"Starting Flask application with debug mode {'enabled' if app.debug else 'disabled'}.")
+    app.run(host='0.0.0.0', port=int(os.getenv('PORT', 8022)))
