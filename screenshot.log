@@ -149,3 +149,60 @@
 2024-10-22 11:52:37,431 - DEBUG - Using selector: KqueueSelector
 2024-10-22 11:52:37,431 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
 2024-10-22 11:52:37,432 - INFO - 192.168.1.18 - - [22/Oct/2024 11:52:37] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:52:40,432 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:52:40,433 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:52:40,433 - INFO - 192.168.1.18 - - [22/Oct/2024 11:52:40] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:52:43,433 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:52:43,433 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:52:43,434 - INFO - 192.168.1.18 - - [22/Oct/2024 11:52:43] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:52:46,432 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:52:46,433 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:52:46,434 - INFO - 192.168.1.18 - - [22/Oct/2024 11:52:46] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:52:49,432 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:52:49,432 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:52:49,433 - INFO - 192.168.1.18 - - [22/Oct/2024 11:52:49] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:52:52,432 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:52:52,433 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:52:52,434 - INFO - 192.168.1.18 - - [22/Oct/2024 11:52:52] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:52:55,433 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:52:55,434 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:52:55,435 - INFO - 192.168.1.18 - - [22/Oct/2024 11:52:55] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:52:58,431 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:52:58,431 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:52:58,432 - INFO - 192.168.1.18 - - [22/Oct/2024 11:52:58] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:53:01,434 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:53:01,435 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:53:01,437 - INFO - 192.168.1.18 - - [22/Oct/2024 11:53:01] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:53:04,433 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:53:04,435 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:53:04,436 - INFO - 192.168.1.18 - - [22/Oct/2024 11:53:04] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:53:07,435 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:53:07,436 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:53:07,437 - INFO - 192.168.1.18 - - [22/Oct/2024 11:53:07] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:53:10,434 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:53:10,434 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:53:10,435 - INFO - 192.168.1.18 - - [22/Oct/2024 11:53:10] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:53:13,433 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:53:13,434 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:53:13,434 - INFO - 192.168.1.18 - - [22/Oct/2024 11:53:13] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:53:16,433 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:53:16,433 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:53:16,433 - INFO - 192.168.1.18 - - [22/Oct/2024 11:53:16] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:53:19,435 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:53:19,435 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:53:19,436 - INFO - 192.168.1.18 - - [22/Oct/2024 11:53:19] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:53:22,434 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:53:22,435 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:53:22,436 - INFO - 192.168.1.18 - - [22/Oct/2024 11:53:22] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:53:25,433 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:53:25,433 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:53:25,434 - INFO - 192.168.1.18 - - [22/Oct/2024 11:53:25] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:53:28,433 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:53:28,434 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:53:28,435 - INFO - 192.168.1.18 - - [22/Oct/2024 11:53:28] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:53:31,432 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:53:31,433 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:53:31,433 - INFO - 192.168.1.18 - - [22/Oct/2024 11:53:31] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
+2024-10-22 11:53:34,434 - DEBUG - Using selector: KqueueSelector
+2024-10-22 11:53:34,435 - DEBUG - Task 01f27ca5a35c29120b2f139e61b8edd2 Status: {'status': 'running', 'error': None, 'url_mapping': None}
+2024-10-22 11:53:34,436 - INFO - 192.168.1.18 - - [22/Oct/2024 11:53:34] "GET /get_status/01f27ca5a35c29120b2f139e61b8edd2 HTTP/1.1" 200 -
