@@ -25,22 +25,9 @@ ch.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
 
-# Füge den Handler dem Logger hinzu
-logger.addHandler(ch)
-
-# ======================= URL Liste =======================
-
-def get_urls() -> List[str]:
-    """
-    Gibt die Liste der URLs zurück, die konvertiert werden sollen.
-    """
-    try:
-        from app.processing.listen import urls  # Stelle sicher, dass listen.py die URLs enthält
-        logger.info(f"{len(urls)} URLs für die Verarbeitung bereitgestellt.")
-        return urls
-    except ImportError as e:
-        logger.error(f"Fehler beim Importieren von URLs: {e}")
-        return []
+# Füge den Handler dem Logger hinzu, falls noch nicht vorhanden
+if not logger.handlers:
+    logger.addHandler(ch)
 
 # ======================= Hilfsfunktionen =======================
 
@@ -52,7 +39,7 @@ def sanitize_filename(url: str) -> str:
     path = parsed_url.path.replace('/', '_').strip('_') or 'root'
     hash_digest = hashlib.sha256(url.encode()).hexdigest()[:10]  # Kurzer Hash zur Einzigartigkeit
     filename = f"{parsed_url.netloc}_{path}_{hash_digest}.pdf"
-    logger.debug(f"Sanitizer Filename: {filename}")
+    logger.debug(f"Sanitized Filename: {filename}")
     return filename
 
 def extract_domain(url: str) -> str:
@@ -63,18 +50,46 @@ def extract_domain(url: str) -> str:
     if domain.startswith('www.'):
         domain = domain[4:]
     domain_main = domain.split('.')[0]
-    logger.debug(f"Extrahierte Domain: {domain_main}")
+    logger.debug(f"Extracted Domain: {domain_main}")
     return domain_main
 
-def setup_directories():
+def get_urls() -> List[str]:
+    """
+    Gibt die Liste der URLs zurück, die konvertiert werden sollen.
+    """
+    try:
+        from app.listen import urls  # Stelle sicher, dass listen.py die URLs enthält
+        logger.info(f"{len(urls)} URLs für die Verarbeitung bereitgestellt.")
+        return urls
+    except ImportError as e:
+        logger.error(f"Fehler beim Importieren von URLs: {e}")
+        return []
+
+def setup_directories(output_directory: str):
     """
     Richtet die erforderlichen Ausgabe-Verzeichnisse ein.
     """
-    individual_collapsed = os.path.join(OUTPUT_DIRECTORY, 'individual_pdfs_collapsed')
-    individual_expanded = os.path.join(OUTPUT_DIRECTORY, 'individual_pdfs_expanded')
+    individual_collapsed = os.path.join(output_directory, 'individual_pdfs_collapsed')
+    individual_expanded = os.path.join(output_directory, 'individual_pdfs_expanded')
     os.makedirs(individual_collapsed, exist_ok=True)
     os.makedirs(individual_expanded, exist_ok=True)
     logger.info(f"Ausgabe-Verzeichnisse eingerichtet: {individual_collapsed}, {individual_expanded}")
+
+def load_js_file(file_path: str) -> str:
+    """
+    Lädt den Inhalt eines JS-Files und gibt ihn als String zurück.
+    """
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            js_content = file.read()
+        logger.debug(f"JS-Datei erfolgreich geladen: {file_path}")
+        return js_content
+    except FileNotFoundError:
+        logger.error(f"JS-Datei nicht gefunden: {file_path}")
+        return ""
+    except Exception as e:
+        logger.error(f"Fehler beim Laden der JS-Datei {file_path}: {e}")
+        return ""
 
 # ======================= Erweiterungsfunktionen =======================
 
@@ -129,8 +144,6 @@ async def remove_unwanted_elements(page: Page, expanded: bool = False):
     """
     logger.info("Entferne unerwünschte Elemente wie Banner und Pop-ups.")
     try:
-        from app.processing.listen import selectors  # Stelle sicher, dass listen.py die Selektoren enthält
-
         # Basis-Selektoren, die immer entfernt werden sollen
         base_selectors = [
             'div[class*="cookie"]',
@@ -170,14 +183,15 @@ async def remove_unwanted_elements(page: Page, expanded: bool = False):
             ])
 
         # Kombiniere die Selektoren
-        all_selectors = base_selectors + selectors + conditional_selectors
+        all_selectors = base_selectors + conditional_selectors
 
         # Entferne die ausgewählten Elemente, indem ihre Anzeige auf 'none' gesetzt wird
         if all_selectors:
+            selector_list = ', '.join(all_selectors)
             await page.evaluate(f"""
                 () => {{
-                    const selectors = {all_selectors};
-                    selectors.forEach(selector => {{
+                    const selectors = "{selector_list}";
+                    selectors.split(', ').forEach(selector => {{
                         const elements = document.querySelectorAll(selector);
                         elements.forEach(el => {{
                             el.style.display = 'none';
@@ -188,8 +202,6 @@ async def remove_unwanted_elements(page: Page, expanded: bool = False):
             logger.debug(f"Entfernte Elemente: {all_selectors}")
         else:
             logger.warning("Keine Selektoren zum Entfernen gefunden.")
-    except ImportError:
-        logger.error("Fehler beim Importieren von Selektoren aus listen.py.")
     except Exception as e:
         logger.error(f"Fehler beim Entfernen unerwünschter Elemente: {e}")
 
@@ -314,7 +326,7 @@ async def inject_custom_css(page: Page, expanded: bool = False):
                     }
                 }
             """)
-            logger.debug("CSS für den normal-Modus erfolgreich injiziert.")
+            logger.debug("CSS für den normalen Modus erfolgreich injiziert.")
         else:
             await page.add_style_tag(content="""
                 /* Optimiere das Layout für den expanded-Modus */
@@ -364,7 +376,7 @@ async def main_test():
     logger.info("Starte Haupttestfunktion für prepare.py.")
 
     # Vorbereitung: Einrichtung der Verzeichnisse
-    setup_directories()
+    setup_directories(OUTPUT_DIRECTORY)
 
     # Lade die URLs
     urls = get_urls()
@@ -394,6 +406,10 @@ async def main_test():
                     "Chrome/94.0.4606.81 Safari/537.36"
                 )
             )
+
+            # Pfad zum externen JS-File
+            remove_elements_js_path = os.path.join(os.path.dirname(__file__), 'js', 'remove_elements.js')
+            remove_elements_js = load_js_file(remove_elements_js_path)
 
             for url in urls:
                 logger.info(f"Verarbeite URL: {url}")
@@ -432,10 +448,12 @@ async def main_test():
                     # Entferne unerwünschte Elemente im expanded-Modus (keine zusätzlichen)
                     await remove_unwanted_elements(page, expanded=True)
 
-                    # Entferne fixierte Elemente im expanded-Modus (falls notwendig)
-                    # In diesem Fall nicht notwendig, da Navigation beibehalten werden soll
+                    # Schritt 7: Entferne spezifische Elemente im erweiterten Modus
+                    if remove_elements_js:
+                        await page.evaluate(remove_elements_js)
+                        logger.info("Externes JS zum Entfernen von Elementen im expanded-Modus injiziert.")
 
-                    # Injezieren von benutzerdefiniertem CSS für den expanded-Modus
+                    # Schritt 8: Injezieren von benutzerdefiniertem CSS für den expanded-Modus
                     await inject_custom_css(page, expanded=True)
 
                     # Optional: Screenshot zur Überprüfung der Änderungen im expanded-Modus

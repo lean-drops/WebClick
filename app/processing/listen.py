@@ -1,7 +1,7 @@
 urls = [
     "https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html",
         "https://www.zh.ch/de/wirtschaft-arbeit/handelsregister/stiftung.html",
-"https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen.html"
+"https://www.zh.ch/de/direktion-der-justiz-und-des-innern/statistisches-amt.html"
 ]
 selectors = [
 ]
