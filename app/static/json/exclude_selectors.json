@@ -1,0 +1,13 @@
+{
+    "exclude_selectors": [
+        "#header",
+        ".important-class",
+        "div#specific-id",
+        "nav.main-navigation",
+        "footer",
+        ".keep-this-element",
+        "#specific-footer",
+        ".navigation-bar",
+        ".cookie"
+    ]
+}
