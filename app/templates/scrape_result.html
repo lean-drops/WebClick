@@ -6,6 +6,190 @@
     <title>Scraping Ergebnisse (Level 1 Links)</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/scrape_result.css', v=version) }}">
+    <style>
+        /* Basis-Stile */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #667eea;
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-button {
+            background-color: #fff;
+            color: #667eea;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #ddd;
+            color: #667eea;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .list-container, .selected-links-container {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .parent-row {
+            background-color: #eef2ff;
+        }
+
+        .child-row {
+            background-color: #f9f9f9;
+        }
+
+        .toggle-btn-label::before {
+            content: '▶';
+            display: inline-block;
+            margin-right: 8px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-btn-label.expanded::before {
+            transform: rotate(90deg);
+        }
+
+        /* Modal-Stile */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            position: relative;
+        }
+
+        .modal iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 25px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+        }
+
+        /* Responsive Anpassungen */
+        @media (max-width: 768px) {
+            .modal iframe {
+                height: 400px;
+            }
+
+            th, td {
+                padding: 10px 12px;
+            }
+        }
+
+        /* Stil für ausgewählte Links */
+        .selected-link {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            background-color: #eef2ff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .selected-link a {
+            color: #667eea;
+            text-decoration: none;
+            flex-grow: 1;
+        }
+
+        .selected-link .remove-link {
+            background-color: transparent;
+            border: none;
+            color: #ff4d4f;
+            font-size: 20px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        #convert-button {
+            background-color: #667eea;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        #convert-button:hover {
+            background-color: #5563c1;
+        }
+    </style>
 </head>
 <body>
 
@@ -17,9 +201,18 @@
     </header>
 
     <main class="container">
+        <!-- Modal für die Hauptwebsite -->
+        <div id="main-website-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 id="modal-title">{{ main_link_title }}</h2>
+                <iframe src="{{ main_link_url }}" title="{{ main_link_title }}"></iframe>
+            </div>
+        </div>
+
         <!-- Container für die Liste -->
         <div class="list-container">
-            <h2>Liste der Links</h2>
+            <h2>{{ main_link_title }}</h2>
             <table>
                 <thead>
                     <tr>
@@ -36,18 +229,23 @@
                                 <!-- Zeige den Toggle-Pfeil nur, wenn es Kinder gibt -->
                                 <span class="toggle-btn-label" data-page-id="{{ page_id }}" role="button" aria-expanded="false" aria-controls="child-{{ page_id }}"></span>
                                 {% endif %}
-                                <!-- Entfernt target="_blank" -->
-                                <a href="{{ page_data.url }}" class="toggle-link" data-page-id="{{ page_id }}">{{ page_data.title }}</a>
+                                <!-- Link zum Öffnen im Modal -->
+                                <a href="{{ page_data.url }}" class="toggle-link" data-page-id="{{ page_id }}" data-title="{{ page_data.title }}" data-url="{{ page_data.url }}">{{ page_data.title }}</a>
                             </td>
-                            <td><input type="checkbox" name="selected_links" value="{{ page_data.url }}"></td>
+                            <td>
+                                <input type="checkbox" name="selected_links" value="{{ page_data.url }}"
+                                    {% if page_data.url == main_link_url %}
+                                        checked disabled
+                                    {% endif %}>
+                            </td>
                         </tr>
                         <!-- Kinder-Elemente -->
                         {% for child_id in page_data.children %}
                             {% if child_id in url_mapping %}
                             <tr class="child-row child-of-{{ page_id }}" id="child-{{ page_id }}" style="display: none;">
                                 <td style="padding-left: 40px;">
-                                    <!-- Entfernt target="_blank" -->
-                                    <a href="{{ url_mapping[child_id].url }}" class="toggle-link" data-page-id="{{ page_id }}">{{ url_mapping[child_id].title }}</a>
+                                    <!-- Link zum Öffnen im Modal -->
+                                    <a href="{{ url_mapping[child_id].url }}" class="toggle-link" data-page-id="{{ page_id }}" data-title="{{ url_mapping[child_id].title }}" data-url="{{ url_mapping[child_id].url }}">{{ url_mapping[child_id].title }}</a>
                                 </td>
                                 <td><input type="checkbox" name="selected_links" value="{{ url_mapping[child_id].url }}"></td>
                             </tr>
@@ -72,6 +270,9 @@
         </div>
     </main>
 
+    <!-- Ladeindikator -->
+    <div id="loading-indicator">Starte PDF-Konvertierung...</div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const toggleButtons = document.querySelectorAll('.toggle-btn-label');
@@ -89,6 +290,35 @@
 
             // Event-Listener für Checkboxen
             checkboxes.forEach(checkbox => {
+                // Skip disabled checkboxes (main link)
+                if (checkbox.disabled) {
+                    // Da der Hauptlink bereits ausgewählt ist, füge ihn zur Anzeige hinzu
+                    const linkUrl = checkbox.value;
+                    const linkId = `selected-${hashCode(linkUrl)}`;
+
+                    const linkDiv = document.createElement('div');
+                    linkDiv.classList.add('selected-link');
+                    linkDiv.id = linkId;
+
+                    const linkAnchor = document.createElement('a');
+                    linkAnchor.href = linkUrl;
+                    linkAnchor.textContent = "{{ main_link_title }}"; // Anzeige des Titels statt URL
+                    linkAnchor.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        openModal(linkUrl, "{{ main_link_title }}");
+                    });
+
+                    const removeButton = document.createElement('button');
+                    removeButton.classList.add('remove-link');
+                    removeButton.innerHTML = '&times;';
+                    removeButton.disabled = true; // Entferne den Button, um das Entfernen zu verhindern
+
+                    linkDiv.appendChild(linkAnchor);
+                    linkDiv.appendChild(removeButton);
+                    selectedLinksContainer.appendChild(linkDiv);
+                    return; // Überspringe den Rest
+                }
+
                 checkbox.addEventListener('change', function () {
                     const linkUrl = this.value;
                     const linkId = `selected-${hashCode(linkUrl)}`;
@@ -101,10 +331,10 @@
 
                         const linkAnchor = document.createElement('a');
                         linkAnchor.href = linkUrl;
-                        linkAnchor.textContent = linkUrl;
+                        linkAnchor.textContent = getLinkTitle(linkUrl); // Funktion zur Ermittlung des Titels
                         linkAnchor.addEventListener('click', function(e) {
                             e.preventDefault();
-                            openWindowHalfScreen(linkUrl);
+                            openModal(linkUrl, this.parentElement.querySelector('a').textContent);
                         });
 
                         const removeButton = document.createElement('button');
@@ -132,8 +362,9 @@
             listLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault(); // Verhindert das Standardverhalten
-                    const url = this.href;
-                    openWindowHalfScreen(url);
+                    const url = this.getAttribute('data-url');
+                    const title = this.getAttribute('data-title');
+                    openModal(url, title);
                 });
             });
 
@@ -157,15 +388,48 @@
                 return Math.abs(hash).toString();
             }
 
-            // Funktion zum Öffnen eines Fensters, das die rechte Hälfte des Bildschirms abdeckt
-            function openWindowHalfScreen(url) {
-                const width = Math.floor(window.screen.width / 2);
-                const height = window.screen.height;
-                const left = width;
-                const top = 0;
-                const features = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`;
+            // Funktion zum Öffnen eines Modals mit der Hauptwebsite
+            function openModal(url, title) {
+                const modal = document.getElementById('main-website-modal');
+                const iframe = modal.querySelector('iframe');
+                const modalTitle = modal.querySelector('#modal-title');
+                iframe.src = url;
+                modalTitle.textContent = title;
+                modal.style.display = 'flex';
+            }
 
-                window.open(url, '_blank', features);
+            // Event-Listener zum Schließen des Modals
+            const closeModalBtn = document.querySelector('.close-modal');
+            closeModalBtn.addEventListener('click', function() {
+                const modal = document.getElementById('main-website-modal');
+                modal.style.display = 'none';
+                const iframe = modal.querySelector('iframe');
+                iframe.src = '';
+            });
+
+            // Schließe das Modal, wenn außerhalb des Inhalts geklickt wird
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('main-website-modal');
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                    const iframe = modal.querySelector('iframe');
+                    iframe.src = '';
+                }
+            });
+
+            // Funktion zur Ermittlung des Titels basierend auf der URL
+            function getLinkTitle(url) {
+                // Du kannst diese Funktion anpassen, um den Titel basierend auf der URL abzurufen
+                // Zum Beispiel könntest du die Titel aus dem DOM speichern oder anderweitig abrufen
+                // Hier einfach als Platzhalter:
+                return url;
+            }
+
+            // Öffne ein Fenster mit dem Hauptlink, wenn vorhanden
+            const mainLinkUrl = "{{ main_link_url }}";
+            const mainLinkTitle = "{{ main_link_title }}";
+            if (mainLinkUrl && mainLinkTitle && mainLinkUrl !== '#') {
+                openModal(mainLinkUrl, mainLinkTitle);
             }
         });
 
@@ -184,10 +448,8 @@
             }
 
             // Ladeanzeige einblenden
-            const loadingIndicator = document.createElement('div');
-            loadingIndicator.id = 'loading-indicator';
-            loadingIndicator.textContent = 'Starte PDF-Konvertierung...';
-            document.body.appendChild(loadingIndicator);
+            const loadingIndicator = document.getElementById('loading-indicator');
+            loadingIndicator.style.display = 'block';
 
             try {
                 console.log('Sende AJAX-Anfrage an /start_pdf_task');
@@ -207,16 +469,15 @@
                     const taskId = data.task_id;
                     window.location.href = `/pdf_status/${taskId}`;
                 } else {
-                    document.body.removeChild(loadingIndicator);
+                    loadingIndicator.style.display = 'none';
                     alert('Fehler beim Starten des PDF-Tasks.');
                 }
             } catch (error) {
-                document.body.removeChild(loadingIndicator);
+                loadingIndicator.style.display = 'none';
                 console.error('Fehler beim Erstellen des PDF-Tasks:', error);
                 alert('Es gab ein Problem beim Starten der PDF-Konvertierung.');
             }
         }
-
     </script>
 
 </body>

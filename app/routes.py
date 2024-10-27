@@ -12,8 +12,19 @@ from typing import List
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify, send_file, send_from_directory
 import json
 
-from app.processing.download import OUTPUT_DIRECTORY, PDFConverter, merge_pdfs_with_bookmarks, apply_ocr_to_all_pdfs, create_zip_archive
-from app.scraping_helpers import scrape_lock, scrape_tasks, run_scrape_task, render_links_recursive
+from app.processing.download import (
+    OUTPUT_DIRECTORY,
+    PDFConverter,
+    merge_pdfs_with_bookmarks,
+    apply_ocr_to_all_pdfs,
+    create_zip_archive
+)
+from app.scraping_helpers import (
+    scrape_lock,
+    scrape_tasks,
+    run_scrape_task,  # Stelle sicher, dass dies eine async Funktion ist
+    render_links_recursive
+)
 from config import MAPPING_DIR
 
 # Logger konfigurieren
@@ -178,7 +189,7 @@ def start_pdf_task():
         task_id = str(uuid.uuid4())
 
         # Starte den PDF-Task im Hintergrund
-        threading.Thread(target=lambda: run_pdf_task(task_id, selected_links)).start()
+        threading.Thread(target=lambda: asyncio.run(run_pdf_task(task_id, selected_links))).start()
 
         logger.info(f"PDF-Task gestartet mit Task-ID: {task_id}")
 
@@ -253,7 +264,7 @@ def pdf_status(task_id):
 
     if not task_info:
         logger.error(f"Task {task_id} nicht gefunden.")
-        return render_template('error.html', message='Task nicht gefunden.'), 404
+        return render_template('error.html', message='PDF Task nicht gefunden.'), 404
 
     if task_info['status'] == 'completed':
         return redirect(url_for('main.pdf_result', task_id=task_id))
@@ -311,7 +322,11 @@ def pdf_result(task_id):
         logger.error(f"ZIP-Datei nicht vorhanden für Task {task_id}: {zip_file_path}")
         return render_template('error.html', message='ZIP-Datei nicht gefunden.'), 404
 
-    return render_template('convert_result.html', zip_filename=os.path.basename(zip_file_path), task_id=task_id)
+    return render_template(
+        'convert_result.html',
+        zip_filename=os.path.basename(zip_file_path),
+        task_id=task_id
+    )
 
 # Route zum Herunterladen der ZIP-Datei
 @main.route('/download_pdfs/<task_id>', methods=['GET'])
