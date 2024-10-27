@@ -4,7 +4,7 @@ import sys
 import os
 
 # Der Pfad zu deinem Projektverzeichnis (Anpassung an deine Verzeichnisstruktur)
-project_home = '/home/yourusername/yourprojectname'
+project_home = '/Users/python/Satelite 1 Python Projekte/Archiv/WebClick'
 if project_home not in sys.path:
     sys.path.append(project_home)
 

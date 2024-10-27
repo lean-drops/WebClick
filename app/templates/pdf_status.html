@@ -2,8 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Screenshot-Status</title>
+    <title>PDF-Konvertierungsstatus</title>
     <style>
         /* Basis-Reset */
         * {
@@ -14,7 +13,6 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            /* Hintergrund-GIF hinzufügen */
             background-image: url('{{ url_for('static', filename='img/background.gif') }}');
             background-repeat: no-repeat;
             background-size: cover;
@@ -28,7 +26,7 @@
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.95); /* Halbtransparenter Hintergrund */
+            background: rgba(255, 255, 255, 0.95);
             padding: 40px;
             border-radius: 15px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
@@ -36,8 +34,6 @@
             max-width: 500px;
             width: 100%;
             transition: all 0.3s ease;
-            /* Optional: Fügen Sie eine leichte Transparenz hinzu, um das GIF durchscheinen zu lassen */
-            /* background: rgba(255, 255, 255, 0.85); */
         }
 
         h2 {
@@ -97,46 +93,41 @@
 
     <div class="container">
         <div class="loading active">
-            <h2>Screenshots werden erstellt. Bitte warten...</h2>
+            <h2>PDF-Konvertierung läuft. Bitte warten...</h2>
             <div class="spinner"></div>
         </div>
         <div class="error">
             <h2>Fehler</h2>
-            <p>Der Screenshot-Task ist fehlgeschlagen. Bitte versuchen Sie es erneut.</p>
+            <p>Die PDF-Konvertierung ist fehlgeschlagen. Bitte versuchen Sie es erneut.</p>
         </div>
         <div class="completed">
-            <h2>Screenshots sind bereit!</h2>
+            <h2>PDF ist bereit!</h2>
         </div>
     </div>
 
 <script>
-    const taskId = "{{ task_id }}";  // Task-ID wird hier von der Route übergeben
+    const taskId = "{{ task_id }}";
 
-    // Funktion, um den Status des Screenshot-Tasks zu überprüfen
-    function pollScreenshotStatus() {
-        fetch(`/get_screenshot_status/${taskId}`)
+    function pollPdfStatus() {
+        fetch(`/get_pdf_status/${taskId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'completed') {
-                    // Task abgeschlossen, Ladeanzeige verstecken und Nachricht anzeigen
                     document.querySelector('.loading').classList.remove('active');
                     document.querySelector('.completed').classList.add('active');
 
-                    // Weiterleitung zur Screenshot-Result-Seite nach kurzer Verzögerung
                     setTimeout(() => {
-                        window.location.href = `/screenshot_result/${taskId}`;
+                        window.location.href = `/pdf_result/${taskId}`;
                     }, 1500);
                 } else if (data.status === 'failed') {
-                    // Fehlerfall: Zeige eine Fehlermeldung
                     document.querySelector('.loading').classList.remove('active');
                     document.querySelector('.error').classList.add('active');
                 } else {
-                    // Task läuft noch, erneut nach 3 Sekunden abfragen
-                    setTimeout(pollScreenshotStatus, 3000);
+                    setTimeout(pollPdfStatus, 3000);
                 }
             })
             .catch(error => {
-                console.error('Fehler beim Abrufen des Screenshot-Status:', error);
+                console.error('Fehler beim Abrufen des PDF-Status:', error);
                 document.querySelector('.loading').classList.remove('active');
                 const errorDiv = document.querySelector('.error');
                 errorDiv.classList.add('active');
@@ -144,9 +135,8 @@
             });
     }
 
-    // Polling startet, sobald die Seite geladen ist
     document.addEventListener('DOMContentLoaded', function() {
-        pollScreenshotStatus();
+        pollPdfStatus();
     });
 </script>
 
