@@ -8,8 +8,9 @@ import pytesseract
 from PyPDF2 import PdfReader, PdfWriter
 from io import BytesIO
 
-from app.processing.prepare import OUTPUT_DIRECTORY
-
+# Ausgabe-Verzeichnis
+OUTPUT_DIRECTORY = os.getenv("OUTPUT_DIRECTORY", "output_pdfs")
+os.makedirs(OUTPUT_DIRECTORY, exist_ok=True)
 
 def apply_ocr_to_pdf(input_pdf_path, output_pdf_path):
     try:
