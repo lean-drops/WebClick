@@ -7,17 +7,19 @@ from typing import List, Dict
 from playwright.async_api import async_playwright, Page
 from pypdf import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4, A3
+from reportlab.lib.pagesizes import A4
 from io import BytesIO
 import ocrmypdf
-import zipfile
 import shutil
 
 from app.create_package.create_zipfile import create_zip_archive
 from app.create_package.ocr_helper import apply_ocr_to_all_pdfs
-# Importiere Funktionen und Konfigurationen aus prepare.py
-from prepare import get_urls, sanitize_filename, extract_domain, expand_hidden_elements, remove_unwanted_elements, \
-    remove_fixed_elements, scroll_page, setup_directories, remove_navigation_and_sidebars, inject_custom_css
+from app.processing.utils import (
+    get_urls, sanitize_filename, extract_domain, expand_hidden_elements,
+    remove_unwanted_elements, remove_fixed_elements, scroll_page,
+    setup_directories, remove_navigation_and_sidebars, inject_custom_css,
+    load_js_file
+)
 
 # ======================= Konfiguration =======================
 
@@ -25,8 +27,33 @@ from prepare import get_urls, sanitize_filename, extract_domain, expand_hidden_e
 OUTPUT_DIRECTORY = os.getenv("OUTPUT_DIRECTORY", "output_pdfs")
 os.makedirs(OUTPUT_DIRECTORY, exist_ok=True)
 
-# Logging konfigurieren
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Logging konfigurieren mit RotatingFileHandler
+logger = logging.getLogger("download_logger")
+logger.setLevel(logging.INFO)
+
+# Erstelle einen Console-Handler
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+
+# Erstelle einen RotatingFileHandler
+from logging.handlers import RotatingFileHandler
+
+fh = RotatingFileHandler(
+    os.path.join(OUTPUT_DIRECTORY, 'download.log'),
+    maxBytes=5*1024*1024,  # 5 MB
+    backupCount=3
+)
+fh.setLevel(logging.INFO)
+
+# Erstelle einen Formatter und füge ihn den Handlern hinzu
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+fh.setFormatter(formatter)
+
+# Füge die Handler dem Logger hinzu, falls noch nicht vorhanden
+if not logger.handlers:
+    logger.addHandler(ch)
+    logger.addHandler(fh)
 
 # ======================= Hilfsfunktionen =======================
 
@@ -77,7 +104,7 @@ def merge_pdfs_with_bookmarks(pdf_entries: List[Dict], output_path: str):
             })
             current_page += len(reader.pages)
         except Exception as e:
-            logging.error(f"Fehler beim Lesen der PDF {entry['path']}: {e}")
+            logger.error(f"Fehler beim Lesen der PDF {entry['path']}: {e}")
 
     if toc_entries:
         # Erstelle das Inhaltsverzeichnis
@@ -94,9 +121,9 @@ def merge_pdfs_with_bookmarks(pdf_entries: List[Dict], output_path: str):
     try:
         with open(output_path, 'wb') as f_out:
             writer.write(f_out)
-        logging.info(f"Alle PDFs wurden zu einem zusammengeführt: {output_path}")
+        logger.info(f"Alle PDFs wurden zu einem zusammengeführt: {output_path}")
     except Exception as e:
-        logging.error(f"Fehler beim Schreiben des zusammengeführten PDFs: {e}")
+        logger.error(f"Fehler beim Schreiben des zusammengeführten PDFs: {e}")
 
 # ======================= PDFConverter Klasse =======================
 
@@ -112,6 +139,10 @@ class PDFConverter:
         os.makedirs(self.output_dir_collapsed, exist_ok=True)
         os.makedirs(self.output_dir_expanded, exist_ok=True)
 
+        # Pfad zum externen JS-File
+        self.remove_elements_js_path = os.path.join(os.path.dirname(__file__), 'js', 'remove_elements.js')
+        self.remove_elements_js = load_js_file(self.remove_elements_js_path)
+
     async def initialize(self):
         """Initialisiert Playwright und startet den Browser."""
         self.playwright = await async_playwright().start()
@@ -125,7 +156,7 @@ class PDFConverter:
                 '--window-size=2560,1440',  # Größere Fenstergröße
             ]
         )
-        logging.info("Playwright Browser gestartet.")
+        logger.info("Playwright Browser gestartet.")
 
     async def close(self):
         """Schließt den Browser und stoppt Playwright."""
@@ -133,7 +164,7 @@ class PDFConverter:
             await self.browser.close()
         if self.playwright:
             await self.playwright.stop()
-        logging.info("Playwright Browser geschlossen.")
+        logger.info("Playwright Browser geschlossen.")
 
     async def render_page(self, url: str, expanded: bool = False) -> Dict:
         """Rendert eine Webseite und speichert sie als PDF."""
@@ -151,39 +182,45 @@ class PDFConverter:
                 )
             )
             page = await context.new_page()
-            logging.info(f"Öffne Seite: {url}")
+            logger.info(f"Öffne Seite: {url}")
             await page.goto(url, timeout=120000, wait_until='networkidle')  # Timeout erhöht
 
             # Sicherstellen, dass alle Inhalte geladen sind
             await asyncio.sleep(2)
 
-            # Entferne unerwünschte Elemente (nur im normal-Modus)
+            # Schritt 1: Erweitere versteckte Elemente
+            await expand_hidden_elements(page)
+
+            # Schritt 2: Entferne unerwünschte Elemente
             await remove_unwanted_elements(page, expanded=expanded)
 
-            # Entferne fixierte Elemente (z.B. Side Banners) (nur im normal-Modus)
+            # Schritt 3: Entferne fixierte Elemente (nur im normalen Modus)
             if not expanded:
                 await remove_fixed_elements(page)
-                # Entferne das spezifische anchornav Element
+                # Entferne die Navigationsleiste und Sidebars
                 await remove_navigation_and_sidebars(page)
 
             if expanded:
-                # Erweitere versteckte Elemente nur im expanded-Modus
-                await expand_hidden_elements(page)
-                # Injezieren von benutzerdefiniertem CSS für den expanded-Modus
+                # Schritt 4: Entferne spezifische Elemente im erweiterten Modus
+                if self.remove_elements_js:
+                    await page.evaluate(self.remove_elements_js)
+                    logger.info("Externes JS zum Entfernen von Elementen im expanded-Modus injiziert.")
+
+                # Schritt 5: Injezieren von benutzerdefiniertem CSS für den expanded-Modus
                 await inject_custom_css(page, expanded=True)
             else:
-                # Injezieren von benutzerdefiniertem CSS für den normal-Modus
+                # Schritt 4: Injezieren von benutzerdefiniertem CSS für den normalen Modus
                 await inject_custom_css(page, expanded=False)
 
             # Optional: Scrollen, um Lazy-Loading zu triggern
             await scroll_page(page)
 
             # Erstelle einen sicheren Dateinamen
-            filename = sanitize_filename(url)
+            filename = sanitize_filename(url)  # Bereits mit .pdf
             if expanded:
-                pdf_path = os.path.join(self.output_dir_expanded, f"{filename}.pdf")
+                pdf_path = os.path.join(self.output_dir_expanded, filename)  # Keine zusätzliche .pdf
             else:
-                pdf_path = os.path.join(self.output_dir_collapsed, f"{filename}.pdf")
+                pdf_path = os.path.join(self.output_dir_collapsed, filename)
 
             # PDF erstellen mit optimierten Optionen
             await page.emulate_media(media="screen")
@@ -196,7 +233,7 @@ class PDFConverter:
                 scale=1,
                 display_header_footer=False
             )
-            logging.info(f"PDF erstellt: {pdf_path}")
+            logger.info(f"PDF erstellt: {pdf_path}")
 
             # Extrahiere den Seitentitel für das Inhaltsverzeichnis
             title = await page.title()
@@ -204,7 +241,7 @@ class PDFConverter:
             return {"url": url, "status": "success", "path": pdf_path, "title": title}
 
         except Exception as e:
-            logging.error(f"Fehler beim Rendern der Seite {url}: {e}")
+            logger.error(f"Fehler beim Rendern der Seite {url}: {e}")
             return {"url": url, "status": "error", "error": str(e)}
         finally:
             if page:
@@ -225,7 +262,7 @@ class PDFConverter:
         processed_results = []
         for result in results:
             if isinstance(result, Exception):
-                logging.error(f"Fehler bei der Verarbeitung einer URL: {result}")
+                logger.error(f"Fehler bei der Verarbeitung einer URL: {result}")
                 processed_results.append({"url": "unknown", "status": "error", "error": str(result)})
             else:
                 processed_results.append(result)
@@ -238,29 +275,36 @@ if __name__ == "__main__":
 
     async def main():
         # Vorbereitung: Einrichtung der Verzeichnisse
-        setup_directories()
+        setup_directories(OUTPUT_DIRECTORY)
 
         # Initialisiere den PDFConverter
         converter = PDFConverter(max_concurrent_tasks=5)
         await converter.initialize()
 
         # Lade die URLs
-        urls = get_urls()
+        urls = [
+            "https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html",
+            "https://www.zh.ch/de/wirtschaft-arbeit/handelsregister/stiftung.html",
+            "https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen.html"
+        ]
+        if not urls:
+            logger.error("Keine URLs zum Verarbeiten gefunden. Programm beendet.")
+            return
 
         # ======================= Individuelle PDFs (Collapsed) =======================
-        logging.info("Starte die Konvertierung der URLs zu PDFs (eingeklappte Version).")
+        logger.info("Starte die Konvertierung der URLs zu PDFs (eingeklappte Version).")
         collapsed_results = await converter.convert_urls_to_pdfs(urls, expanded=False)
         merged_collapsed_pdf = os.path.join(OUTPUT_DIRECTORY, "combined_collapsed.pdf")
         merge_pdfs_with_bookmarks(collapsed_results, merged_collapsed_pdf)
 
         # ======================= Individuelle PDFs (Expanded) =======================
-        logging.info("Starte die Konvertierung der URLs zu PDFs (ausgeklappte Version).")
+        logger.info("Starte die Konvertierung der URLs zu PDFs (ausgeklappte Version).")
         expanded_results = await converter.convert_urls_to_pdfs(urls, expanded=True)
         merged_expanded_pdf = os.path.join(OUTPUT_DIRECTORY, "combined_expanded.pdf")
         merge_pdfs_with_bookmarks(expanded_results, merged_expanded_pdf)
 
         # ======================= OCR Anwenden =======================
-        logging.info("Wende OCR auf alle PDFs an.")
+        logger.info("Wende OCR auf alle PDFs an.")
         apply_ocr_to_all_pdfs(
             individual_collapsed_dir=converter.output_dir_collapsed,
             individual_expanded_dir=converter.output_dir_expanded,
@@ -269,7 +313,7 @@ if __name__ == "__main__":
         )
 
         # ======================= ZIP Archiv erstellen =======================
-        logging.info("Erstelle ein ZIP-Archiv der generierten PDFs.")
+        logger.info("Erstelle ein ZIP-Archiv der generierten PDFs.")
 
         # Extrahiere Domain-Namen ohne 'www' und TLD
         domains = [extract_domain(url) for url in urls]
@@ -282,23 +326,23 @@ if __name__ == "__main__":
         create_zip_archive(OUTPUT_DIRECTORY, zip_filename)
 
         # ======================= Bereinigen der Ausgabeordner =======================
-        logging.info("Bereinige die Ausgabeordner, um nur das ZIP-Archiv zu behalten.")
+        logger.info("Bereinige die Ausgabeordner, um nur das ZIP-Archiv zu behalten.")
         for item in os.listdir(OUTPUT_DIRECTORY):
             item_path = os.path.join(OUTPUT_DIRECTORY, item)
             if item_path != zip_filename:
                 try:
                     if os.path.isfile(item_path) or os.path.islink(item_path):
                         os.remove(item_path)
-                        logging.info(f"Datei entfernt: {item_path}")
+                        logger.info(f"Datei entfernt: {item_path}")
                     elif os.path.isdir(item_path):
                         shutil.rmtree(item_path)
-                        logging.info(f"Verzeichnis entfernt: {item_path}")
+                        logger.info(f"Verzeichnis entfernt: {item_path}")
                 except Exception as e:
-                    logging.error(f"Fehler beim Entfernen von {item_path}: {e}")
+                    logger.error(f"Fehler beim Entfernen von {item_path}: {e}")
 
         # ======================= Abschluss =======================
         await converter.close()
-        logging.info(f"Alle Prozesse abgeschlossen. ZIP-Archiv befindet sich unter: {zip_filename}")
+        logger.info(f"Alle Prozesse abgeschlossen. ZIP-Archiv befindet sich unter: {zip_filename}")
         print(f"ZIP-Archiv erstellt: {zip_filename}")
 
     # Starte das asynchrone Hauptprogramm
