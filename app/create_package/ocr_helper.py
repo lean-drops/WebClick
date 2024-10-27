@@ -1,21 +1,54 @@
 import asyncio
+import logging
+import os
+
+import ocrmypdf
 from pdf2image import convert_from_path
 import pytesseract
 from PyPDF2 import PdfReader, PdfWriter
 from io import BytesIO
 
-async def apply_ocr_to_pdf(input_pdf_path, output_pdf_path, language='deu'):
-    loop = asyncio.get_event_loop()
-    await loop.run_in_executor(None, _apply_ocr_sync, input_pdf_path, output_pdf_path, language)
+from app.processing.prepare import OUTPUT_DIRECTORY
 
-def _apply_ocr_sync(input_pdf_path, output_pdf_path, language):
-    pages = convert_from_path(input_pdf_path)
-    pdf_writer = PdfWriter()
 
-    for page_image in pages:
-        ocr_result = pytesseract.image_to_pdf_or_hocr(page_image, lang=language, extension='pdf')
-        pdf_reader = PdfReader(BytesIO(ocr_result))
-        pdf_writer.add_page(pdf_reader.pages[0])
+def apply_ocr_to_pdf(input_pdf_path, output_pdf_path):
+    try:
+        ocrmypdf.ocr(
+            input_pdf_path,
+            output_pdf_path,
+            language='deu',
+            progress_bar=True,
+            force_ocr=True,  # OCR erzwingen
+            redo_ocr=True     # Falls verfügbar, um OCR nochmals durchzuführen
+        )
+        logging.info(f"OCR angewendet auf {input_pdf_path}")
+    except Exception as e:
+        logging.error(f"Fehler beim Anwenden von OCR auf {input_pdf_path}: {e}")
 
-    with open(output_pdf_path, 'wb') as f_out:
-        pdf_writer.write(f_out)
+def apply_ocr_to_pdfs_in_directory(input_dir, output_dir):
+    os.makedirs(output_dir, exist_ok=True)
+    for filename in os.listdir(input_dir):
+        if filename.endswith('.pdf'):
+            input_pdf_path = os.path.join(input_dir, filename)
+            output_pdf_path = os.path.join(output_dir, filename)
+            apply_ocr_to_pdf(input_pdf_path, output_pdf_path)
+
+def apply_ocr_to_all_pdfs(individual_collapsed_dir, individual_expanded_dir, merged_collapsed_pdf, merged_expanded_pdf):
+    # OCR-Verzeichnisse erstellen
+    ocr_individual_collapsed_dir = os.path.join(OUTPUT_DIRECTORY, 'ocr_individual_pdfs_collapsed')
+    ocr_individual_expanded_dir = os.path.join(OUTPUT_DIRECTORY, 'ocr_individual_pdfs_expanded')
+    ocr_combined_collapsed_pdf = os.path.join(OUTPUT_DIRECTORY, 'ocr_combined_pdfs_collapsed.pdf')
+    ocr_combined_expanded_pdf = os.path.join(OUTPUT_DIRECTORY, 'ocr_combined_pdfs_expanded.pdf')
+
+    # OCR auf individuelle eingeklappte PDFs
+    apply_ocr_to_pdfs_in_directory(individual_collapsed_dir, ocr_individual_collapsed_dir)
+
+    # OCR auf individuelle ausgeklappte PDFs
+    apply_ocr_to_pdfs_in_directory(individual_expanded_dir, ocr_individual_expanded_dir)
+
+    # OCR auf kombiniertes eingeklapptes PDF
+    apply_ocr_to_pdf(merged_collapsed_pdf, ocr_combined_collapsed_pdf)
+
+    # OCR auf kombiniertes ausgeklapptes PDF
+    apply_ocr_to_pdf(merged_expanded_pdf, ocr_combined_expanded_pdf)
+

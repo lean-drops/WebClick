@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Screenshot Result</title>
+    <title>PDF-Download</title>
     <style>
         /* Reset */
         * {
@@ -37,16 +37,16 @@
         a.button {
             display: inline-block;
             padding: 10px 30px;
-            background-color: transparent;
-            color: #0073e6;
-            text-decoration: underline;
+            background-color: #0073e6;
+            color: #fff;
+            text-decoration: none;
             font-size: 1em;
-            transition: color 0.2s ease, text-decoration 0.2s ease;
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
         }
 
         a.button:hover {
-            color: #005bb5;
-            text-decoration: none;
+            background-color: #005bb5;
         }
 
         .button-group {
@@ -72,26 +72,15 @@
             }
         }
     </style>
-    <script>
-        function promptFileName(event) {
-            event.preventDefault();
-            const fileName = prompt("Geben Sie den gewünschten Ordner- und Dateinamen ein:", "screenshots");
-            if (fileName) {
-                const downloadLink = event.target.href;
-                const newUrl = downloadLink + `?file_name=${encodeURIComponent(fileName)}`;
-                window.location.href = newUrl;
-            }
-        }
-    </script>
 </head>
 <body>
     <div>
-        <h1>Screenshots sind bereit!</h1>
-        <p>Geben Sie einen Ordner- und Dateinamen ein und laden Sie die Screenshots als PDF herunter.</p>
+        <h1>PDF-Konvertierung abgeschlossen!</h1>
+        <p>Ihre PDF-Datei wurde erfolgreich erstellt. Sie können sie jetzt herunterladen.</p>
 
         <div class="button-group">
-            <!-- Button zum Herunterladen der Screenshots -->
-            <a href="{{ url_for('main.download_screenshots', task_id=task_id) }}" class="button" onclick="promptFileName(event)">Screenshots herunterladen</a>
+            <!-- Button zum Herunterladen der PDF -->
+            <a href="{{ url_for('main.download_pdfs', task_id=task_id) }}" class="button">PDF herunterladen</a>
             <!-- Button zum Zurückkehren zur Scrape-Result-Seite -->
             <a href="{{ url_for('main.scrape_result', task_id=task_id) }}" class="button">Zurück zu den Scraping-Ergebnissen</a>
             <!-- Button zum Zurückkehren zum Index -->
