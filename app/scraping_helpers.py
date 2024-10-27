@@ -1,3 +1,5 @@
+# app/scraping_helpers.py
+
 import asyncio
 import threading
 import logging
@@ -10,8 +12,9 @@ from app.scrapers.fetch_content import scrape_website
 from config import MAPPING_DIR, logger
 
 # Fortschrittsverfolgung
+# Gemeinsames Dictionary für Scraping-Tasks (optional, je nach Anwendung)
 scrape_tasks = {}
-scrape_lock = threading.Lock()
+scrape_lock = asyncio.Lock()
 
 def run_scrape_task(task_id, url):
     try:

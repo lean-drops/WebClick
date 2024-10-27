@@ -11,15 +11,18 @@ from reportlab.lib.pagesizes import A4
 from io import BytesIO
 import ocrmypdf
 import shutil
+import json
+import random
 
 from app.create_package.create_zipfile import create_zip_archive
 from app.create_package.ocr_helper import apply_ocr_to_all_pdfs
 from app.processing.utils import (
-    get_urls, sanitize_filename, extract_domain, expand_hidden_elements,
+    get_urls, extract_domain, expand_hidden_elements,
     remove_unwanted_elements, remove_fixed_elements, scroll_page,
     setup_directories, remove_navigation_and_sidebars, inject_custom_css,
-    load_js_file
+    load_js_file, load_exclude_selectors
 )
+from app.utils.naming_utils import sanitize_filename, shorten_url
 
 # ======================= Konfiguration =======================
 
@@ -166,7 +169,7 @@ class PDFConverter:
             await self.playwright.stop()
         logger.info("Playwright Browser geschlossen.")
 
-    async def render_page(self, url: str, expanded: bool = False) -> Dict:
+    async def render_page(self, url: str, expanded: bool = False, exclude_selectors: List[str] = None) -> Dict:
         """Rendert eine Webseite und speichert sie als PDF."""
         context = None
         page = None
@@ -192,13 +195,25 @@ class PDFConverter:
             await expand_hidden_elements(page)
 
             # Schritt 2: Entferne unerwünschte Elemente
-            await remove_unwanted_elements(page, expanded=expanded)
+            await remove_unwanted_elements(page, expanded=expanded, exclude_selectors=exclude_selectors)
 
             # Schritt 3: Entferne fixierte Elemente (nur im normalen Modus)
             if not expanded:
                 await remove_fixed_elements(page)
                 # Entferne die Navigationsleiste und Sidebars
                 await remove_navigation_and_sidebars(page)
+            else:
+                # Entferne das <header> Element beim Expanden, falls nicht ausgeschlossen
+                if "#header" not in exclude_selectors:
+                    await page.evaluate("""
+                        () => {
+                            const header = document.querySelector('header#header');
+                            if (header) {
+                                header.style.display = 'none';
+                            }
+                        }
+                    """)
+                    logger.info("Header beim Expanden entfernt.")
 
             if expanded:
                 # Schritt 4: Entferne spezifische Elemente im erweiterten Modus
@@ -215,12 +230,16 @@ class PDFConverter:
             # Optional: Scrollen, um Lazy-Loading zu triggern
             await scroll_page(page)
 
-            # Erstelle einen sicheren Dateinamen
-            filename = sanitize_filename(url)  # Bereits mit .pdf
+            # Erstelle einen sicheren und lesbaren Dateinamen mit Hash
+            raw_title = await page.title()
+            raw_filename = f"{raw_title}.pdf"
+            sanitized_filename = sanitize_filename(raw_filename)
+            final_filename = shorten_url(url)  # Nutze die shorten_url-Funktion, die den Hash integriert
+
             if expanded:
-                pdf_path = os.path.join(self.output_dir_expanded, filename)  # Keine zusätzliche .pdf
+                pdf_path = os.path.join(self.output_dir_expanded, final_filename)
             else:
-                pdf_path = os.path.join(self.output_dir_collapsed, filename)
+                pdf_path = os.path.join(self.output_dir_collapsed, final_filename)
 
             # PDF erstellen mit optimierten Optionen
             await page.emulate_media(media="screen")
@@ -249,13 +268,13 @@ class PDFConverter:
             if context:
                 await context.close()
 
-    async def convert_urls_to_pdfs(self, urls: List[str], expanded: bool = False) -> List[Dict]:
+    async def convert_urls_to_pdfs(self, urls: List[str], expanded: bool = False, exclude_selectors: List[str] = None) -> List[Dict]:
         """Konvertiert eine Liste von URLs zu PDFs."""
         semaphore = asyncio.Semaphore(self.max_concurrent_tasks)
 
         async def sem_task(url):
             async with semaphore:
-                return await self.render_page(url, expanded=expanded)
+                return await self.render_page(url, expanded=expanded, exclude_selectors=exclude_selectors)
 
         tasks = [asyncio.create_task(sem_task(url)) for url in urls]
         results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -268,38 +287,42 @@ class PDFConverter:
                 processed_results.append(result)
         return processed_results
 
-# ======================= Main Block =======================
+# ======================= Haupttestfunktion =======================
 
-if __name__ == "__main__":
-    import asyncio
+async def main():
+    """
+    Hauptfunktion zum Testen der download.py Funktionen.
+    """
+    logger.info("Starte Hauptfunktion für download.py.")
 
-    async def main():
-        # Vorbereitung: Einrichtung der Verzeichnisse
-        setup_directories(OUTPUT_DIRECTORY)
+    # Vorbereitung: Einrichtung der Verzeichnisse
+    setup_directories(OUTPUT_DIRECTORY)
 
-        # Initialisiere den PDFConverter
-        converter = PDFConverter(max_concurrent_tasks=5)
-        await converter.initialize()
+    # Lade die URLs (drei zufällige URLs aus der JSON-Datei)
+    urls = get_urls(json_path="json/urls.json", sample_size=3)
 
-        # Lade die URLs
-        urls = [
-            "https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html",
-            "https://www.zh.ch/de/wirtschaft-arbeit/handelsregister/stiftung.html",
-            "https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen.html"
-        ]
-        if not urls:
-            logger.error("Keine URLs zum Verarbeiten gefunden. Programm beendet.")
-            return
+    if not urls:
+        logger.error("Keine URLs zum Verarbeiten gefunden. Programm beendet.")
+        return
 
+    # Pfad zur Ausnahmeselectoren JSON-Datei
+    exclude_selectors_path = os.path.join(os.path.dirname(__file__), 'exclude_selectors.json')
+    exclude_selectors = load_exclude_selectors(exclude_selectors_path)
+
+    # Initialisiere den PDFConverter
+    converter = PDFConverter(max_concurrent_tasks=5)
+    await converter.initialize()
+
+    try:
         # ======================= Individuelle PDFs (Collapsed) =======================
         logger.info("Starte die Konvertierung der URLs zu PDFs (eingeklappte Version).")
-        collapsed_results = await converter.convert_urls_to_pdfs(urls, expanded=False)
+        collapsed_results = await converter.convert_urls_to_pdfs(urls, expanded=False, exclude_selectors=exclude_selectors)
         merged_collapsed_pdf = os.path.join(OUTPUT_DIRECTORY, "combined_collapsed.pdf")
         merge_pdfs_with_bookmarks(collapsed_results, merged_collapsed_pdf)
 
         # ======================= Individuelle PDFs (Expanded) =======================
         logger.info("Starte die Konvertierung der URLs zu PDFs (ausgeklappte Version).")
-        expanded_results = await converter.convert_urls_to_pdfs(urls, expanded=True)
+        expanded_results = await converter.convert_urls_to_pdfs(urls, expanded=True, exclude_selectors=exclude_selectors)
         merged_expanded_pdf = os.path.join(OUTPUT_DIRECTORY, "combined_expanded.pdf")
         merge_pdfs_with_bookmarks(expanded_results, merged_expanded_pdf)
 
@@ -341,9 +364,17 @@ if __name__ == "__main__":
                     logger.error(f"Fehler beim Entfernen von {item_path}: {e}")
 
         # ======================= Abschluss =======================
-        await converter.close()
         logger.info(f"Alle Prozesse abgeschlossen. ZIP-Archiv befindet sich unter: {zip_filename}")
         print(f"ZIP-Archiv erstellt: {zip_filename}")
 
-    # Starte das asynchrone Hauptprogramm
-    asyncio.run(main())
+    finally:
+        # Schließe den PDFConverter
+        await converter.close()
+
+# ======================= Ausführung des Haupttests =======================
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        logger.critical(f"Unbehandelter Fehler im Hauptblock: {e}")

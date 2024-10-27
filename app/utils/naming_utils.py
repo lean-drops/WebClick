@@ -2,57 +2,71 @@ import re
 import unicodedata
 from urllib.parse import urlparse
 import logging
+from slugify import slugify  # Importiere die slugify-Funktion
 
 logger = logging.getLogger(__name__)
 
-def sanitize_filename(filename):
+
+def sanitize_filename(filename: str) -> str:
     """
-    Normalize the filename, remove non-ASCII characters, and replace spaces and special characters.
+    Normalisiert den Dateinamen, entfernt nicht-ASCII-Zeichen und ersetzt Leerzeichen und Sonderzeichen.
+    Nutzt die slugify-Bibliothek für eine verbesserte Lesbarkeit.
 
     Args:
-        filename (str): The filename to sanitize.
+        filename (str): Der zu sanitierende Dateiname.
 
     Returns:
-        str: The sanitized filename.
+        str: Der sanitierte Dateiname.
     """
-    filename = unicodedata.normalize('NFC', filename)
-    filename = filename.encode('ascii', 'ignore').decode('ascii')
-    filename = filename.replace(' ', '_')
-    filename = re.sub(r'[^A-Za-z0-9_\-]', '', filename)
-    return filename
+    # Verwende slugify, um den Dateinamen zu normalisieren und lesbar zu machen
+    sanitized = slugify(filename, separator='_', lowercase=False)
+    logger.debug(f"Sanitized Filename: {filename} to {sanitized}")
+    return sanitized
 
-def format_filename(filename):
+
+def format_filename(filename: str) -> str:
     """
-    Format the filename by removing unwanted characters and replacing underscores with spaces.
+    Formatiert den Dateinamen, indem unerwünschte Zeichen entfernt und Unterstriche durch Leerzeichen ersetzt werden.
+    Nutzt die slugify-Bibliothek für eine verbesserte Lesbarkeit.
 
     Args:
-        filename (str): The filename to format.
+        filename (str): Der zu formatierende Dateiname.
 
     Returns:
-        str: The formatted filename.
+        str: Der formatierte Dateiname.
     """
-    filename = unicodedata.normalize('NFC', filename)
-    filename = filename.encode('ascii', 'ignore').decode('ascii')
-    filename = filename.replace('_', ' ')
-    filename = re.sub(r'[^A-Za-z0-9 \-\.]', '', filename)
-    filename = filename.strip()
-    return filename
+    # Verwende slugify mit separator=' ' und preserve_case=True für bessere Lesbarkeit
+    formatted = slugify(filename, separator=' ', lowercase=False, allow_unicode=True)
+    # Entferne führende und folgende Leerzeichen
+    formatted = formatted.strip()
+    logger.debug(f"Formatted Filename: {filename} to {formatted}")
+    return formatted
 
-def shorten_url(url):
+
+def shorten_url(url: str) -> str:
     """
-    Shorten the URL to create a folder-friendly name.
+    Kürzt die URL, um einen ordnerfreundlichen und lesbaren Namen zu erstellen.
+    Nutzt die slugify-Bibliothek zur Verbesserung der Lesbarkeit.
 
     Args:
-        url (str): The URL to shorten.
+        url (str): Die zu kürzende URL.
 
     Returns:
-        str: A shortened version of the URL.
+        str: Eine gekürzte und lesbare Version der URL.
     """
     parsed_url = urlparse(url)
-    netloc = parsed_url.netloc.replace('www.', '').replace('http://', '').replace('https://', '')
-    path = parsed_url.path.replace('/', '_')
-    short_name = f"{netloc}{path}"
-    short_name = re.sub(r'\W+', '_', short_name)  # Replace non-word characters with underscores
-    short_name = short_name.replace('_', ' ')  # Replace underscores with spaces
+    netloc = parsed_url.netloc.replace('www.', '')
+    path = parsed_url.path.strip('/').replace('/', '_')
+
+    # Kombiniere Netloc und Pfad und erstelle einen lesbaren Namen
+    combined = f"{netloc}_{path}" if path else netloc
+    # Verwende slugify, um den kombinierten String zu kürzen und lesbar zu machen
+    short_name = slugify(combined, separator=' ', lowercase=False, allow_unicode=True)
+
+    # Optional: Kürze den Namen auf eine maximale Länge, z.B. 50 Zeichen
+    max_length = 50
+    if len(short_name) > max_length:
+        short_name = short_name[:max_length].rstrip()
+
     logger.debug(f"Shortened URL: {url} to {short_name}")
     return short_name

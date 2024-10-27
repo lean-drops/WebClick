@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Daten werden gesammelt...</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.4/lottie.min.js"></script>
     <style>
         /* Perfektes Status-Design */
 
@@ -21,6 +22,7 @@
             align-items: center;
             height: 100vh;
             color: #fff;
+            overflow: hidden;
         }
 
         .loading-container {
@@ -31,11 +33,13 @@
             box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(10px);
             animation: fadeIn 1.5s ease-in-out;
+            position: relative;
         }
 
         h1 {
             font-size: 2.5em;
             font-weight: 600;
+            margin-top: 20px;
             margin-bottom: 20px;
             letter-spacing: 1.2px;
         }
@@ -50,21 +54,6 @@
             color: #ff4d4f;
             font-weight: 600;
             display: none;
-        }
-
-        .loader {
-            border: 8px solid rgba(255, 255, 255, 0.2);
-            border-top: 8px solid #fff;
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         @keyframes fadeIn {
@@ -87,24 +76,28 @@
             p {
                 font-size: 1em;
             }
-
-            .loader {
-                width: 60px;
-                height: 60px;
-            }
         }
     </style>
 </head>
 <body>
 
     <div class="loading-container">
-        <div class="loader"></div>
+        <div id="lottie-animation" style="width: 150px; height: 150px; margin: 0 auto;"></div> <!-- Lottie-Animation -->
         <h1>Wir sammeln die Sublinks der Website!</h1>
         <p>Bitte hab einen Moment Geduld. Wir stellen alle Informationen für dich zusammen.</p>
         <p class="error">Ups! Etwas ist schiefgelaufen. Bitte versuche es später erneut.</p>
     </div>
 
     <script>
+        // Lottie-Animation laden
+        lottie.loadAnimation({
+            container: document.getElementById('lottie-animation'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'https://assets4.lottiefiles.com/packages/lf20_dy3j7wu5.json' // Beispiel-URL, ersetze mit deiner eigenen Animation
+        });
+
         async function checkStatus() {
             try {
                 const response = await fetch(`/get_status/{{ task_id }}`);

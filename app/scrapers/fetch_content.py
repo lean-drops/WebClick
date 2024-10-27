@@ -11,6 +11,8 @@ from collections import defaultdict
 from lxml import html  # Import lxml
 import aiofiles
 
+from app.utils.naming_utils import sanitize_filename
+
 # Logging konfigurieren
 logging.basicConfig(
     level=logging.INFO,  # Ändere zu logging.DEBUG für detailliertere Ausgaben
@@ -40,10 +42,7 @@ def url_to_filename(url):
     logger.debug(f"Generierter Dateiname für URL {url}: {filename}")
     return filename
 
-def sanitize_filename(filename):
-    sanitized = "".join(x for x in filename if (x.isalnum() or x in "._- "))
-    logger.debug(f"Bereinigter Dateiname: {sanitized}")
-    return sanitized
+
 
 def is_valid_url(url, base_netloc):
     parsed_url = urlparse(url)

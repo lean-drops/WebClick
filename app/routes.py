@@ -12,9 +12,11 @@ from typing import List
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify, send_file, send_from_directory
 import json
 
+from app.create_package.create_directory import shorten_url
 from app.processing.download import OUTPUT_DIRECTORY, PDFConverter, merge_pdfs_with_bookmarks, apply_ocr_to_all_pdfs, create_zip_archive
 from app.scraping_helpers import scrape_lock, scrape_tasks, run_scrape_task, render_links_recursive
 from config import MAPPING_DIR
+
 
 # Logger konfigurieren
 logger = logging.getLogger(__name__)
@@ -178,7 +180,7 @@ def start_pdf_task():
         task_id = str(uuid.uuid4())
 
         # Starte den PDF-Task im Hintergrund
-        threading.Thread(target=lambda: run_pdf_task(task_id, selected_links)).start()
+        threading.Thread(target=lambda: asyncio.run(run_pdf_task(task_id, selected_links))).start()
 
         logger.info(f"PDF-Task gestartet mit Task-ID: {task_id}")
 
@@ -205,6 +207,9 @@ async def _run_pdf_task(task_id: str, urls: List[str]):
     try:
         pdf_converter = PDFConverter(max_concurrent_tasks=20)
         await pdf_converter.initialize()
+
+        # Generiere deskriptive Dateinamen mit Hash für jede URL
+        sanitized_urls = [shorten_url(url) for url in urls]
 
         # Erstelle PDFs mit eingeklapptem Inhalt
         collapsed_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=False)
@@ -252,8 +257,8 @@ def pdf_status(task_id):
         task_info = pdf_tasks.get(task_id)
 
     if not task_info:
-        logger.error(f"Task {task_id} nicht gefunden.")
-        return render_template('error.html', message='Task nicht gefunden.'), 404
+        logger.error(f"PDF Task {task_id} nicht gefunden.")
+        return render_template('error.html', message='PDF Task nicht gefunden.'), 404
 
     if task_info['status'] == 'completed':
         return redirect(url_for('main.pdf_result', task_id=task_id))
