@@ -9,7 +9,7 @@ import time
 import uuid
 from typing import List
 
-from flask import Blueprint, request, render_template, redirect, url_for, jsonify, send_file, send_from_directory
+from flask import Blueprint, request, render_template, redirect, url_for, jsonify, send_from_directory
 import json
 
 from app.processing.download import (
@@ -19,7 +19,7 @@ from app.processing.download import (
     apply_ocr_to_all_pdfs,
     create_zip_archive
 )
-from app.scraping_helpers import (
+from app.scrapers.scraping_helpers import (
     scrape_lock,
     scrape_tasks,
     run_scrape_task,  # Stelle sicher, dass dies eine async Funktion ist
@@ -131,39 +131,41 @@ def get_status(task_id):
 # Route zur Anzeige des Scraping-Ergebnisses
 @main.route('/scrape_result/<task_id>', methods=['GET'])
 def scrape_result(task_id):
-    version = str(int(time.time()))  # Zeitstempel für Caching
+    version = str(int(time.time()))  # Timestamp for resource caching
 
     with scrape_lock:
         task_info = scrape_tasks.get(task_id)
 
     if not task_info:
-        logger.error(f"Task {task_id} nicht gefunden.")
-        return render_template('error.html', message='Task nicht gefunden.'), 404
+        logger.error(f"Task {task_id} not found.")
+        return render_template('error.html', message='Task not found.'), 404
 
     if task_info['status'] == 'failed':
-        error_message = task_info.get('error', 'Unbekannter Fehler.')
-        logger.error(f"Task {task_id} fehlgeschlagen: {error_message}")
+        error_message = task_info.get('error', 'Unknown error.')
+        logger.error(f"Task {task_id} failed: {error_message}")
         return render_template('error.html', message=error_message), 500
 
     if task_info['status'] != 'completed':
         return redirect(url_for('main.scrape_status', task_id=task_id))
 
-    # Überprüfe, ob url_mapping vorhanden ist
-    url_mapping = task_info['result'].get('url_mapping', {})
-    if not url_mapping:
-        logger.error(f"URL Mapping nicht vorhanden für Task {task_id}")
-        return render_template('error.html', message='Keine Daten gefunden.'), 404
+    # Check if url_mapping exists
+    result = task_info.get('result', {})
+    url_mapping = result.get('url_mapping', {})
+    base_page_id = result.get('base_page_id', None)
 
-    # Erzeuge die Baumstruktur für das Template
+    if not url_mapping:
+        logger.error(f"URL Mapping not found for Task {task_id}")
+        return render_template('error.html', message='No data found.'), 404
+
+    # Generate the tree structure for the template
     tree_html = render_links_recursive(url_mapping)
 
-    # Extrahiere den Hauptlink (erste Seite im Mapping)
-    main_link_id = next(iter(url_mapping), None)
-    if main_link_id:
-        main_link_title = url_mapping[main_link_id].get('title', 'Kein Titel')
-        main_link_url = url_mapping[main_link_id].get('url', '#')
+    if base_page_id:
+        main_link_data = url_mapping.get(base_page_id, {})
+        main_link_title = main_link_data.get('title', 'No Title')
+        main_link_url = main_link_data.get('url', '#')
     else:
-        main_link_title = 'Kein Hauptlink'
+        main_link_title = 'No Main Link'
         main_link_url = '#'
 
     return render_template(
@@ -174,7 +176,6 @@ def scrape_result(task_id):
         main_link_title=main_link_title,
         main_link_url=main_link_url
     )
-
 # Route zum Starten des PDF-Tasks
 @main.route('/start_pdf_task', methods=['POST'])
 def start_pdf_task():

@@ -9,7 +9,6 @@ from pypdf import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from io import BytesIO
-import ocrmypdf
 import shutil
 
 from app.create_package.create_zipfile import create_zip_archive
