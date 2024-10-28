@@ -166,13 +166,15 @@ class PDFConverter:
             await self.playwright.stop()
         logger.info("Playwright Browser geschlossen.")
 
+    # app/processing/download.py
+
     async def render_page(self, url: str, expanded: bool = False) -> Dict:
-        """Rendert eine Webseite und speichert sie als PDF."""
+        """Renders a webpage and saves it as PDF."""
         context = None
         page = None
         try:
             context = await self.browser.new_context(
-                viewport={"width": 2560, "height": 1440},  # Größere Breite und Höhe
+                viewport={"width": 2560, "height": 1440},
                 device_scale_factor=2,
                 locale='de-DE',
                 user_agent=(
@@ -182,66 +184,66 @@ class PDFConverter:
                 )
             )
             page = await context.new_page()
-            logger.info(f"Öffne Seite: {url}")
-            await page.goto(url, timeout=120000, wait_until='networkidle')  # Timeout erhöht
+            logger.info(f"Opening page: {url}")
+            await page.goto(url, timeout=120000, wait_until='networkidle')
 
-            # Sicherstellen, dass alle Inhalte geladen sind
+            # Ensure all content is loaded
             await asyncio.sleep(2)
 
-            # Schritt 1: Erweitere versteckte Elemente
+            # Step 1: Expand hidden elements
             await expand_hidden_elements(page)
 
-            # Schritt 2: Entferne unerwünschte Elemente
+            # Step 2: Remove unwanted elements
             await remove_unwanted_elements(page, expanded=expanded)
 
-            # Schritt 3: Entferne fixierte Elemente (nur im normalen Modus)
+            # Step 3: Remove fixed elements (only in normal mode)
             if not expanded:
                 await remove_fixed_elements(page)
-                # Entferne die Navigationsleiste und Sidebars
+                # Remove navigation bar and sidebars
                 await remove_navigation_and_sidebars(page)
 
             if expanded:
-                # Schritt 4: Entferne spezifische Elemente im erweiterten Modus
+                # Step 4: Remove specific elements in expanded mode
                 if self.remove_elements_js:
                     await page.evaluate(self.remove_elements_js)
-                    logger.info("Externes JS zum Entfernen von Elementen im expanded-Modus injiziert.")
+                    logger.info("Injected external JS to remove elements in expanded mode.")
 
-                # Schritt 5: Injezieren von benutzerdefiniertem CSS für den expanded-Modus
+                # Step 5: Inject custom CSS for expanded mode
                 await inject_custom_css(page, expanded=True)
             else:
-                # Schritt 4: Injezieren von benutzerdefiniertem CSS für den normalen Modus
+                # Step 4: Inject custom CSS for normal mode
                 await inject_custom_css(page, expanded=False)
 
-            # Optional: Scrollen, um Lazy-Loading zu triggern
+            # Optionally: Scroll to trigger lazy-loading
             await scroll_page(page)
 
-            # Erstelle einen sicheren Dateinamen
-            filename = sanitize_filename(url)  # Bereits mit .pdf
+            # Create a safe filename
+            filename = sanitize_filename(url)
             if expanded:
-                pdf_path = os.path.join(self.output_dir_expanded, filename)  # Keine zusätzliche .pdf
+                pdf_path = os.path.join(self.output_dir_expanded, filename)
             else:
                 pdf_path = os.path.join(self.output_dir_collapsed, filename)
 
-            # PDF erstellen mit optimierten Optionen
+            # Generate PDF with optimized options
             await page.emulate_media(media="screen")
             await page.pdf(
                 path=pdf_path,
-                format='A3',  # Größeres Papierformat für mehr Breite
+                format='A3',
                 print_background=True,
                 margin={"top": "10mm", "bottom": "10mm", "left": "10mm", "right": "10mm"},
-                prefer_css_page_size=False,  # Verwende die angegebene Papiergröße
+                prefer_css_page_size=False,
                 scale=1,
                 display_header_footer=False
             )
-            logger.info(f"PDF erstellt: {pdf_path}")
+            logger.info(f"PDF created: {pdf_path}")
 
-            # Extrahiere den Seitentitel für das Inhaltsverzeichnis
+            # Extract the page title for the table of contents
             title = await page.title()
 
             return {"url": url, "status": "success", "path": pdf_path, "title": title}
 
         except Exception as e:
-            logger.error(f"Fehler beim Rendern der Seite {url}: {e}")
+            logger.error(f"Error rendering page {url}: {e}")
             return {"url": url, "status": "error", "error": str(e)}
         finally:
             if page:
