@@ -23,9 +23,7 @@ sys.path.insert(0, project_root)  # Ensure project_root is at the start of sys.p
 # Now import the configuration
 from config import CACHE_DIR, MAPPING_DIR, TABOO_JSON_PATH, logger
 
-# Import the 'rich' library for visual display
-from rich import print
-from rich.tree import Tree
+# Rest of your code...
 
 # Error tracking
 error_counts = defaultdict(int)
@@ -289,80 +287,38 @@ def log_error_summary():
     else:
         logger.info("No errors occurred.")
 
-# Function to get URLs from a JSON file
-def get_urls_from_json(json_path):
-    try:
-        with open(json_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            urls = data.get('urls', [])
-            if not urls:
-                logger.error("No URLs found in the JSON file.")
-            return urls
-    except Exception as e:
-        logger.error(f"Error reading JSON file: {e}")
-        return []
-
-# Function to display the mapping using rich.Tree
-def display_mapping(url_mapping, base_page_id):
-    if base_page_id not in url_mapping:
-        print("Base page ID not found in the URL mapping.")
-        return
-
-    base_page = url_mapping[base_page_id]
-    tree = Tree(f"[link={base_page['url']}] {base_page['title']}", guide_style="bold bright_blue")
-
-    def add_children(node, page_id):
-        page = url_mapping.get(page_id)
-        if not page:
-            return
-        for child_id in page.get('children', []):
-            child = url_mapping.get(child_id)
-            if not child:
-                continue
-            child_node = node.add(f"[link={child['url']}] {child['title']}")
-            add_children(child_node, child_id)
-
-    add_children(tree, base_page_id)
-    print(tree)
-
 # Main block for testing
 if __name__ == "__main__":
     async def main():
-        # Path to the JSON file containing URLs
-        urls_json_path = os.path.join(current_dir, 'urls.json')
-        urls = get_urls_from_json(urls_json_path)
-
-        if not urls:
-            print("No URLs to process.")
+        import sys
+        if len(sys.argv) != 2:
+            print("Usage: python fetch_content.py <url>")
             return
 
-        for test_url in urls:
-            start_time = time.time()
-            result = await scrape_website(test_url, max_depth=2, max_concurrency=MAX_CONCURRENCY, use_cache=False)
-            end_time = time.time()
+        test_url = sys.argv[1]
 
-            elapsed_time = end_time - start_time
+        start_time = time.time()
+        result = await scrape_website(test_url, max_depth=2, max_concurrency=MAX_CONCURRENCY, use_cache=False)
+        end_time = time.time()
 
-            if 'error' in result:
-                logger.error(f"Error scraping the website: {result['error']}")
-            else:
-                num_pages = len(result['url_mapping'])
-                time_per_page = elapsed_time / num_pages if num_pages > 0 else 0
-                logger.info(f"Scraping successful for {result['url']}")
-                logger.info(f"Total pages collected: {num_pages}")
-                logger.info(f"Execution time: {elapsed_time:.2f} seconds")
-                logger.info(f"Average time per page: {time_per_page:.4f} seconds")
+        elapsed_time = end_time - start_time
 
-                output_file = os.path.join(CACHE_DIR, f"output_mapping_{url_to_filename(test_url)}.json")
-                with open(output_file, 'w', encoding='utf-8') as f:
-                    json.dump(result['url_mapping'], f, indent=4)
-                logger.info(f"Result saved in {output_file}")
+        if 'error' in result:
+            logger.error(f"Error scraping the website: {result['error']}")
+        else:
+            num_pages = len(result['url_mapping'])
+            time_per_page = elapsed_time / num_pages if num_pages > 0 else 0
+            logger.info(f"Scraping successful for {result['url']}")
+            logger.info(f"Total pages collected: {num_pages}")
+            logger.info(f"Execution time: {elapsed_time:.2f} seconds")
+            logger.info(f"Average time per page: {time_per_page:.4f} seconds")
 
-                # Display the mapping visually
-                print(f"\nVisual representation of the mapping for {test_url}:\n")
-                display_mapping(result['url_mapping'], result['base_page_id'])
+            output_file = os.path.join(CACHE_DIR, "output_mapping.json")
+            with open(output_file, 'w', encoding='utf-8') as f:
+                json.dump(result['url_mapping'], f, indent=4)
+            logger.info(f"Result saved in {output_file}")
 
-            # At the end, output the error report
-            log_error_summary()
+        # At the end, output the error report
+        log_error_summary()
 
     asyncio.run(main())
