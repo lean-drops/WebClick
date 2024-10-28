@@ -4,7 +4,7 @@ import os
 import logging
 
 # Base directory (the directory where config.py is located)
-BASE_DIR = "/Users/programming/PycharmProjects/Money/WebClick"
+BASE_DIR = "/Users/python/Satelite 1 Python Projekte/Archiv/WebClick"
 print(BASE_DIR)
 # App directory
 APP_DIR = os.path.join(BASE_DIR, 'app')
@@ -30,9 +30,34 @@ MAX_WORKERS = 4
 TABOO_JSON_PATH = os.path.join(JSON_DIR, 'taboo.json')
 
 # Logging configuration
-logging.basicConfig(
-    level=logging.DEBUG,  # Change to logging.INFO in production
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logging.StreamHandler()]
-)
-logger = logging.getLogger(__name__)
+# Configure Logging
+def setup_logging():
+    logger = logging.getLogger("WebClickScraper")
+    logger.setLevel(logging.DEBUG)  # Set to DEBUG for detailed logs
+
+    # Create formatter
+    formatter = logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(name)s - %(message)s'
+    )
+
+    # Stream handler (console)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)  # Set to INFO to reduce console verbosity
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+    # File handler
+    log_dir = "logs"
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    fh = logging.FileHandler(os.path.join(log_dir, "scraper.log"))
+    fh.setLevel(logging.DEBUG)  # File logs will capture all details
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+
+    # Prevent log messages from being propagated to the root logger
+    logger.propagate = False
+
+    return logger
+
+logger = setup_logging()

@@ -3,13 +3,12 @@
 import os
 import logging
 import hashlib
-import asyncio
 import threading
 import time
 import uuid
-from typing import List
+from typing import List, Dict, Any
 
-from flask import Blueprint, request, render_template, redirect, url_for, jsonify, send_from_directory, send_file
+from flask import Blueprint, request, render_template, redirect, url_for, jsonify, send_file
 import json
 
 from app.processing.download import (
@@ -22,7 +21,7 @@ from app.processing.download import (
 from app.scrapers.scraping_helpers import (
     scrape_lock,
     scrape_tasks,
-    run_scrape_task,  # Stelle sicher, dass dies eine async Funktion ist
+    run_scrape_task,
     render_links_recursive
 )
 from config import MAPPING_DIR
@@ -44,48 +43,51 @@ def index():
     return render_template('index.html', version=version)
 
 # Route zum Starten des Scraping-Tasks
-# Adjusted code for starting scrape tasks
 @main.route('/scrape_links', methods=['POST'])
 def scrape():
     url = request.form.get('url')
     logger.info(f"Scrape request received for URL: {url}")
 
     if not url:
-        return render_template('error.html', message='No URL provided.'), 400
+        return render_template('error.html', message='Keine URL angegeben.'), 400
 
     try:
-        # Generate a unique task ID
+        # Generiere eine eindeutige Task-ID
         task_id = hashlib.md5(url.encode()).hexdigest()
 
-        # Check for cached data
+        # Überprüfe auf zwischengespeicherte Daten
         cache_filename = f"{task_id}.json"
         cache_filepath = os.path.join(MAPPING_DIR, cache_filename)
 
         if os.path.exists(cache_filepath):
-            # Load cached data
+            # Lade zwischengespeicherte Daten
             with scrape_lock:
                 with open(cache_filepath, 'r', encoding='utf-8') as f:
-                    cached_url_mapping = json.load(f)
+                    cached_result = json.load(f)
                 scrape_tasks[task_id] = {
                     'status': 'completed',
-                    'result': {'url_mapping': cached_url_mapping}
+                    'result': cached_result
                 }
-            # Redirect to result page
+            # Weiterleitung zur Ergebnisseite
             return redirect(url_for('main.scrape_result', task_id=task_id))
         else:
-            # Start scraping in the background
+            # Starte das Scraping im Hintergrund
             threading.Thread(target=start_scrape_task, args=(task_id, url)).start()
             logger.info(f"No cached data found. Scraping started for URL: {url}")
 
-            # Redirect to scrape_status page
+            # Weiterleitung zur Statusseite
             return redirect(url_for('main.scrape_status', task_id=task_id))
     except Exception as e:
         logger.error(f"Error starting scraping: {e}", exc_info=True)
         return render_template('error.html', message=str(e)), 500
 
 def start_scrape_task(task_id, url):
-    asyncio.run(run_scrape_task(task_id, url))
-
+    try:
+        run_scrape_task(task_id, url)
+    except Exception as e:
+        logger.error(f"Error in scrape task {task_id}: {e}", exc_info=True)
+        with scrape_lock:
+            scrape_tasks[task_id] = {'status': 'failed', 'error': str(e)}
 
 # Route zur Anzeige des Scraping-Status
 @main.route('/scrape_status/<task_id>', methods=['GET'])
@@ -97,21 +99,20 @@ def scrape_status(task_id):
 
     if not task_info:
         logger.error(f"Task {task_id} not found.")
-        return render_template('error.html', message='Task not found.'), 404
+        return render_template('error.html', message='Task nicht gefunden.'), 404
 
     if task_info['status'] == 'completed':
         logger.info(f"Task {task_id} completed. Redirecting to result.")
         return redirect(url_for('main.scrape_result', task_id=task_id))
 
     elif task_info['status'] == 'failed':
-        error_message = task_info.get('error', 'Unknown error.')
+        error_message = task_info.get('error', 'Unbekannter Fehler.')
         logger.error(f"Task {task_id} failed: {error_message}")
         return render_template('error.html', message=error_message), 500
 
     else:
-        # Render the scrape_status.html template
+        # Render das Template scrape_status.html
         return render_template('scrape_status.html', task_id=task_id)
-
 
 # API-Endpunkt zum Abrufen des Scraping-Status
 @main.route('/get_status/<task_id>', methods=['GET'])
@@ -127,6 +128,7 @@ def get_status(task_id):
     response_data = {
         'status': task_info['status'],
         'error': task_info.get('error', None),
+        # Nur wenn der Status 'completed' ist, das url_mapping einschließen
         'url_mapping': task_info['result'].get('url_mapping', None) if task_info['status'] == 'completed' else None
     }
 
@@ -134,8 +136,6 @@ def get_status(task_id):
     return jsonify(response_data)
 
 # Route zur Anzeige des Scraping-Ergebnisses
-# app/routes.py
-
 @main.route('/scrape_result/<task_id>')
 def scrape_result(task_id):
     cache_filename = f"{task_id}.json"
@@ -152,14 +152,17 @@ def scrape_result(task_id):
     main_link_url = url_mapping.get(base_page_id, {}).get('url', '#')
     main_link_title = url_mapping.get(base_page_id, {}).get('title', 'No Title')
 
+    # Generiere den HTML-Inhalt für die Links
+    links_html = render_links_recursive(url_mapping, base_page_id)
+
     return render_template(
         'scrape_result.html',
         url_mapping=url_mapping,
         base_page_id=base_page_id,
         main_link_url=main_link_url,
-        main_link_title=main_link_title
+        main_link_title=main_link_title,
+        links_html=links_html
     )
-
 
 @main.route('/start_pdf_task', methods=['POST'])
 def start_pdf_task():
@@ -189,32 +192,28 @@ def run_pdf_task(task_id: str, urls: List[str]):
         pdf_tasks[task_id] = {'status': 'running', 'result': {}, 'error': None}
 
     try:
-        asyncio.run(_run_pdf_task(task_id, urls))
+        logger.info(f"Starting PDF task {task_id} for URLs: {urls}")
 
-    except Exception as e:
-        logger.error(f"Fehler bei PDF-Task {task_id}: {e}")
-        with pdf_lock:
-            pdf_tasks[task_id]['status'] = 'failed'
-            pdf_tasks[task_id]['error'] = str(e)
+        # Erstelle eine Instanz von PDFConverter (angenommen, es ist jetzt synchron)
+        pdf_converter = PDFConverter(max_concurrent_tasks=5)
 
-async def _run_pdf_task(task_id: str, urls: List[str]):
-    try:
-        pdf_converter = PDFConverter(max_concurrent_tasks=20)
-        await pdf_converter.initialize()
+        # Initialisiere den PDF-Konverter
+        pdf_converter.initialize()
 
         # Erstelle PDFs mit eingeklapptem Inhalt
-        collapsed_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=False)
+        collapsed_results = pdf_converter.convert_urls_to_pdfs(urls, expanded=False)
         # Fasse die eingeklappten PDFs zusammen
         merged_collapsed_pdf = os.path.join(OUTPUT_DIRECTORY, f"combined_pdfs_collapsed_{task_id}.pdf")
         merge_pdfs_with_bookmarks(collapsed_results, merged_collapsed_pdf)
 
         # Erstelle PDFs mit ausgeklapptem Inhalt
-        expanded_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=True)
+        expanded_results = pdf_converter.convert_urls_to_pdfs(urls, expanded=True)
         # Fasse die ausgeklappten PDFs zusammen
         merged_expanded_pdf = os.path.join(OUTPUT_DIRECTORY, f"combined_pdfs_expanded_{task_id}.pdf")
         merge_pdfs_with_bookmarks(expanded_results, merged_expanded_pdf)
 
-        await pdf_converter.close()
+        # Schließe den PDF-Konverter
+        pdf_converter.close()
 
         # Anwenden von OCR auf die PDFs
         apply_ocr_to_all_pdfs(
@@ -236,7 +235,7 @@ async def _run_pdf_task(task_id: str, urls: List[str]):
         logger.info(f"PDF-Task abgeschlossen: {task_id}")
 
     except Exception as e:
-        logger.error(f"Fehler bei PDF-Task {task_id}: {e}")
+        logger.error(f"Fehler bei PDF-Task {task_id}: {e}", exc_info=True)
         with pdf_lock:
             pdf_tasks[task_id]['status'] = 'failed'
             pdf_tasks[task_id]['error'] = str(e)
@@ -248,7 +247,7 @@ def pdf_status(task_id):
         task_info = pdf_tasks.get(task_id)
 
     if not task_info:
-        logger.error(f"Task {task_id} nicht gefunden.")
+        logger.error(f"PDF Task {task_id} nicht gefunden.")
         return render_template('error.html', message='PDF Task nicht gefunden.'), 404
 
     if task_info['status'] == 'completed':
@@ -256,13 +255,12 @@ def pdf_status(task_id):
 
     elif task_info['status'] == 'failed':
         error_message = task_info.get('error', 'Unbekannter Fehler.')
-        logger.error(f"Task {task_id} fehlgeschlagen: {error_message}")
+        logger.error(f"PDF Task {task_id} fehlgeschlagen: {error_message}")
         return render_template('error.html', message=error_message), 500
 
     else:
-        # Übergeben Sie 'task_id' an das Template, um es für das Status-Update-Skript zu verwenden
+        # Übergib 'task_id' an das Template, um es für das Status-Update-Skript zu verwenden
         return render_template('pdf_status.html', task_id=task_id)
-
 
 # Route zum Abrufen des PDF-Task-Status
 @main.route('/get_pdf_status/<task_id>', methods=['GET'])
@@ -293,12 +291,12 @@ def pdf_result(task_id):
 
     if not task_info:
         logger.error(f"Task {task_id} not found.")
-        return render_template('error.html', message='Task not found.'), 404
+        return render_template('error.html', message='Task nicht gefunden.'), 404
 
     logger.debug(f"Task {task_id} status: {task_info['status']}")
 
     if task_info['status'] == 'failed':
-        error_message = task_info.get('error', 'Unknown error.')
+        error_message = task_info.get('error', 'Unbekannter Fehler.')
         logger.error(f"Task {task_id} failed: {error_message}")
         return render_template('error.html', message=error_message), 500
 
@@ -306,7 +304,7 @@ def pdf_result(task_id):
         logger.debug(f"Task {task_id} not yet completed, redirecting to status page.")
         return redirect(url_for('main.pdf_status', task_id=task_id))
 
-    # Check if zip_file exists
+    # Überprüfe, ob zip_file existiert
     zip_file_path = task_info['result'].get('zip_file')
     logger.debug(f"ZIP file path for task {task_id}: {zip_file_path}")
     if not zip_file_path or not os.path.exists(zip_file_path):
@@ -331,7 +329,7 @@ def download_pdfs(task_id):
 
     if not task_info:
         logger.error(f"PDF Task {task_id} not found.")
-        return render_template('error.html', message='PDF Task not found.'), 404
+        return render_template('error.html', message='PDF Task nicht gefunden.'), 404
 
     if task_info['status'] != 'completed':
         logger.warning(f"PDF Task {task_id} is not yet completed.")
@@ -344,7 +342,7 @@ def download_pdfs(task_id):
         logger.error(f"ZIP file not found for Task {task_id}: {zip_file_path} (Absolute path: {os.path.abspath(zip_file_path)})")
         return render_template('error.html', message='ZIP file not found.'), 404
 
-    # Send the file using send_file with the absolute path
+    # Sende die Datei mit send_file und dem absoluten Pfad
     return send_file(
         os.path.abspath(zip_file_path),
         as_attachment=True,
