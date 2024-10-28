@@ -9,12 +9,13 @@ from pypdf import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from io import BytesIO
+import ocrmypdf
 import shutil
 
 from app.create_package.create_zipfile import create_zip_archive
 from app.create_package.ocr_helper import apply_ocr_to_all_pdfs
 from app.processing.utils import (
-    get_urls, sanitize_filename, extract_domain, expand_hidden_elements,
+    get_url, sanitize_filename, extract_domain, expand_hidden_elements,
     remove_unwanted_elements, remove_fixed_elements, scroll_page,
     setup_directories, remove_navigation_and_sidebars, inject_custom_css,
     load_js_file
