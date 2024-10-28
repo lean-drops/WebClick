@@ -4,7 +4,7 @@ import os
 import logging
 
 # Base directory (the directory where config.py is located)
-BASE_DIR = "/Users/programming/PycharmProjects/Money/WebClick"
+BASE_DIR = "/Users/python/Satelite 1 Python Projekte/Archiv/WebClick"
 print(BASE_DIR)
 # App directory
 APP_DIR = os.path.join(BASE_DIR, 'app')
