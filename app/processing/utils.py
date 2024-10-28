@@ -6,6 +6,8 @@ from typing import List
 from urllib.parse import urlparse
 import hashlib
 
+from app.utils.naming_utils import sanitize_filename
+
 # ======================= Logging Konfiguration =======================
 logger = logging.getLogger("utils_logger")
 logger.setLevel(logging.DEBUG)
@@ -24,14 +26,6 @@ if not logger.handlers:
 
 # ======================= Hilfsfunktionen =======================
 
-def sanitize_filename(url: str) -> str:
-    """Erstellt einen sicheren und eindeutigen Dateinamen aus einer URL."""
-    parsed_url = urlparse(url)
-    path = parsed_url.path.replace('/', '_').strip('_') or 'root'
-    hash_digest = hashlib.sha256(url.encode()).hexdigest()[:10]  # Kurzer Hash zur Einzigartigkeit
-    filename = f"{parsed_url.netloc}_{path}_{hash_digest}.pdf"
-    logger.debug(f"Sanitized Filename: {filename}")
-    return filename
 
 def extract_domain(url: str) -> str:
     """Extrahiert den Domain-Namen ohne 'www' und TLD."""
@@ -43,18 +37,32 @@ def extract_domain(url: str) -> str:
     logger.debug(f"Extracted Domain: {domain_main}")
     return domain_main
 
-def get_urls() -> List[str]:
-    """
-    Gibt die Liste der URLs zurück, die konvertiert werden sollen.
-    """
-    try:
-        from app.listen import urls  # Stelle sicher, dass listen.py die URLs enthält
-        logger.info(f"{len(urls)} URLs für die Verarbeitung bereitgestellt.")
-        return urls
-    except ImportError as e:
-        logger.error(f"Fehler beim Importieren von URLs: {e}")
-        return []
 
+def get_url(json_daten=None, eigene_urls=None):
+    """
+    Wählt eine zufällige URL aus einer Liste von URLs aus.
+
+    :param json_daten: Ein JSON-Objekt mit einem Schlüssel "links", der eine Liste von URLs enthält.
+    :param eigene_urls: Eine eigene Liste von URLs, die verwendet werden soll.
+    :return: Eine zufällige URL als String.
+    """
+    if eigene_urls:
+        urls = eigene_urls
+    elif json_daten and "links" in json_daten:
+        urls = json_daten["links"]
+    else:
+        # Standard-URLs, falls keine Eingabe erfolgt
+        urls = [
+            "https://www.zh.ch/de/staatskanzlei/regierungskommunikation.html",
+            "https://www.zh.ch/de/wirtschaft-arbeit/handelsregister.html",
+            "https://www.zh.ch/de/arbeiten-beim-kanton.html"
+        ]
+
+    if not urls:
+        raise ValueError("Die URL-Liste ist leer.")
+
+    import random
+    return random.choice(urls)
 def setup_directories(output_directory: str):
     """
     Richtet die erforderlichen Ausgabe-Verzeichnisse ein.
@@ -414,7 +422,7 @@ async def main_test():
     setup_directories()
 
     # Lade die URLs
-    urls = get_urls()
+    urls = get_url()
 
     if not urls:
         logger.error("Keine URLs zum Verarbeiten gefunden. Test abgebrochen.")
