@@ -168,76 +168,46 @@ async def expand_hidden_elements(page: Page):
     except Exception as e:
         logger.error(f"Fehler beim Erweitern versteckter Elemente: {e}")
 
+# app/processing/utils.py
+
 async def remove_unwanted_elements(page: Page, expanded: bool = False):
-    """
-    Entfernt unerwünschte Elemente wie Banner, Pop-ups und Cookie-Banner,
-    ohne das Layout der Seite zu beeinträchtigen. Im expanded-Modus werden bestimmte Elemente beibehalten.
-    """
-    logger.info("Entferne unerwünschte Elemente wie Banner und Pop-ups.")
+    """Removes unwanted elements from the page."""
     try:
-        from app.processing.listen import selectors  # Stelle sicher, dass listen.py die Selektoren enthält
-
-        # Basis-Selektoren, die immer entfernt werden sollen
-        base_selectors = [
-            'div[class*="cookie"]',
-            'div[class*="popup"]',
-            'div[class*="subscribe"]',
-            'div[id*="cookie"]',
-            'div[id*="popup"]',
-            'div[id*="subscribe"]',
-
-            '.advertisement',
-            '.adsbygoogle',
-            '.modal',
-            '.overlay',
-            '.subscribe-modal',
-            '.cookie-consent',
-            'button[class*="close"]',
-            'button[class*="dismiss"]',
-            'button[class*="agree"]',
-            'button[id*="close"]',
-            'button[id*="dismiss"]',
-            'button[id*="agree"]',
+        # Common selectors to remove
+        selectors = [
+            'script',
+            'noscript',
+            'style',
+            'iframe',
+            'footer',
+            'div.ads',
+            # Add any other common unwanted elements here
         ]
 
-        # Zusätzliche Selektoren, die nur im normal-Modus entfernt werden sollen
-        conditional_selectors = []
-        if not expanded:
-            conditional_selectors.extend([
-                'div[class*="banner"]',
-                'div[class*="anchornav__content"]',
-                '.side-banner',
-                '#side-index',
-                '.fixed-sidebar',
-                '#navigation-bar',
-                'div.cell.tiny-12.xsmall-12.small-10.medium-10.large-2.xlarge-2',
-                'div.mdl-anchornav',  # Gezieltes Entfernen aller mdl-anchornav Elemente
-                '#toc',                # Gezieltes Entfernen des toc ID
+        if expanded:
+            # Additional selectors to remove in expanded mode
+            selectors.extend([
+                'header',
+                'nav',
+                '.sidebar',
+                '#navigation',
+                '.mdl-anchornav',
+                '#header',
+                '.mdl-header',
+                '#toc',
+                '.mdl-footer',
+                '#footer',
+                # Add any other selectors specific to the navbar and sidebar
             ])
 
-        # Kombiniere die Selektoren
-        all_selectors = base_selectors + selectors + conditional_selectors
-
-        # Entferne die ausgewählten Elemente, indem ihre Anzeige auf 'none' gesetzt wird
-        if all_selectors:
-            await page.evaluate(f"""
-                () => {{
-                    const selectors = {all_selectors};
-                    selectors.forEach(selector => {{
-                        const elements = document.querySelectorAll(selector);
-                        elements.forEach(el => {{
-                            el.style.display = 'none';
-                        }});
-                    }});
-                }}
-            """)
-            logger.debug(f"Entfernte Elemente: {all_selectors}")
-        else:
-            logger.warning("Keine Selektoren zum Entfernen gefunden.")
-    except ImportError:
-        logger.error("Fehler beim Importieren von Selektoren aus listen.py.")
+        for selector in selectors:
+            await page.evaluate(f'''
+                const elements = document.querySelectorAll('{selector}');
+                elements.forEach(el => el.remove());
+            ''')
+        logger.debug(f"Removed unwanted elements: {selectors}")
     except Exception as e:
-        logger.error(f"Fehler beim Entfernen unerwünschter Elemente: {e}")
+        logger.error(f"Error removing unwanted elements: {e}")
 
 async def remove_navigation_and_sidebars(page: Page):
     """
@@ -303,103 +273,35 @@ async def scroll_page(page: Page):
     except Exception as e:
         logger.error(f"Fehler beim Scrollen der Seite: {e}")
 
+# app/processing/utils.py
+
 async def inject_custom_css(page: Page, expanded: bool = False):
-    """
-    Injezieren von benutzerdefinierten CSS-Regeln, um die Darstellung der Seite zu optimieren.
-    """
-    logger.info("Injezieren von benutzerdefiniertem CSS.")
+    """Inject custom CSS into the page."""
     try:
-        if not expanded:
-            await page.add_style_tag(content="""
-                /* Entferne alle mdl-anchornav Navigationsmenüs */
-                .mdl-anchornav {
+        if expanded:
+            css = '''
+                /* Hide navbar and sidebar */
+                header, nav, .sidebar, #navigation, .mdl-anchornav, #header, .mdl-header, #toc, .mdl-footer, #footer {
                     display: none !important;
                 }
-
-                /* Entferne die Navigationsleiste */
-                header#header {
-                    display: none !important;
-                }
-
-                /* Anpassungen für den normalen Modus */
+                /* Adjust page width */
                 body {
-                    max-width: none !important;
-                    width: 100% !important;
+                    margin: 0 auto;
+                    width: 100%;
                 }
-
-                /* Anpassung der Schriftgröße für atm-heading im Normal-Modus */
-                h3.atm-heading {
-                    font-size: 1.2em !important;
-                    line-height: 1.4 !important;
+                /* Additional CSS to make the page look nice and clean */
+                .lyt-wrapper {
+                    max-width: 100% !important;
+                    padding: 0 !important;
                 }
-                h2.atm-heading {
-                    font-size: 1.8em !important;
-                    line-height: 1.5 !important;
-                }
-
-                @media print {
-                    /* Standardmäßig den Header ausblenden */
-                    header#header {
-                        display: none !important;
-                    }
-
-                    /* Nur auf der ersten Seite den Header anzeigen */
-                    @page :first {
-                        header#header {
-                            display: block !important;
-                            position: fixed;
-                            top: 0;
-                            width: 100%;
-                            /* Weitere Stile nach Bedarf */
-                        }
-                    }
-
-                    /* Platzhalter schaffen, damit der Inhalt nicht vom Header verdeckt wird */
-                    body {
-                        margin-top: 100px; /* Höhe des Headers anpassen */
-                    }
-                }
-            """)
-            logger.debug("CSS für den normal-Modus erfolgreich injiziert.")
+            '''
+            await page.add_style_tag(content=css)
+            logger.debug(f"Injected custom CSS for expanded mode.")
         else:
-            await page.add_style_tag(content="""
-                /* Optimiere das Layout für den expanded-Modus */
-                body {
-                    max-width: none !important;
-                    width: 100% !important;
-                }
-
-                .mdl-anchornav {
-                    display: block !important;
-                    position: fixed !important;
-                    top: 0 !important;
-                    left: 0 !important;
-                    width: 300px !important;
-                    height: 100% !important;
-                    overflow: auto !important;
-                    background-color: white !important;
-                    box-shadow: 2px 0 5px rgba(0,0,0,0.1) !important;
-                    z-index: 1000 !important;
-                }
-
-                /* Stelle sicher, dass der Hauptinhalt nicht von der Navigation überlappt wird */
-                .main-content {
-                    margin-left: 320px !important;
-                }
-
-                /* Anpassung der Schriftgröße für atm-heading im Expanded-Modus */
-                h3.atm-heading {
-                    font-size: 1.0em !important;
-                    line-height: 1.3 !important;
-                }
-                h2.atm-heading {
-                    font-size: 1.6em !important;
-                    line-height: 1.4 !important;
-                }
-            """)
-            logger.debug("CSS für den expanded-Modus erfolgreich injiziert.")
+            # Inject CSS for collapsed mode if needed
+            pass
     except Exception as e:
-        logger.error(f"Fehler beim Injizieren von CSS: {e}")
+        logger.error(f"Error injecting custom CSS: {e}")
 
 
 # app/processing/utils.py
