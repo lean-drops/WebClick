@@ -1,12 +1,13 @@
 # app/scrape_helpers.py
-
-from typing import Dict, Optional
+import json
+import os
+from typing import Dict, Optional, Any
 import threading
 
-from config import logger
+from config import logger, MAPPING_DIR
 
 # Import the configuration
-from fetch_content import scrape_website
+from app.scrapers.fetch_content import scrape_website
 
 # Shared dictionary for scraping tasks
 scrape_tasks: Dict[str, Dict] = {}
@@ -14,96 +15,66 @@ scrape_tasks: Dict[str, Dict] = {}
 scrape_lock = threading.Lock()
 
 
+# app/scrapers/scraping_helpers.py
+
 async def run_scrape_task(task_id: str, url: str):
-    """
-    Performs scraping for the given URL and updates the task status.
+    with scrape_lock:
+        scrape_tasks[task_id] = {'status': 'running', 'result': {}, 'error': None}
 
-    :param task_id: Unique ID for the scraping task
-    :param url: URL to be scraped
-    """
     try:
-        logger.info(f"Starting scraping for Task ID: {task_id}, URL: {url}")
+        logger.info(f"Starting scrape task {task_id} for URL: {url}")
 
-        # Use fetch_content.py's scrape_website function
-        result = await scrape_website(url, max_depth=2, max_concurrency=20, use_cache=True)
+        result = await scrape_website(url)
 
-        # Check if an error occurred
-        if 'error' in result:
-            error_message = result['error']
-            logger.error(f"Error during scraping for Task ID: {task_id}: {error_message}")
-            with scrape_lock:
-                scrape_tasks[task_id] = {
-                    'status': 'failed',
-                    'error': error_message
-                }
-        else:
-            url_mapping = result['url_mapping']
-            base_page_id = result['base_page_id']
+        # Save result to cache (include both 'url_mapping' and 'base_page_id')
+        cache_filename = f"{task_id}.json"
+        cache_filepath = os.path.join(MAPPING_DIR, cache_filename)
+        with open(cache_filepath, 'w', encoding='utf-8') as f:
+            json.dump(result, f, ensure_ascii=False, indent=4)
 
-            # Update the task status safely
-            with scrape_lock:
-                scrape_tasks[task_id] = {
-                    'status': 'completed',
-                    'result': {
-                        'url_mapping': url_mapping,
-                        'base_page_id': base_page_id
-                    }
-                }
+        with scrape_lock:
+            scrape_tasks[task_id]['status'] = 'completed'
+            scrape_tasks[task_id]['result'] = result
 
-            logger.info(f"Scraping completed for Task ID: {task_id}")
+        logger.info(f"Scrape task {task_id} completed successfully.")
 
     except Exception as e:
-        logger.error(f"Error during scraping for Task ID: {task_id}: {e}")
+        logger.error(f"Error during scraping task {task_id}: {e}", exc_info=True)
         with scrape_lock:
-            scrape_tasks[task_id] = {
-                'status': 'failed',
-                'error': str(e)
-            }
-        raise e  # To handle the error in routes.py
+            scrape_tasks[task_id]['status'] = 'failed'
+            scrape_tasks[task_id]['error'] = str(e)
 
 
-def render_links_recursive(url_mapping: Dict[str, Dict], page_id: Optional[str] = None, level: int = 0) -> str:
-    """
-    Creates a recursive HTML representation of links based on the URL mapping structure.
+def render_links_recursive(url_mapping: Dict[str, Any], base_page_id: str = None) -> str:
+    if not base_page_id:
+        base_page_id = next(iter(url_mapping))
 
-    :param url_mapping: Dictionary with URL mappings
-    :param page_id: ID of the current page
-    :param level: Recursion depth
-    :return: HTML string of the links
-    """
-    html = ""
-    indent = "    " * level  # Indentation for readability
+    visited_pages = set()
 
-    if page_id is None:
-        # If no page_id is given, start with root pages (without parent_id)
-        root_pages = [pid for pid, pdata in url_mapping.items() if pdata.get('parent_id') is None]
-        for pid in root_pages:
-            html += render_links_recursive(url_mapping, page_id=pid, level=level)
-        return html
+    def render_node(page_id):
+        if page_id in visited_pages:
 
-    page_data = url_mapping.get(page_id)
-    if not page_data:
-        return ""
+            logger.debug(f"Already visited page_id {page_id}, skipping to prevent infinite recursion.")
+            return ''
+        visited_pages.add(page_id)
 
-    title = page_data.get('title', 'No Title')
-    url = page_data.get('url', '#')
+        page = url_mapping.get(page_id, {})
+        title = page.get('title', 'No Title')
+        url = page.get('url', '#')
+        children_html = ''
 
-    # Generate HTML for the current page
-    html += f"""
-{indent}<tr class="level-{level}">
-{indent}    <td>
-{indent}        <span class="toggle-btn-label" data-page-id="{page_id}" role="button" aria-expanded="false" aria-controls="child-{page_id}"></span>
-{indent}        <a href="{url}" class="toggle-link" data-page-id="{page_id}" data-title="{title}" data-url="{url}">{title}</a>
-{indent}    </td>
-{indent}    <td>
-{indent}        <input type="checkbox" name="selected_links" value="{url}">
-{indent}    </td>
-{indent}</tr>
-"""
+        for child_id in page.get('children', []):
+            children_html += render_node(child_id)
 
-    # Process the children of the current page
-    children = page_data.get('children', [])
-    for child_id in children:
-        html += render_links_recursive(url_mapping, page_id=child_id, level=level + 1)
+        checked_attribute = 'checked' if page_id == base_page_id else ''
 
-    return html
+        return f"""
+        <li>
+            <input type="checkbox" id="{page_id}" name="selected_links" value="{url}" {checked_attribute}>
+            <label for="{page_id}">{title}</label>
+            <ul>{children_html}</ul>
+        </li>
+        """
+
+    html_content = render_node(base_page_id)
+    return f"<ul>{html_content}</ul>"

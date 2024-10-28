@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scraping Ergebnisse (Level 1 Links)</title>
+    <title>Scraping Ergebnisse</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/scrape_result.css', v=version) }}">
     <style>
         /* Basis-Stile */
         body {
@@ -41,17 +40,40 @@
         }
 
         .container {
+            display: flex;
+            flex-wrap: wrap;
             padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
+            box-sizing: border-box;
         }
 
-        .list-container, .selected-links-container {
+        .main-link-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .list-container {
+            flex: 1 1 60%;
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 30px;
+            margin-right: 20px;
+            border-radius: 10px;
+            box-sizing: border-box;
+            overflow: auto;
+            max-height: 70vh;
+        }
+
+        .selected-links-container {
+            flex: 1 1 35%;
             background-color: #fff;
             padding: 20px;
             margin-bottom: 30px;
             border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            overflow: auto;
+            max-height: 70vh;
         }
 
         h2 {
@@ -71,6 +93,9 @@
 
         th {
             background-color: #f0f0f0;
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
 
         tr:nth-child(even) {
@@ -96,60 +121,6 @@
             transform: rotate(90deg);
         }
 
-        /* Modal-Stile */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 20px;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 90%;
-            max-height: 90%;
-            overflow: auto;
-            position: relative;
-        }
-
-        .modal iframe {
-            width: 100%;
-            height: 600px;
-            border: none;
-            border-radius: 5px;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 25px;
-            font-weight: bold;
-            color: #333;
-            cursor: pointer;
-        }
-
-        /* Responsive Anpassungen */
-        @media (max-width: 768px) {
-            .modal iframe {
-                height: 400px;
-            }
-
-            th, td {
-                padding: 10px 12px;
-            }
-        }
-
         /* Stil für ausgewählte Links */
         .selected-link {
             display: flex;
@@ -158,6 +129,7 @@
             background-color: #eef2ff;
             padding: 10px;
             border-radius: 5px;
+            word-break: break-word;
         }
 
         .selected-link a {
@@ -184,10 +156,46 @@
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s;
+            margin-top: 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         #convert-button:hover {
             background-color: #5563c1;
+        }
+
+        /* Ladeindikator */
+        #loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #667eea;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            display: none; /* Initially hidden */
+            z-index: 9999;
+        }
+
+        /* Responsive Anpassungen */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .list-container,
+            .selected-links-container {
+                margin-right: 0;
+                width: 100%;
+            }
+
+            #convert-button {
+                width: 100%;
+                box-sizing: border-box;
+            }
         }
     </style>
 </head>
@@ -201,18 +209,14 @@
     </header>
 
     <main class="container">
-        <!-- Modal für die Hauptwebsite -->
-        <div id="main-website-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-modal">&times;</span>
-                <h2 id="modal-title">{{ main_link_title }}</h2>
-                <iframe src="{{ main_link_url }}" title="{{ main_link_title }}"></iframe>
-            </div>
+        <!-- Hauptlink anzeigen -->
+        <div class="main-link-container">
+            <h2>Hauptlink: <a href="#" id="main-link">{{ main_link_title }}</a></h2>
         </div>
 
         <!-- Container für die Liste -->
         <div class="list-container">
-            <h2>{{ main_link_title }}</h2>
+            <h2>Gefundene Links</h2>
             <table>
                 <thead>
                     <tr>
@@ -229,14 +233,12 @@
                                 <!-- Zeige den Toggle-Pfeil nur, wenn es Kinder gibt -->
                                 <span class="toggle-btn-label" data-page-id="{{ page_id }}" role="button" aria-expanded="false" aria-controls="child-{{ page_id }}"></span>
                                 {% endif %}
-                                <!-- Link zum Öffnen im Modal -->
-                                <a href="{{ page_data.url }}" class="toggle-link" data-page-id="{{ page_id }}" data-title="{{ page_data.title }}" data-url="{{ page_data.url }}">{{ page_data.title }}</a>
+                                <!-- Link zum Öffnen im neuen Fenster -->
+                                <a href="#" class="toggle-link" data-url="{{ page_data.url }}" data-title="{{ page_data.title }}">{{ page_data.title }}</a>
                             </td>
                             <td>
-                                <input type="checkbox" name="selected_links" value="{{ page_data.url }}"
-                                    {% if page_data.url == main_link_url %}
-                                        checked disabled
-                                    {% endif %}>
+                                <input type="checkbox" name="selected_links" value="{{ page_data.url }}" data-title="{{ page_data.title }}"
+                                    {% if page_data.url == main_link_url %} checked {% endif %}>
                             </td>
                         </tr>
                         <!-- Kinder-Elemente -->
@@ -244,10 +246,10 @@
                             {% if child_id in url_mapping %}
                             <tr class="child-row child-of-{{ page_id }}" id="child-{{ page_id }}" style="display: none;">
                                 <td style="padding-left: 40px;">
-                                    <!-- Link zum Öffnen im Modal -->
-                                    <a href="{{ url_mapping[child_id].url }}" class="toggle-link" data-page-id="{{ page_id }}" data-title="{{ url_mapping[child_id].title }}" data-url="{{ url_mapping[child_id].url }}">{{ url_mapping[child_id].title }}</a>
+                                    <!-- Link zum Öffnen im neuen Fenster -->
+                                    <a href="#" class="toggle-link" data-url="{{ url_mapping[child_id].url }}" data-title="{{ url_mapping[child_id].title }}">{{ url_mapping[child_id].title }}</a>
                                 </td>
-                                <td><input type="checkbox" name="selected_links" value="{{ url_mapping[child_id].url }}"></td>
+                                <td><input type="checkbox" name="selected_links" value="{{ url_mapping[child_id].url }}" data-title="{{ url_mapping[child_id].title }}"></td>
                             </tr>
                             {% endif %}
                         {% endfor %}
@@ -266,179 +268,158 @@
             </div>
 
             <!-- Konvertieren-Button -->
-            <button id="convert-button" onclick="startPdfConversion()">PDF-Konvertierung starten</button>
+<!-- Konvertieren-Button -->
+<button id="convert-button" onclick="start_pdf_task()">PDF-Konvertierung starten</button>
         </div>
     </main>
 
     <!-- Ladeindikator -->
     <div id="loading-indicator">Starte PDF-Konvertierung...</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const toggleButtons = document.querySelectorAll('.toggle-btn-label');
-            const selectedLinksContainer = document.getElementById('selected-links');
-            const checkboxes = document.querySelectorAll('input[name="selected_links"]');
-            const listLinks = document.querySelectorAll('.toggle-link'); // Auswahl für die List Links
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleButtons = document.querySelectorAll('.toggle-btn-label');
+        const selectedLinksContainer = document.getElementById('selected-links');
+        const checkboxes = document.querySelectorAll('input[name="selected_links"]');
+        const listLinks = document.querySelectorAll('.toggle-link');
 
-            // Event-Listener für Toggle-Buttons
-            toggleButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const pageId = this.getAttribute('data-page-id');
-                    toggleChildren(pageId, this);
-                });
+        let externalWindow = null;
+
+        // Funktion zum Öffnen eines neuen Fensters rechts neben dem aktuellen Fenster
+        function openExternalWindow(url) {
+            // Berechne die Position und Größe des neuen Fensters
+            const screenWidth = window.screen.width;
+            const screenHeight = window.screen.height;
+            const windowWidth = screenWidth / 2;
+            const windowHeight = screenHeight;
+
+            // Versuche, das neue Fenster rechts neben dem aktuellen Fenster zu öffnen
+            const windowLeft = window.screenX + window.outerWidth;
+            const windowTop = window.screenY;
+
+            // Öffne das neue Fenster
+            externalWindow = window.open(
+                url,
+                'externalWindow',
+                `width=${windowWidth},height=${windowHeight},left=${windowLeft},top=${windowTop}`
+            );
+        }
+
+        // Event-Listener für den Hauptlink
+        const mainLinkElement = document.getElementById('main-link');
+        mainLinkElement.addEventListener('click', function (e) {
+            e.preventDefault();
+            const mainLinkUrl = "{{ main_link_url }}";
+            if (externalWindow && !externalWindow.closed) {
+                externalWindow.location.href = mainLinkUrl;
+                externalWindow.focus();
+            } else {
+                openExternalWindow(mainLinkUrl);
+            }
+        });
+
+        // Event-Listener für die List Links
+        listLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const url = this.getAttribute('data-url');
+                if (externalWindow && !externalWindow.closed) {
+                    externalWindow.location.href = url;
+                    externalWindow.focus();
+                } else {
+                    openExternalWindow(url);
+                }
             });
+        });
 
-            // Event-Listener für Checkboxen
-            checkboxes.forEach(checkbox => {
-                // Skip disabled checkboxes (main link)
-                if (checkbox.disabled) {
-                    // Da der Hauptlink bereits ausgewählt ist, füge ihn zur Anzeige hinzu
-                    const linkUrl = checkbox.value;
-                    const linkId = `selected-${hashCode(linkUrl)}`;
+        // Event-Listener für Toggle-Buttons
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const pageId = this.getAttribute('data-page-id');
+                toggleChildren(pageId, this);
+            });
+        });
 
+        // Event-Listener für Checkboxen
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const linkUrl = this.value;
+                const linkTitle = this.dataset.title;
+                const linkId = `selected-${hashCode(linkUrl)}`;
+
+                if (this.checked) {
+                    // Link hinzufügen
                     const linkDiv = document.createElement('div');
                     linkDiv.classList.add('selected-link');
                     linkDiv.id = linkId;
 
                     const linkAnchor = document.createElement('a');
-                    linkAnchor.href = linkUrl;
-                    linkAnchor.textContent = "{{ main_link_title }}"; // Anzeige des Titels statt URL
-                    linkAnchor.addEventListener('click', function(e) {
+                    linkAnchor.href = '#';
+                    linkAnchor.textContent = linkTitle || linkUrl;
+                    linkAnchor.addEventListener('click', function (e) {
                         e.preventDefault();
-                        openModal(linkUrl, "{{ main_link_title }}");
+                        if (externalWindow && !externalWindow.closed) {
+                            externalWindow.location.href = linkUrl;
+                            externalWindow.focus();
+                        } else {
+                            openExternalWindow(linkUrl);
+                        }
                     });
 
                     const removeButton = document.createElement('button');
                     removeButton.classList.add('remove-link');
                     removeButton.innerHTML = '&times;';
-                    removeButton.disabled = true; // Entferne den Button, um das Entfernen zu verhindern
+                    removeButton.addEventListener('click', function () {
+                        checkbox.checked = false; // Checkbox deaktivieren
+                        selectedLinksContainer.removeChild(linkDiv);
+                    });
 
                     linkDiv.appendChild(linkAnchor);
                     linkDiv.appendChild(removeButton);
                     selectedLinksContainer.appendChild(linkDiv);
-                    return; // Überspringe den Rest
-                }
-
-                checkbox.addEventListener('change', function () {
-                    const linkUrl = this.value;
-                    const linkId = `selected-${hashCode(linkUrl)}`;
-
-                    if (this.checked) {
-                        // Link hinzufügen
-                        const linkDiv = document.createElement('div');
-                        linkDiv.classList.add('selected-link');
-                        linkDiv.id = linkId;
-
-                        const linkAnchor = document.createElement('a');
-                        linkAnchor.href = linkUrl;
-                        linkAnchor.textContent = getLinkTitle(linkUrl); // Funktion zur Ermittlung des Titels
-                        linkAnchor.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            openModal(linkUrl, this.parentElement.querySelector('a').textContent);
-                        });
-
-                        const removeButton = document.createElement('button');
-                        removeButton.classList.add('remove-link');
-                        removeButton.innerHTML = '&times;';
-                        removeButton.addEventListener('click', function() {
-                            checkbox.checked = false; // Checkbox deaktivieren
-                            selectedLinksContainer.removeChild(linkDiv);
-                        });
-
-                        linkDiv.appendChild(linkAnchor);
-                        linkDiv.appendChild(removeButton);
-                        selectedLinksContainer.appendChild(linkDiv);
-                    } else {
-                        // Link entfernen
-                        const linkDiv = document.getElementById(linkId);
-                        if (linkDiv) {
-                            selectedLinksContainer.removeChild(linkDiv);
-                        }
+                } else {
+                    // Link entfernen
+                    const linkDiv = document.getElementById(linkId);
+                    if (linkDiv) {
+                        selectedLinksContainer.removeChild(linkDiv);
                     }
-                });
-            });
-
-            // Event-Listener für die List Links
-            listLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault(); // Verhindert das Standardverhalten
-                    const url = this.getAttribute('data-url');
-                    const title = this.getAttribute('data-title');
-                    openModal(url, title);
-                });
-            });
-
-            function toggleChildren(pageId, toggleElement) {
-                const childRows = document.querySelectorAll('.child-of-' + pageId);
-                const isExpanded = toggleElement.classList.toggle('expanded');
-                toggleElement.setAttribute('aria-expanded', isExpanded);
-
-                childRows.forEach(row => {
-                    row.style.display = isExpanded ? 'table-row' : 'none';
-                });
-            }
-
-            // Funktion zur Generierung eines einfachen Hashcodes für eindeutige IDs
-            function hashCode(str) {
-                let hash = 0;
-                for (let i = 0; i < str.length; i++) {
-                    hash = (hash << 5) - hash + str.charCodeAt(i);
-                    hash |= 0; // Convert to 32bit integer
-                }
-                return Math.abs(hash).toString();
-            }
-
-            // Funktion zum Öffnen eines Modals mit der Hauptwebsite
-            function openModal(url, title) {
-                const modal = document.getElementById('main-website-modal');
-                const iframe = modal.querySelector('iframe');
-                const modalTitle = modal.querySelector('#modal-title');
-                iframe.src = url;
-                modalTitle.textContent = title;
-                modal.style.display = 'flex';
-            }
-
-            // Event-Listener zum Schließen des Modals
-            const closeModalBtn = document.querySelector('.close-modal');
-            closeModalBtn.addEventListener('click', function() {
-                const modal = document.getElementById('main-website-modal');
-                modal.style.display = 'none';
-                const iframe = modal.querySelector('iframe');
-                iframe.src = '';
-            });
-
-            // Schließe das Modal, wenn außerhalb des Inhalts geklickt wird
-            window.addEventListener('click', function(event) {
-                const modal = document.getElementById('main-website-modal');
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                    const iframe = modal.querySelector('iframe');
-                    iframe.src = '';
                 }
             });
 
-            // Funktion zur Ermittlung des Titels basierend auf der URL
-            function getLinkTitle(url) {
-                // Du kannst diese Funktion anpassen, um den Titel basierend auf der URL abzurufen
-                // Zum Beispiel könntest du die Titel aus dem DOM speichern oder anderweitig abrufen
-                // Hier einfach als Platzhalter:
-                return url;
-            }
-
-            // Öffne ein Fenster mit dem Hauptlink, wenn vorhanden
-            const mainLinkUrl = "{{ main_link_url }}";
-            const mainLinkTitle = "{{ main_link_title }}";
-            if (mainLinkUrl && mainLinkTitle && mainLinkUrl !== '#') {
-                openModal(mainLinkUrl, mainLinkTitle);
+            // Initialisiere die ausgewählten Links beim Laden der Seite
+            if (checkbox.checked) {
+                const event = new Event('change');
+                checkbox.dispatchEvent(event);
             }
         });
 
+        function toggleChildren(pageId, toggleElement) {
+            const childRows = document.querySelectorAll('.child-of-' + pageId);
+            const isExpanded = toggleElement.classList.toggle('expanded');
+            toggleElement.setAttribute('aria-expanded', isExpanded);
+
+            childRows.forEach(row => {
+                row.style.display = isExpanded ? 'table-row' : 'none';
+            });
+        }
+
+        // Funktion zur Generierung eines einfachen Hashcodes für eindeutige IDs
+        function hashCode(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = (hash << 5) - hash + str.charCodeAt(i);
+                hash |= 0; // Convert to 32bit integer
+            }
+            return Math.abs(hash).toString();
+        }
+
+        // Funktion zum Starten der PDF-Konvertierung
         async function startPdfConversion() {
             const checkboxes = document.querySelectorAll('input[name="selected_links"]:checked');
             let selectedLinks = [];
 
+            // Benutzergewählte Links hinzufügen
             checkboxes.forEach((checkbox) => {
-                console.log(`Checkbox Wert: ${checkbox.value}`);  // Debugging
                 selectedLinks.push(checkbox.value);
             });
 
@@ -452,7 +433,6 @@
             loadingIndicator.style.display = 'block';
 
             try {
-                console.log('Sende AJAX-Anfrage an /start_pdf_task');
                 const response = await fetch('/start_pdf_task', {
                     method: 'POST',
                     headers: {
@@ -462,7 +442,6 @@
                 });
 
                 const data = await response.json();
-                console.log('Antwort erhalten, überprüfe den Status', data);
 
                 if (data.status === 'success' && data.task_id) {
                     // Weiterleitung zur PDF-Statusseite mit der task_id
@@ -478,7 +457,13 @@
                 alert('Es gab ein Problem beim Starten der PDF-Konvertierung.');
             }
         }
-    </script>
+
+        // Event-Listener für den Konvertieren-Button hinzufügen
+        const convertButton = document.getElementById('convert-button');
+        convertButton.addEventListener('click', startPdfConversion);
+    });
+</script>
+
 
 </body>
 </html>

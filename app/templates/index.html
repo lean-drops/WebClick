@@ -31,12 +31,9 @@
     </div>
 
     <script>
-        // Zeige den Lade-Rahmen, wenn das Formular abgeschickt wird
+        // Show the loading bar when the form is submitted
         document.getElementById('scrapeForm').addEventListener('submit', function (event) {
-            // Verhindere mehrfache Abschickungen, falls nötig
-            // event.preventDefault();
-
-            // Zeige die Ladeanimation (Border)
+            // Show the loading animation (Border)
             document.getElementById('loadingBar').style.display = 'block';
         });
     </script>
