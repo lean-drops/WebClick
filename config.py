@@ -1,5 +1,5 @@
-# config.py
 import os
+import json  # Hinzugefügt
 from pathlib import Path
 import logging
 from dotenv import load_dotenv
@@ -35,7 +35,6 @@ UTILS_DIR = APP_DIR / os.getenv('UTILS_DIR', 'utils')
 # Cache-Verzeichnisse
 CACHE_DIR = STATIC_DIR / os.getenv('CACHE_DIR', 'cache')
 MAPPING_CACHE_DIR = CACHE_DIR / os.getenv('MAPPING_CACHE_DIR', 'mapping_cache')
-
 # Logs-Verzeichnis
 LOGS_DIR = BASE_DIR / os.getenv('LOGS_DIR', 'logs')
 
@@ -85,14 +84,15 @@ def ensure_directories_exist(directories):
     all_exist = True
     for directory in directories:
         if not directory.exists():
-            print(f"{Fore.RED}Fehler: Das Verzeichnis existiert nicht: {directory}")
+            print(f"{Fore.RED}Verzeichnis fehlt: {directory}{Style.RESET_ALL}")
+            directory.mkdir(parents=True, exist_ok=True)
+            print(f"{Fore.GREEN}Verzeichnis erstellt: {directory}{Style.RESET_ALL}")
             all_exist = False
         else:
-            print(f"{Fore.GREEN}OK: Das Verzeichnis existiert: {directory}")
-    if not all_exist:
-        print(f"{Fore.RED}Ein oder mehrere erforderliche Verzeichnisse fehlen. Bitte erstelle sie und starte die Anwendung neu.")
-        sys.exit(1)
+            print(f"{Fore.YELLOW}Verzeichnis existiert bereits: {directory}{Style.RESET_ALL}")
+    return all_exist
 
+# Verzeichnisse sicherstellen
 ensure_directories_exist(directories)
 
 # Pfade zu spezifischen Dateien
@@ -109,15 +109,33 @@ def ensure_files_exist(files):
     all_exist = True
     for file in files:
         if not file.exists():
-            print(f"{Fore.RED}Fehler: Die Datei existiert nicht: {file}")
-            all_exist = False
+            if file == OUTPUT_MAPPING_PATH:
+                try:
+                    # Erstelle eine leere JSON-Datei
+                    with open(file, 'w') as f:
+                        json.dump({}, f)
+                    print(f"{Fore.GREEN}Erstellte leere Datei: {file}{Style.RESET_ALL}")
+                    logger.info(f"Leere Datei erstellt: {file}")
+                except Exception as e:
+                    print(f"{Fore.RED}Fehler beim Erstellen der Datei {file}: {e}{Style.RESET_ALL}")
+                    logger.error(f"Fehler beim Erstellen der Datei {file}: {e}")
+                    all_exist = False
+            else:
+                print(f"{Fore.RED}Fehler: Die Datei existiert nicht: {file}{Style.RESET_ALL}")
+                logger.error(f"Fehler: Die Datei existiert nicht: {file}")
+                all_exist = False
         else:
-            print(f"{Fore.GREEN}OK: Die Datei existiert: {file}")
+            print(f"{Fore.GREEN}OK: Die Datei existiert: {file}{Style.RESET_ALL}")
     if not all_exist:
-        print(f"{Fore.RED}Ein oder mehrere erforderliche Dateien fehlen. Bitte erstelle sie und starte die Anwendung neu.")
+        print(f"{Fore.RED}Ein oder mehrere erforderliche Dateien fehlen. Bitte erstelle sie und starte die Anwendung neu.{Style.RESET_ALL}")
+        logger.warning("Ein oder mehrere erforderliche Dateien fehlen.")
         sys.exit(1)
 
-ensure_files_exist(files)
+# Verzeichnisse sicherstellen
+if not ensure_files_exist(files):
+    logger.warning("Einige Dateien wurden erstellt.")
+else:
+    logger.info("Alle Dateien existieren bereits.")
 
 # Funktion zur Bestimmung der maximal möglichen Anzahl von Workern
 def get_max_workers(default=DEFAULT_MAX_WORKERS):
