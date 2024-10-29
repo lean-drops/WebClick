@@ -1,247 +1,210 @@
-/* Grundlegende Einstellungen */
-* {
+/* Basis-Stile */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
-html, body {
-    height: 100%;
-}
-
-body {
-    display: flex;
-    flex-direction: column;
-    font-family: 'Montserrat', sans-serif;
-    background-color: #f4f7f9;
-    color: #2c3e50;
-    margin: 0;
-    padding: 0; /* Entferne Padding, um Flexbox korrekt zu nutzen */
-}
-
-/* Navbar-Stil */
 .navbar {
-    background-color: #3498db;
-    padding: 15px;
-    color: white;
-    text-align: center;
-    font-size: 1.5em;
-    font-weight: 600;
-    margin-bottom: 0; /* Entferne margin-bottom */
+    background-color: #667eea;
+    color: #fff;
+    padding: 15px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .back-button {
-    color: white;
-    text-decoration: underline;
-    margin-left: 20px;
-    font-size: 0.8em;
-    cursor: pointer;
+    background-color: #fff;
+    color: #667eea;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .back-button:hover {
-    color: #ecf0f1;
+    background-color: #ddd;
+    color: #667eea;
 }
 
-/* Container-Stil */
 .container {
     display: flex;
-    gap: 20px;
-    flex: 1; /* Nimmt den verbleibenden Platz ein */
+    flex-wrap: wrap;
     padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden; /* Verhindert Überlauf */
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
-.list-container, .selected-links-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: auto; /* Ermöglicht Scrollen bei Überlauf */
+.main-link-container {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.list-container {
+    flex: 1 1 60%;
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 30px;
+    margin-right: 20px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    overflow: auto;
+    max-height: 70vh;
 }
 
 .selected-links-container {
-    background-color: #ecf0f1;
-    border-radius: 10px;
+    flex: 1 1 35%;
+    background-color: #fff;
     padding: 20px;
-    position: relative;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    overflow: auto;
+    max-height: 70vh;
 }
 
-/* Überschriften */
 h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 2em;
-    color: #3498db;
+    margin-bottom: 15px;
+    color: #667eea;
 }
 
-/* Stil für die Tabelle */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
 }
 
 th, td {
-    padding: 15px;
-    border-bottom: 1px solid #ddd;
+    padding: 12px 15px;
     text-align: left;
 }
 
 th {
-    background-color: #ecf0f1;
-    color: #2c3e50;
-    font-weight: 600;
+    background-color: #f0f0f0;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
-/* Kinder-Elemente verstecken */
+tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.parent-row {
+    background-color: #eef2ff;
+}
+
 .child-row {
-    display: none;
-}
-
-/* Stil für das Label (Pfeil) */
-.toggle-btn-label {
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    margin-right: 5px;
+    background-color: #f9f9f9;
 }
 
 .toggle-btn-label::before {
-    content: "►"; /* Pfeil für geschlossenes Menü */
+    content: '▶';
     display: inline-block;
-    margin-right: 10px;
-    color: #3498db;
+    margin-right: 8px;
+    transition: transform 0.3s;
 }
 
 .toggle-btn-label.expanded::before {
-    content: "▼"; /* Pfeil für geöffnetes Menü */
+    transform: rotate(90deg);
 }
 
-/* Links in der Tabelle */
-a.toggle-link {
-    color: #2980b9;
+/* Stil für ausgewählte Links */
+.selected-link {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    background-color: #eef2ff;
+    padding: 10px;
+    border-radius: 5px;
+    word-break: break-word;
+}
+
+.selected-link a {
+    color: #667eea;
     text-decoration: none;
+    flex-grow: 1;
+}
+
+.selected-link .remove-link {
+    background-color: transparent;
+    border: none;
+    color: #ff4d4f;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+#convert-button {
+    background-color: #667eea;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#convert-button:hover {
+    background-color: #5563c1;
+}
+
+/* Ladeindikator */
+#loading-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #667eea;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    display: none; /* Initially hidden */
+    z-index: 9999;
+}
+
+/* Stil für die Konvertierungsmodus-Auswahl */
+.conversion-mode {
+    margin-top: 20px;
+}
+
+.conversion-mode h3 {
+    margin-bottom: 10px;
+    color: #667eea;
+}
+
+.conversion-mode label {
+    margin-right: 15px;
     font-weight: 500;
 }
 
-a.toggle-link:hover {
-    text-decoration: underline;
-}
-
-input[type="checkbox"] {
-    transform: scale(1.2);
-    cursor: pointer;
-}
-
-/* Stil für den Screenshot-Button */
-#screenshot-button {
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-    text-align: center;
-    margin-top: 20px;
-    width: 100%;
-    transition: background-color 0.3s ease;
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-#screenshot-button:hover {
-    background-color: #1e8449;
+.conversion-mode input {
+    margin-right: 5px;
 }
 
 /* Responsive Anpassungen */
 @media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
     .container {
         flex-direction: column;
-        padding: 10px;
     }
 
-    .list-container, .selected-links-container {
-        padding: 10px;
-    }
-
-    th, td {
-        padding: 10px;
-    }
-
-    h2 {
-        font-size: 1.5em;
-    }
-
-    #screenshot-button {
-        padding: 10px;
-        font-size: 14px;
-        position: static;
-        transform: none;
-        margin-top: 20px;
-    }
-
+    .list-container,
     .selected-links-container {
-        padding-bottom: 60px; /* Platz für den Screenshot-Button */
+        margin-right: 0;
+        width: 100%;
     }
-}
 
-/* Zusätzliche Stile für ausgewählte Links */
-.selected-link {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: #dff0d8;
-    border: 1px solid #d6e9c6;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
-
-.selected-link a {
-    flex: 1;
-    margin-right: 10px;
-    color: #27ae60;
-    text-decoration: none;
-}
-
-.selected-link a:hover {
-    text-decoration: underline;
-}
-
-.remove-link {
-    background: none;
-    border: none;
-    color: #c0392b;
-    font-size: 1.2em;
-    cursor: pointer;
-}
-
-.remove-link:hover {
-    color: #e74c3c;
-}
-
-/* Ladeindikator Stil */
-#loading-indicator {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    z-index: 1000;
+    #convert-button {
+        width: 100%;
+        box-sizing: border-box;
+    }
 }

@@ -5,8 +5,9 @@ import logging
 from typing import List
 from urllib.parse import urlparse
 import hashlib
-
+import asyncio
 from app.utils.naming_utils import sanitize_filename
+from config import OUTPUT_PDFS_DIR
 
 # ======================= Logging Konfiguration =======================
 logger = logging.getLogger("utils_logger")
@@ -26,7 +27,6 @@ if not logger.handlers:
 
 # ======================= Hilfsfunktionen =======================
 
-
 def extract_domain(url: str) -> str:
     """Extrahiert den Domain-Namen ohne 'www' und TLD."""
     parsed_url = urlparse(url)
@@ -37,8 +37,7 @@ def extract_domain(url: str) -> str:
     logger.debug(f"Extracted Domain: {domain_main}")
     return domain_main
 
-
-def get_url(json_daten=None, eigene_urls=None):
+def get_url(json_daten=None, eigene_urls=None) -> str:
     """
     Wählt eine zufällige URL aus einer Liste von URLs aus.
 
@@ -63,6 +62,7 @@ def get_url(json_daten=None, eigene_urls=None):
 
     import random
     return random.choice(urls)
+
 def setup_directories(OUTPUT_PDFS_DIR: str):
     """
     Richtet die erforderlichen Ausgabe-Verzeichnisse ein.
@@ -89,40 +89,11 @@ def load_js_file(file_path: str) -> str:
     except Exception as e:
         logger.error(f"Fehler beim Laden der JS-Datei {file_path}: {e}")
         return ""
-# app/processing/prepare.py
-
-import asyncio
-import os
-import logging
-from typing import List
-
-from playwright.async_api import async_playwright, Page
-
-# ======================= Konfiguration =======================
-
-# Ausgabe-Verzeichnis
-OUTPUT_PDFS_DIR = os.getenv("OUTPUT_PDFS_DIR", "output_pdfs")
-os.makedirs(OUTPUT_PDFS_DIR, exist_ok=True)
-
-# Logging konfigurieren
-logger = logging.getLogger("prepare_logger")
-logger.setLevel(logging.DEBUG)  # Setze auf DEBUG für ausführliches Logging
-
-# Erstelle einen Console-Handler mit einem höheren Log-Level
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-
-# Erstelle einen Formatter und füge ihn dem Handler hinzu
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-
-# Füge den Handler dem Logger hinzu
-logger.addHandler(ch)
-
-# ======================= URL Liste =======================
-
 
 # ======================= Erweiterungsfunktionen =======================
+
+from playwright.async_api import async_playwright, Page
+import shutil
 
 async def expand_hidden_elements(page: Page):
     """
@@ -168,12 +139,10 @@ async def expand_hidden_elements(page: Page):
     except Exception as e:
         logger.error(f"Fehler beim Erweitern versteckter Elemente: {e}")
 
-# app/processing/utils.py
-
 async def remove_unwanted_elements(page: Page, expanded: bool = False):
-    """Removes unwanted elements from the page."""
+    """Entfernt unerwünschte Elemente von der Seite."""
     try:
-        # Common selectors to remove
+        # Gemeinsame Selektoren zum Entfernen
         selectors = [
             'script',
             'noscript',
@@ -181,11 +150,11 @@ async def remove_unwanted_elements(page: Page, expanded: bool = False):
             'iframe',
             'footer',
             'div.ads',
-            # Add any other common unwanted elements here
+            # Füge weitere unerwünschte Elemente hinzu
         ]
 
         if expanded:
-            # Additional selectors to remove in expanded mode
+            # Zusätzliche Selektoren zum Entfernen im expanded Modus
             selectors.extend([
                 'header',
                 'nav',
@@ -197,7 +166,7 @@ async def remove_unwanted_elements(page: Page, expanded: bool = False):
                 '#toc',
                 '.mdl-footer',
                 '#footer',
-                # Add any other selectors specific to the navbar and sidebar
+                # Füge weitere Selektoren spezifisch für Navbar und Sidebar hinzu
             ])
 
         for selector in selectors:
@@ -205,9 +174,9 @@ async def remove_unwanted_elements(page: Page, expanded: bool = False):
                 const elements = document.querySelectorAll('{selector}');
                 elements.forEach(el => el.remove());
             ''')
-        logger.debug(f"Removed unwanted elements: {selectors}")
+        logger.debug(f"Unerwünschte Elemente entfernt: {selectors}")
     except Exception as e:
-        logger.error(f"Error removing unwanted elements: {e}")
+        logger.error(f"Fehler beim Entfernen unerwünschter Elemente: {e}")
 
 async def remove_navigation_and_sidebars(page: Page):
     """
@@ -218,13 +187,13 @@ async def remove_navigation_and_sidebars(page: Page):
         await page.evaluate("""
             () => {
                 // Entferne die Navigationsleiste
-                const header = document.querySelector('header#header');
-                if (header) {
+                const headers = document.querySelectorAll('header, nav');
+                headers.forEach(header => {
                     header.style.display = 'none';
-                }
+                });
 
-                // Entferne alle Sidebars mit der Klasse 'mdl-anchornav'
-                const sidebars = document.querySelectorAll('div.mdl-anchornav');
+                // Entferne alle Sidebars mit der Klasse 'mdl-anchornav' oder ähnlichen Klassen
+                const sidebars = document.querySelectorAll('div.mdl-anchornav, aside.sidebar, .sidebar');
                 sidebars.forEach(sidebar => {
                     sidebar.style.display = 'none';
                 });
@@ -273,44 +242,42 @@ async def scroll_page(page: Page):
     except Exception as e:
         logger.error(f"Fehler beim Scrollen der Seite: {e}")
 
-# app/processing/utils.py
-
 async def inject_custom_css(page: Page, expanded: bool = False):
-    """Inject custom CSS into the page."""
+    """Fügt benutzerdefiniertes CSS in die Seite ein."""
     try:
         if expanded:
             css = '''
-                /* Hide navbar and sidebar */
+                /* Verstecke Navbar und Sidebar */
                 header, nav, .sidebar, #navigation, .mdl-anchornav, #header, .mdl-header, #toc, .mdl-footer, #footer {
                     display: none !important;
                 }
-                /* Adjust page width */
+                /* Passe die Seitenbreite an */
                 body {
                     margin: 0 auto;
                     width: 100%;
                 }
-                /* Additional CSS to make the page look nice and clean */
+                /* Weitere CSS-Anpassungen für ein sauberes Layout */
                 .lyt-wrapper {
                     max-width: 100% !important;
                     padding: 0 !important;
                 }
             '''
             await page.add_style_tag(content=css)
-            logger.debug(f"Injected custom CSS for expanded mode.")
+            logger.debug("Benutzerdefiniertes CSS für expanded Modus eingefügt.")
         else:
-            # Inject CSS for collapsed mode if needed
-            pass
+            # Benutzerdefiniertes CSS für collapsed Modus, falls benötigt
+            css = '''
+                /* Optional: CSS für collapsed Modus */
+                body {
+                    margin: 0 auto;
+                    width: 100%;
+                }
+                /* Weitere Anpassungen für collapsed Modus */
+            '''
+            await page.add_style_tag(content=css)
+            logger.debug("Benutzerdefiniertes CSS für collapsed Modus eingefügt.")
     except Exception as e:
-        logger.error(f"Error injecting custom CSS: {e}")
-
-
-# app/processing/utils.py
-
-import os
-import logging
-
-logger = logging.getLogger("utils_logger")
-
+        logger.error(f"Fehler beim Einfügen von benutzerdefiniertem CSS: {e}")
 
 # ======================= Haupttestfunktion =======================
 
@@ -321,7 +288,7 @@ async def main_test():
     logger.info("Starte Haupttestfunktion für prepare.py.")
 
     # Vorbereitung: Einrichtung der Verzeichnisse
-    setup_directories()
+    setup_directories(OUTPUT_PDFS_DIR)
 
     # Lade die URLs
     urls = get_url()
@@ -378,7 +345,7 @@ async def main_test():
                     screenshot_collapsed = sanitize_filename(url).replace('.pdf', '_collapsed.png')
                     screenshot_collapsed_path = os.path.join(OUTPUT_PDFS_DIR, 'individual_pdfs_collapsed', screenshot_collapsed)
                     await page.screenshot(path=screenshot_collapsed_path, full_page=True)
-                    logger.info(f"Screenshot im normal-Modus gespeichert: {screenshot_collapsed_path}")
+                    logger.info(f"Screenshot im collapsed Modus gespeichert: {screenshot_collapsed_path}")
 
                     # Schritt 6: Wiederhole die Schritte für den expanded-Modus
                     logger.info(f"Starte erweiterte Verarbeitung für URL: {url}")
@@ -386,11 +353,11 @@ async def main_test():
                     # Erweitere versteckte Elemente erneut (falls nötig)
                     await expand_hidden_elements(page)
 
-                    # Entferne unerwünschte Elemente im expanded-Modus (keine zusätzlichen)
+                    # Entferne unerwünschte Elemente im expanded-Modus
                     await remove_unwanted_elements(page, expanded=True)
 
                     # Entferne fixierte Elemente im expanded-Modus (falls notwendig)
-                    # In diesem Fall nicht notwendig, da Navigation beibehalten werden soll
+                    await remove_fixed_elements(page)
 
                     # Injezieren von benutzerdefiniertem CSS für den expanded-Modus
                     await inject_custom_css(page, expanded=True)
@@ -399,7 +366,7 @@ async def main_test():
                     screenshot_expanded = sanitize_filename(url).replace('.pdf', '_expanded.png')
                     screenshot_expanded_path = os.path.join(OUTPUT_PDFS_DIR, 'individual_pdfs_expanded', screenshot_expanded)
                     await page.screenshot(path=screenshot_expanded_path, full_page=True)
-                    logger.info(f"Screenshot im expanded-Modus gespeichert: {screenshot_expanded_path}")
+                    logger.info(f"Screenshot im expanded Modus gespeichert: {screenshot_expanded_path}")
 
                     await page.close()
                 except Exception as e:

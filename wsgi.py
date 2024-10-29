@@ -2,28 +2,29 @@
 
 import sys
 import os
-from config import BASE_DIR, check_system_and_port
+from config import BASE_DIR
+from app import create_app
 import logging
 
-# Der Pfad zu deinem Projektverzeichnis (Anpassung an deine Verzeichnisstruktur)
+# Füge das Projektverzeichnis zum Python-Pfad hinzu
 project_home = BASE_DIR
-if project_home not in sys.path:
-    sys.path.append(project_home)
+if str(project_home) not in sys.path:
+    sys.path.insert(0, str(project_home))
 
-# Setze die Umgebungsvariable für das Flask-Anwendungspaket (falls erforderlich)
-os.environ['FLASK_APP'] = 'app'  # Passe den Namen deines Flask-App-Pakets an
+# Setze die Umgebungsvariable für die Flask-Anwendung, falls erforderlich
+os.environ['FLASK_APP'] = 'wsgi.py'
 
-# Flask-Anwendung importieren
-from app import create_app
-
-# Überprüfe System und Port
-config = check_system_and_port()
-MAX_WORKERS = config['max_workers']
-PORT = config['port']
-
-logger = logging.getLogger(__name__)
-logger.info(f"Starte Anwendung mit {MAX_WORKERS} Workern auf Port {PORT}")
-print(f"Starte Anwendung mit {MAX_WORKERS} Workern auf Port {PORT}")
-
-# Flask-Anwendung für WSGI
+# Erstelle die Flask-Anwendung
 application = create_app()
+
+# Optional: Logging konfigurieren, falls benötigt
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler(BASE_DIR / 'logs' / 'app.log')
+    ]
+)
+logger = logging.getLogger(__name__)
+logger.debug("Flask-Anwendung wurde erstellt.")

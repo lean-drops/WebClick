@@ -6,6 +6,11 @@ from dotenv import load_dotenv
 import socket
 import psutil
 import multiprocessing
+import sys
+from colorama import init, Fore, Style
+
+# Initialisiere colorama
+init(autoreset=True)
 
 # Lade die .env Datei
 load_dotenv()
@@ -37,27 +42,8 @@ LOGS_DIR = BASE_DIR / os.getenv('LOGS_DIR', 'logs')
 # Output PDFs-Verzeichnis
 OUTPUT_PDFS_DIR = BASE_DIR / os.getenv('OUTPUT_PDFS_DIR', 'output_pdfs')
 
-# Sicherstellen, dass alle wichtigen Verzeichnisse existieren
-directories = [
-    MAPPING_CACHE_DIR,
-    LOGS_DIR,
-    OUTPUT_PDFS_DIR,
-    CSS_DIR,
-    IMG_DIR,
-    JS_DIR,
-    JSON_DIR,
-    TEMPLATES_DIR,
-    UTILS_DIR,
-    CACHE_DIR,
-]
-
-for directory in directories:
-    directory.mkdir(parents=True, exist_ok=True)
-    print(f"Stelle sicher, dass das Verzeichnis existiert: {directory}")
-
 # Pfade zu spezifischen Dateien
 OUTPUT_MAPPING_PATH = CACHE_DIR / os.getenv('OUTPUT_MAPPING_PATH', 'output_mapping.json')
-
 TABOO_JSON_PATH = JSON_DIR / os.getenv('TABOO_JSON_FILE', 'taboo.json')
 COOKIES_SELECTOR_JSON_PATH = JSON_DIR / os.getenv('COOKIES_SELECTOR_JSON_FILE', 'cookies_selector.json')
 EXCLUDE_SELECTORS_JSON_PATH = JSON_DIR / os.getenv('EXCLUDE_SELECTORS_JSON_FILE', 'exclude_selectors.json')
@@ -80,6 +66,58 @@ logger = logging.getLogger(__name__)
 
 logger.debug("Konfiguration geladen und Logger eingerichtet.")
 
+# Sicherstellen, dass alle wichtigen Verzeichnisse existieren
+directories = [
+    MAPPING_CACHE_DIR,
+    LOGS_DIR,
+    OUTPUT_PDFS_DIR,
+    CSS_DIR,
+    IMG_DIR,
+    JS_DIR,
+    JSON_DIR,
+    TEMPLATES_DIR,
+    UTILS_DIR,
+    CACHE_DIR,
+]
+
+# Überprüfung der Verzeichnisse
+def ensure_directories_exist(directories):
+    all_exist = True
+    for directory in directories:
+        if not directory.exists():
+            print(f"{Fore.RED}Fehler: Das Verzeichnis existiert nicht: {directory}")
+            all_exist = False
+        else:
+            print(f"{Fore.GREEN}OK: Das Verzeichnis existiert: {directory}")
+    if not all_exist:
+        print(f"{Fore.RED}Ein oder mehrere erforderliche Verzeichnisse fehlen. Bitte erstelle sie und starte die Anwendung neu.")
+        sys.exit(1)
+
+ensure_directories_exist(directories)
+
+# Pfade zu spezifischen Dateien
+files = [
+    OUTPUT_MAPPING_PATH,
+    TABOO_JSON_PATH,
+    COOKIES_SELECTOR_JSON_PATH,
+    EXCLUDE_SELECTORS_JSON_PATH,
+    URLS_JSON_PATH,
+]
+
+# Überprüfung der Dateien
+def ensure_files_exist(files):
+    all_exist = True
+    for file in files:
+        if not file.exists():
+            print(f"{Fore.RED}Fehler: Die Datei existiert nicht: {file}")
+            all_exist = False
+        else:
+            print(f"{Fore.GREEN}OK: Die Datei existiert: {file}")
+    if not all_exist:
+        print(f"{Fore.RED}Ein oder mehrere erforderliche Dateien fehlen. Bitte erstelle sie und starte die Anwendung neu.")
+        sys.exit(1)
+
+ensure_files_exist(files)
 
 # Funktion zur Bestimmung der maximal möglichen Anzahl von Workern
 def get_max_workers(default=DEFAULT_MAX_WORKERS):
@@ -97,7 +135,6 @@ def get_max_workers(default=DEFAULT_MAX_WORKERS):
 
     return max_workers
 
-
 # Funktion zur Überprüfung der Port-Verfügbarkeit und Finden eines freien Ports
 def find_available_port(start_port=5000):
     port = start_port
@@ -112,7 +149,6 @@ def find_available_port(start_port=5000):
                 logger.debug(f"Port {port} ist belegt. Versuche nächsten Port...")
                 port += 1
     raise RuntimeError("Kein verfügbarer Port gefunden.")
-
 
 # Funktion zur Systemüberwachung
 def get_system_stats():
@@ -131,7 +167,6 @@ def get_system_stats():
     logger.debug(f"Systemstatistiken: {stats}")
     return stats
 
-
 # Funktion zur Überprüfung von verfügbaren Workern und Port
 def check_system_and_port(start_port=5000):
     max_workers = get_max_workers()
@@ -143,9 +178,8 @@ def check_system_and_port(start_port=5000):
         'system_stats': system_stats
     }
 
-
 if __name__ == "__main__":
     config = check_system_and_port()
-    print(f"Maximale Anzahl der Worker: {config['max_workers']}")
-    print(f"Verwender Port: {config['port']}")
-    print(f"Systemstatistiken: {config['system_stats']}")
+    print(f"{Fore.GREEN}Maximale Anzahl der Worker: {config['max_workers']}")
+    print(f"{Fore.GREEN}Verwendeter Port: {config['port']}")
+    print(f"{Fore.GREEN}Systemstatistiken: {config['system_stats']}")
