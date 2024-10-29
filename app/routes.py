@@ -13,7 +13,7 @@ from typing import List
 from flask import Blueprint, request, render_template, redirect, url_for, jsonify, send_from_directory, send_file
 import json
 
-from app.processing.download import (
+from app.processing.website_downloader  import (
     PDFConverter,
     merge_pdfs_with_bookmarks,
     apply_ocr_to_all_pdfs,
