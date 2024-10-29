@@ -73,21 +73,17 @@
         }
     </style>
 </head>
-
+<body>
     <div>
         <h1>PDF-Konvertierung abgeschlossen!</h1>
         <p>Ihre PDF-Datei wurde erfolgreich erstellt. Sie können sie jetzt herunterladen.</p>
 
         <div class="button-group">
-            <!-- Button zum Herunterladen der PDF -->
-            <a href="{{ url_for('main.download_pdfs', task_id=task_id) }}" class="button">PDF herunterladen</a>
-            <!-- Button zum Zurückkehren zur Scrape-Result-Seite -->
-            <a href="{{ url_for('main.scrape_result', task_id=task_id) }}" class="button">Zurück zu den Scraping-Ergebnissen</a>
-            <!-- Button zum Zurückkehren zum Index -->
-            <a href="{{ url_for('main.index') }}" class="button">Zurück zum Index</a>
+            <!-- Korrigierte url_for Nutzung für statische Dateien und Routen -->
+            <a href="{{ url_for('download_pdfs', task_id=task_id) }}" class="button">PDF herunterladen</a>
+            <a href="{{ url_for('scrape_result', task_id=task_id) }}" class="button">Zurück zu den Scraping-Ergebnissen</a>
+            <a href="{{ url_for('index') }}" class="button">Zurück zum Index</a>
         </div>
-    </div>
-
     </div>
 </body>
 </html>

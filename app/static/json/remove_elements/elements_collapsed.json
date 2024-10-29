@@ -1,17 +1,6 @@
 {
     "remove": [
-        "script",
-        "noscript",
-        "style",
-        "iframe",
-        "footer",
-        "div.ads",
-        "header",
-        "nav",
-        ".sidebar",
-        "#navigation",
-        ".mdl-anchornav",
-        ".mdl-footer",
-        "#footer"
+
+        "div.ads"
     ]
 }
