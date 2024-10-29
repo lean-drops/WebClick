@@ -1,3 +1,6 @@
+
+
+# Rest deines config.py Codes
 import os
 import json  # Hinzugefügt
 from pathlib import Path
@@ -14,9 +17,11 @@ init(autoreset=True)
 
 # Lade die .env Datei
 load_dotenv()
-
+def get_base_dir():
+    # Bestimmt das Basisverzeichnis des Skripts
+    return os.path.dirname(os.path.abspath(__file__))
 # Basisverzeichnis des Projekts
-BASE_DIR = Path(os.getenv('BASE_DIR', '.')).resolve()
+BASE_DIR = Path(get_base_dir())
 
 # App-Verzeichnis
 APP_DIR = BASE_DIR / os.getenv('APP_DIR', 'app')
@@ -35,6 +40,7 @@ UTILS_DIR = APP_DIR / os.getenv('UTILS_DIR', 'utils')
 # Cache-Verzeichnisse
 CACHE_DIR = STATIC_DIR / os.getenv('CACHE_DIR', 'cache')
 MAPPING_CACHE_DIR = CACHE_DIR / os.getenv('MAPPING_CACHE_DIR', 'mapping_cache')
+
 # Logs-Verzeichnis
 LOGS_DIR = BASE_DIR / os.getenv('LOGS_DIR', 'logs')
 
@@ -48,20 +54,58 @@ COOKIES_SELECTOR_JSON_PATH = JSON_DIR / os.getenv('COOKIES_SELECTOR_JSON_FILE', 
 EXCLUDE_SELECTORS_JSON_PATH = JSON_DIR / os.getenv('EXCLUDE_SELECTORS_JSON_FILE', 'exclude_selectors.json')
 URLS_JSON_PATH = JSON_DIR / os.getenv('URLS_JSON_FILE', 'urls.json')
 
+# Zusätzliche Verzeichnisse für Remove Elements Konfiguration
+REMOVE_ELEMENTS_CONFIG_DIR = JSON_DIR / 'remove_elements'
+ELEMENTS_COLLAPSED_CONFIG = REMOVE_ELEMENTS_CONFIG_DIR / 'elements_collapsed.json'
+ELEMENTS_EXPANDED_CONFIG = REMOVE_ELEMENTS_CONFIG_DIR / 'elements_expanded.json'
+
 # Einstellungen
 DEFAULT_MAX_WORKERS = int(os.getenv('DEFAULT_MAX_WORKERS', '4'))
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'DEBUG').upper()
+ENABLE_LOGGING = os.getenv('ENABLE_LOGGING', 'True').lower() in ['true', '1', 't']
 
 # Logging-Konfiguration
-logging.basicConfig(
-    level=getattr(logging, LOG_LEVEL, logging.DEBUG),
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(LOGS_DIR / 'app.log')
-    ]
-)
 logger = logging.getLogger(__name__)
+logger.setLevel(getattr(logging, LOG_LEVEL, logging.DEBUG))
+
+# Handler für die Konsole mit Farbcodes
+console_handler = logging.StreamHandler()
+console_handler.setLevel(getattr(logging, LOG_LEVEL, logging.DEBUG))
+
+# Handler für die Datei ohne Farbcodes
+file_handler = logging.FileHandler(LOGS_DIR / 'app.log')
+file_handler.setLevel(getattr(logging, LOG_LEVEL, logging.DEBUG))
+
+# Formatter ohne Farbcodes für die Datei
+file_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(file_formatter)
+
+# Funktion zur farbcodierten Formatierung basierend auf Log-Level
+class ColorFormatter(logging.Formatter):
+    LEVEL_COLORS = {
+        logging.DEBUG: Fore.CYAN,
+        logging.INFO: Fore.GREEN,
+        logging.WARNING: Fore.YELLOW,
+        logging.ERROR: Fore.RED,
+        logging.CRITICAL: Fore.MAGENTA
+    }
+
+    def format(self, record):
+        color = self.LEVEL_COLORS.get(record.levelno, Fore.WHITE)
+        message = super().format(record)
+        return f"{color}{message}{Style.RESET_ALL}"
+
+# Formatter mit Farbcodes für die Konsole
+console_formatter = ColorFormatter('%(asctime)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(console_formatter)
+
+# Logging nur aktivieren, wenn ENABLE_LOGGING True ist
+if ENABLE_LOGGING:
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+else:
+    # Wenn Logging deaktiviert ist, verwende einen NullHandler
+    logger.addHandler(logging.NullHandler())
 
 logger.debug("Konfiguration geladen und Logger eingerichtet.")
 
@@ -77,6 +121,7 @@ directories = [
     TEMPLATES_DIR,
     UTILS_DIR,
     CACHE_DIR,
+    REMOVE_ELEMENTS_CONFIG_DIR,  # Hinzugefügt
 ]
 
 # Überprüfung der Verzeichnisse
@@ -84,16 +129,23 @@ def ensure_directories_exist(directories):
     all_exist = True
     for directory in directories:
         if not directory.exists():
-            print(f"{Fore.RED}Verzeichnis fehlt: {directory}{Style.RESET_ALL}")
-            directory.mkdir(parents=True, exist_ok=True)
-            print(f"{Fore.GREEN}Verzeichnis erstellt: {directory}{Style.RESET_ALL}")
-            all_exist = False
+            logger.error(f"{Fore.RED}Verzeichnis fehlt: {directory}{Style.RESET_ALL}")
+            try:
+                directory.mkdir(parents=True, exist_ok=True)
+                logger.info(f"{Fore.GREEN}Verzeichnis erstellt: {directory}{Style.RESET_ALL}")
+                all_exist = False
+            except Exception as e:
+                logger.error(f"Fehler beim Erstellen des Verzeichnisses {directory}: {e}")
+                all_exist = False
         else:
-            print(f"{Fore.YELLOW}Verzeichnis existiert bereits: {directory}{Style.RESET_ALL}")
+            logger.info(f"{Fore.GREEN}Verzeichnis existiert bereits: {directory}{Style.RESET_ALL}")
     return all_exist
 
 # Verzeichnisse sicherstellen
-ensure_directories_exist(directories)
+if ensure_directories_exist(directories):
+    logger.info(f"{Fore.GREEN}All ready.{Style.RESET_ALL}")
+else:
+    logger.warning(f"{Fore.YELLOW}Setup started.{Style.RESET_ALL}")
 
 # Pfade zu spezifischen Dateien
 files = [
@@ -113,29 +165,24 @@ def ensure_files_exist(files):
                 try:
                     # Erstelle eine leere JSON-Datei
                     with open(file, 'w') as f:
-                        json.dump({}, f)
-                    print(f"{Fore.GREEN}Erstellte leere Datei: {file}{Style.RESET_ALL}")
-                    logger.info(f"Leere Datei erstellt: {file}")
+                        json.dump({}, f, indent=4)
+                    logger.info(f"{Fore.GREEN}Erstellte leere Datei: {file}{Style.RESET_ALL}")
                 except Exception as e:
-                    print(f"{Fore.RED}Fehler beim Erstellen der Datei {file}: {e}{Style.RESET_ALL}")
                     logger.error(f"Fehler beim Erstellen der Datei {file}: {e}")
                     all_exist = False
             else:
-                print(f"{Fore.RED}Fehler: Die Datei existiert nicht: {file}{Style.RESET_ALL}")
-                logger.error(f"Fehler: Die Datei existiert nicht: {file}")
+                logger.error(f"{Fore.RED}Fehler: Die Datei existiert nicht: {file}{Style.RESET_ALL}")
                 all_exist = False
         else:
-            print(f"{Fore.GREEN}OK: Die Datei existiert: {file}{Style.RESET_ALL}")
-    if not all_exist:
-        print(f"{Fore.RED}Ein oder mehrere erforderliche Dateien fehlen. Bitte erstelle sie und starte die Anwendung neu.{Style.RESET_ALL}")
-        logger.warning("Ein oder mehrere erforderliche Dateien fehlen.")
-        sys.exit(1)
+            logger.info(f"{Fore.GREEN}OK: Die Datei existiert: {file}{Style.RESET_ALL}")
+    return all_exist
 
-# Verzeichnisse sicherstellen
+# Dateien sicherstellen
 if not ensure_files_exist(files):
-    logger.warning("Einige Dateien wurden erstellt.")
+    logger.critical(f"{Fore.RED}Ein oder mehrere erforderliche Dateien fehlen. Bitte erstelle sie und starte die Anwendung neu.{Style.RESET_ALL}")
+    sys.exit(1)
 else:
-    logger.info("Alle Dateien existieren bereits.")
+    logger.info(f"{Fore.GREEN}All files are ready.{Style.RESET_ALL}")
 
 # Funktion zur Bestimmung der maximal möglichen Anzahl von Workern
 def get_max_workers(default=DEFAULT_MAX_WORKERS):
@@ -198,6 +245,6 @@ def check_system_and_port(start_port=5000):
 
 if __name__ == "__main__":
     config = check_system_and_port()
-    print(f"{Fore.GREEN}Maximale Anzahl der Worker: {config['max_workers']}")
-    print(f"{Fore.GREEN}Verwendeter Port: {config['port']}")
-    print(f"{Fore.GREEN}Systemstatistiken: {config['system_stats']}")
+    logger.info(f"{Fore.GREEN}Maximale Anzahl der Worker: {config['max_workers']}{Style.RESET_ALL}")
+    logger.info(f"{Fore.GREEN}Verwendeter Port: {config['port']}{Style.RESET_ALL}")
+    logger.info(f"{Fore.GREEN}Systemstatistiken: {config['system_stats']}{Style.RESET_ALL}")

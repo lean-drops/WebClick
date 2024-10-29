@@ -2,7 +2,7 @@
 
 import os
 import logging
-from app import create_app
+from app.main import create_app
 from dotenv import load_dotenv
 
 # Load environment variables from .env file

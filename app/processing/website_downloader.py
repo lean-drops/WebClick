@@ -15,12 +15,12 @@ import shutil
 
 from app.create_package.create_zipfile import create_zip_archive
 from app.create_package.ocr_helper import apply_ocr_to_all_pdfs
-from app.processing.utils import (
-    get_url, sanitize_filename, extract_domain, expand_hidden_elements,
-    remove_unwanted_elements, remove_fixed_elements, scroll_page,
-    setup_directories, remove_navigation_and_sidebars, inject_custom_css,
-    load_js_file
-)
+from app.processing.website_cleaner import remove_unwanted_elements, remove_fixed_elements, \
+    remove_navigation_and_sidebars
+from app.processing.website_handler import expand_hidden_elements, scroll_page
+from app.processing.website_utils import load_js_file, extract_domain, setup_directories, inject_custom_css
+from app.utils.naming_utils import sanitize_filename
+
 from config import ELEMENTS_COLLAPSED_CONFIG, ELEMENTS_EXPANDED_CONFIG
 
 # ======================= Konfiguration =======================
@@ -309,7 +309,7 @@ if __name__ == "__main__":
 
         # Lade die URLs
         urls = [
-            "https://replicate.com/home",
+            "https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150",
 
         ]
         if not urls:
