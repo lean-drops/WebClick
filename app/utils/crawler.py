@@ -1,107 +1,174 @@
-import aiohttp
-import asyncio
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlparse
-import hashlib
-import json
+import os
+import re
+import shutil
+import subprocess
+from config import BASE_DIR
 
+# Einstellungen
+ALLOWED_EXTENSIONS = {".py"}
+IGNORED_FOLDERS = {
+    "venv", "node_modules", "__pycache__", "dist", "build",
+    "External Libraries", "Scratches and Consoles", ".venv(310)", ".git", "webvenv(310)"
+}
 
-def hash_url(url):
-    """Generates a unique hash for a URL."""
-    return hashlib.md5(url.encode()).hexdigest()
-
-
-async def fetch(url, session, visited, prefix):
-    """Asynchronously fetches a URL and extracts relevant links."""
-    url_hash = hash_url(url)
-    if url_hash in visited:
-        return None  # URL bereits besucht
-
-    visited.add(url_hash)
+def find_imports_in_file(file_path):
+    """
+    Extrahiert alle Imports aus einer Datei.
+    """
+    imports = set()
     try:
-        async with session.get(url, timeout=10) as response:
-            if response.status != 200:
-                print(f"Skipping {url}, status code: {response.status}")
-                return (url, [])
+        with open(file_path, 'r', encoding='utf-8') as file:
+            for line in file:
+                match = re.match(r'^\s*(?:import|from)\s+([a-zA-Z_][a-zA-Z0-9_]*)', line)
+                if match:
+                    imports.add(match.group(1))
+    except (UnicodeDecodeError, FileNotFoundError) as e:
+        print(f"Fehler beim Lesen der Datei {file_path}: {e}")
+    return imports
 
-            text = await response.text()
-            soup = BeautifulSoup(text, 'html.parser')
-            page_links = set()
+def find_imports_in_directory(directory):
+    """
+    Geht alle Python-Dateien durch und sammelt alle Imports.
+    """
+    all_imports = set()
+    for root, dirs, files in os.walk(directory):
+        # Ignoriere unerwünschte Ordner
+        dirs[:] = [d for d in dirs if d not in IGNORED_FOLDERS]
+        for file in files:
+            if file.endswith(tuple(ALLOWED_EXTENSIONS)):
+                file_path = os.path.join(root, file)
+                file_imports = find_imports_in_file(file_path)
+                if file_imports:
+                    print(f"Gefundene Importe in {file_path}: {file_imports}")
+                all_imports.update(file_imports)
+    return all_imports
 
-            for a_tag in soup.find_all('a', href=True):
-                href = a_tag['href']
-                full_url = urljoin(url, href)
-                parsed_full_url = urlparse(full_url)._replace(fragment='', query='').geturl()
+def create_requirements_file(imports, directory):
+    """
+    Erstellt ein requirements.txt basierend auf den gefundenen Imports mithilfe von pipreqs.
+    """
+    temp_folder = os.path.join(directory, "temp_imports")
+    os.makedirs(temp_folder, exist_ok=True)
+    temp_file_path = os.path.join(temp_folder, "temp_script.py")
 
-                if parsed_full_url.startswith(prefix):
-                    full_url_hash = hash_url(parsed_full_url)
-                    if full_url_hash not in visited:
-                        page_links.add(parsed_full_url)
+    # Schreibe alle Imports in ein temporäres Python-File
+    with open(temp_file_path, 'w', encoding='utf-8') as temp_file:
+        for imp in imports:
+            temp_file.write(f"import {imp}\n")
 
-            return (url, list(page_links))
-    except Exception as e:
-        print(f"Error fetching {url}: {e}")
-        return (url, [])
+    # Führe pipreqs aus, um requirements.txt zu erstellen
+    try:
+        print("Führe pipreqs aus, um requirements.txt zu erstellen...")
+        subprocess.run(["pipreqs", temp_folder, "--force"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError as e:
+        print(f"Fehler beim Ausführen von pipreqs: {e.stderr.decode().strip()}")
+        shutil.rmtree(temp_folder)
+        return False
 
+    # Verschiebe die generierte requirements.txt in das Projektverzeichnis
+    requirements_src = os.path.join(temp_folder, "requirements.txt")
+    requirements_dst = os.path.join(directory, "requirements.txt")
+    if os.path.exists(requirements_src):
+        os.replace(requirements_src, requirements_dst)
+        print(f"requirements.txt erfolgreich erstellt unter {requirements_dst}")
+    else:
+        print("pipreqs konnte keine requirements.txt erstellen.")
+        shutil.rmtree(temp_folder)
+        return False
 
-async def crawl(url, prefix, visited, session, semaphore):
-    """Controls the asynchronous crawling of a single URL."""
-    async with semaphore:
-        return await fetch(url, session, visited, prefix)
+    # Bereinige das temporäre Verzeichnis
+    shutil.rmtree(temp_folder)
+    return True
 
+def create_virtualenv(directory, project_name, python_version="3.10"):
+    """
+    Erstellt eine virtuelle Umgebung mit dem Namen {projektname}-venv.
+    """
+    venv_name = f"{project_name}-venv"
+    venv_path = os.path.join(directory, venv_name)
 
-async def crawl_all_links(start_url, prefix):
-    """Orchestrates the recursive, asynchronous crawling of links using aiohttp and asyncio."""
-    visited = set()
-    links = []
-    url_to_links = {}
-    semaphore = asyncio.Semaphore(20)  # Erhöht die Parallelität bei Bedarf
+    if not os.path.exists(venv_path):
+        print(f"Erstelle virtuelle Umgebung '{venv_name}' mit Python {python_version}...")
+        try:
+            subprocess.run(["python3.10", "-m", "venv", venv_path], check=True)
+            print(f"Virtuelle Umgebung '{venv_name}' erfolgreich erstellt unter {venv_path}")
+        except subprocess.CalledProcessError as e:
+            print(f"Fehler beim Erstellen der virtuellen Umgebung: {e}")
+            return None
+    else:
+        print(f"Virtuelle Umgebung '{venv_name}' existiert bereits unter {venv_path}")
 
-    async with aiohttp.ClientSession() as session:
-        tasks = set()
-        # Erstelle die initiale Aufgabe
-        initial_task = asyncio.create_task(crawl(start_url, prefix, visited, session, semaphore))
-        tasks.add(initial_task)
+    return venv_path
 
-        while tasks:
-            # Warte auf die erste abgeschlossene Aufgabe
-            done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+def install_dependencies(venv_path, requirements_file):
+    """
+    Installiert die Abhängigkeiten aus requirements.txt in der angegebenen virtuellen Umgebung.
+    """
+    if os.name == 'nt':
+        # Windows
+        pip_executable = os.path.join(venv_path, "Scripts", "pip.exe")
+    else:
+        # Unix/Linux/Mac
+        pip_executable = os.path.join(venv_path, "bin", "pip")
 
-            for task in done:
-                tasks.remove(task)
-                result = await task
-                if result is None:
-                    continue
-                url, sub_links = result
-                url_to_links[url] = sub_links
-                links.extend(sub_links)
+    if not os.path.exists(pip_executable):
+        print(f"pip wurde in der virtuellen Umgebung nicht gefunden: {pip_executable}")
+        return False
 
-                for sub_link in sub_links:
-                    sub_link_hash = hash_url(sub_link)
-                    if sub_link_hash not in visited:
-                        new_task = asyncio.create_task(crawl(sub_link, prefix, visited, session, semaphore))
-                        tasks.add(new_task)
+    print(f"Installiere Abhängigkeiten aus {requirements_file} in der virtuellen Umgebung...")
+    try:
+        subprocess.run([pip_executable, "install", "-r", requirements_file], check=True)
+        print("Alle Abhängigkeiten wurden erfolgreich installiert.")
+    except subprocess.CalledProcessError as e:
+        print(f"Fehler beim Installieren der Abhängigkeiten: {e}")
+        return False
 
-        return links, url_to_links
-
+    return True
 
 def main():
-    start_url = input("Enter the starting URL: ").strip()
-    parsed_url = urlparse(start_url)
-    base_path = parsed_url.path.rsplit('/', 1)[0] + '/'
-    prefix = f"{parsed_url.scheme}://{parsed_url.netloc}{base_path}"
-    print(f"Crawling links starting with prefix: {prefix}")
+    # Bestimme den Projektnamen aus BASE_DIR
+    project_name = os.path.basename(os.path.normpath(BASE_DIR))
+    print(f"Projektname: {project_name}")
 
-    links, url_map = asyncio.run(crawl_all_links(start_url, prefix))
-    unique_links = sorted(set(links))
-    output_file = 'links.json'
+    # Suche nach Imports
+    print("Suche nach Imports im Projektverzeichnis...")
+    imports = find_imports_in_directory(BASE_DIR)
+    if not imports:
+        print("Keine Importe gefunden. Das requirements.txt wird nicht erstellt.")
+        return
 
-    # Save the mapping of URLs and their discovered links
-    with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(url_map, f, indent=2, ensure_ascii=False)
+    # Erstelle requirements.txt
+    print("Erstelle requirements.txt basierend auf den gefundenen Imports...")
+    if not create_requirements_file(imports, BASE_DIR):
+        print("Fehler beim Erstellen der requirements.txt. Vorgang abgebrochen.")
+        return
 
-    print(f"Collected {len(unique_links)} links. Saved to {output_file}")
+    # Erstelle virtuelle Umgebung
+    print("Richte die virtuelle Umgebung ein...")
+    venv_path = create_virtualenv(BASE_DIR, project_name)
+    if not venv_path:
+        print("Fehler beim Einrichten der virtuellen Umgebung. Vorgang abgebrochen.")
+        return
 
+    # Installiere Abhängigkeiten in der virtuellen Umgebung
+    requirements_file = os.path.join(BASE_DIR, "requirements.txt")
+    if not install_dependencies(venv_path, requirements_file):
+        print("Fehler beim Installieren der Abhängigkeiten. Überprüfe die requirements.txt und die Netzwerkverbindung.")
+        return
+
+    # Abschließende Hinweise
+    print("\nSetup abgeschlossen!")
+    print(f"Die virtuelle Umgebung wurde erstellt unter: {venv_path}")
+    print("Um die virtuelle Umgebung zu aktivieren, verwende folgenden Befehl in deinem Terminal:")
+    if os.name == 'nt':
+        print(f"```shell\n{venv_path}\\Scripts\\activate\n```")
+    else:
+        print(f"```shell\nsource {venv_path}/bin/activate\n```")
+    print("\nAuf PythonAnywhere kannst du die virtuelle Umgebung wie folgt aktivieren und die Abhängigkeiten nutzen:")
+    print("1. Öffne eine Bash-Konsole.")
+    print(f"2. Aktiviere die virtuelle Umgebung mit: source {venv_path}/bin/activate")
+    print("3. Stelle sicher, dass deine Web-App auf diese virtuelle Umgebung zeigt.")
+    print("4. Falls Änderungen an den Abhängigkeiten vorgenommen wurden, führe erneut `pip install -r requirements.txt` in der aktivierten venv aus.")
 
 if __name__ == "__main__":
     main()

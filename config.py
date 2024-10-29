@@ -80,20 +80,6 @@ directories = [
     CACHE_DIR,
 ]
 
-# Überprüfung der Verzeichnisse
-def ensure_directories_exist(directories):
-    all_exist = True
-    for directory in directories:
-        if not directory.exists():
-            print(f"{Fore.RED}Fehler: Das Verzeichnis existiert nicht: {directory}")
-            all_exist = False
-        else:
-            print(f"{Fore.GREEN}OK: Das Verzeichnis existiert: {directory}")
-    if not all_exist:
-        print(f"{Fore.RED}Ein oder mehrere erforderliche Verzeichnisse fehlen. Bitte erstelle sie und starte die Anwendung neu.")
-        sys.exit(1)
-
-ensure_directories_exist(directories)
 
 # Pfade zu spezifischen Dateien
 files = [
@@ -103,6 +89,21 @@ files = [
     EXCLUDE_SELECTORS_JSON_PATH,
     URLS_JSON_PATH,
 ]
+
+
+def ensure_directories_exist(directories):
+    all_exist = True
+    for directory in directories:
+        if not directory.exists():
+            print(f"{Fore.RED}Fehler: Das Verzeichnis existiert nicht: {directory}")
+            all_exist = False
+        else:
+            print(f"{Fore.GREEN}OK: Das Verzeichnis existiert: {directory}")
+    if not all_exist:
+        print(
+            f"{Fore.RED}Ein oder mehrere erforderliche Verzeichnisse fehlen. Bitte erstelle sie und starte die Anwendung neu.")
+        sys.exit(1)
+
 
 # Überprüfung der Dateien
 def ensure_files_exist(files):
@@ -179,6 +180,15 @@ def check_system_and_port(start_port=5000):
     }
 
 if __name__ == "__main__":
+    # Überprüfung der Verzeichnisse
+
+    ensure_directories_exist(directories)
+
+    ensure_files_exist(files)
+
+
+
+
     config = check_system_and_port()
     print(f"{Fore.GREEN}Maximale Anzahl der Worker: {config['max_workers']}")
     print(f"{Fore.GREEN}Verwendeter Port: {config['port']}")
