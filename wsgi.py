@@ -1,25 +1,16 @@
-# /var/www/www_e-archival_ch_wsgi.py
-
 import sys
 import os
-import logging
-from starlette.middleware.wsgi import WSGIMiddleware
-from app.main import app  # Deine FastAPI-App
 
-# Projektverzeichnis zum Python-Pfad hinzufügen
-project_home = '/home/digitalherodot/WebClick'
+# Pfad zu deinem Projekt hinzufügen
+project_home = '/home/digitalherodot/your_project_directory'  # Ersetze mit deinem Pfad
 if project_home not in sys.path:
     sys.path.insert(0, project_home)
 
-# Logging konfigurieren (optional)
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler()]
-)
-logger = logging.getLogger(__name__)
-logger.debug("WSGI-Konfiguration gestartet.")
+# Virtuelle Umgebung aktivieren
+activate_env = '/home/digitalherodot/webclick-venv/bin/activate_this.py'
+if os.path.exists(activate_env):
+    with open(activate_env) as f:
+        exec(f.read(), {'__file__': activate_env})
 
-# FastAPI-App in WSGI umwandeln
-application = WSGIMiddleware(app)
-logger.debug("WSGIMiddleware gesetzt.")
+# Flask-Anwendung importieren
+from app import app as application

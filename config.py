@@ -17,9 +17,11 @@ init(autoreset=True)
 
 # Lade die .env Datei
 load_dotenv()
-
+def get_base_dir():
+    # Bestimmt das Basisverzeichnis des Skripts
+    return os.path.dirname(os.path.abspath(__file__))
 # Basisverzeichnis des Projekts
-BASE_DIR = Path(os.getenv('BASE_DIR', '.')).resolve()
+BASE_DIR = Path(get_base_dir())
 
 # App-Verzeichnis
 APP_DIR = BASE_DIR / os.getenv('APP_DIR', 'app')

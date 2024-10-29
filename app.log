@@ -13412,3 +13412,32 @@
 2024-10-29 19:11:57,246 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized
 2024-10-29 19:11:58,259 - config - INFO - Mounting static files from: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static
 2024-10-29 19:11:58,262 - config - INFO - Static files mounted successfully.
+2024-10-29 20:33:43,663 - __main__ - INFO - Starting FastAPI application with debug mode enabled.
+2024-10-29 20:33:43,794 - asyncio - DEBUG - Using selector: KqueueSelector
+2024-10-29 20:33:44,604 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized
+2024-10-29 20:33:57,099 - __main__ - INFO - Starting FastAPI application with debug mode enabled.
+2024-10-29 20:33:57,221 - asyncio - DEBUG - Using selector: KqueueSelector
+2024-10-29 20:33:57,813 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized
+2024-10-29 20:35:35,179 - asyncio - DEBUG - Using selector: KqueueSelector
+2024-10-29 20:35:35,914 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized
+2024-10-29 20:47:57,598 - __main__ - INFO - Starting FastAPI application with debug mode enabled.
+2024-10-29 20:47:57,889 - asyncio - DEBUG - Using selector: KqueueSelector
+2024-10-29 20:47:58,793 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized
+2024-10-29 20:48:15,962 - asyncio - DEBUG - Using selector: KqueueSelector
+2024-10-29 20:48:17,679 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized
+2024-10-29 20:48:28,668 - __main__ - INFO - Starting FastAPI application with debug mode enabled.
+2024-10-29 20:48:28,795 - asyncio - DEBUG - Using selector: KqueueSelector
+2024-10-29 20:48:29,943 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized
+2024-10-29 20:48:51,618 - asyncio - DEBUG - Using selector: KqueueSelector
+2024-10-29 20:48:53,230 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized
+2024-10-29 20:48:56,033 - __main__ - INFO - Starting FastAPI application with debug mode enabled.
+2024-10-29 20:48:56,193 - asyncio - DEBUG - Using selector: KqueueSelector
+2024-10-29 20:48:57,087 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized
+2024-10-29 20:49:18,782 - __main__ - INFO - Starting FastAPI application with debug mode enabled.
+2024-10-29 20:49:18,907 - asyncio - DEBUG - Using selector: KqueueSelector
+2024-10-29 20:49:19,579 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized
+2024-10-29 20:49:31,382 - __main__ - INFO - Starting FastAPI application with debug mode enabled.
+2024-10-29 20:49:31,507 - asyncio - DEBUG - Using selector: KqueueSelector
+2024-10-29 20:49:32,061 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized
+2024-10-29 20:50:06,592 - asyncio - DEBUG - Using selector: KqueueSelector
+2024-10-29 20:50:07,259 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized

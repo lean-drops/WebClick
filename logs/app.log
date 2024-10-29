@@ -411,3 +411,900 @@
 2024-10-29 19:08:01,022 - INFO - [32mAll files are ready.[0m
 2024-10-29 19:08:01,835 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
 2024-10-29 19:08:01,836 - INFO - Static files mounted successfully.
+2024-10-29 20:17:31,753 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:17:31,753 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:17:31,754 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:17:31,754 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:17:31,754 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:17:31,754 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:17:31,754 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:17:31,754 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:17:31,754 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:17:31,754 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:17:31,754 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:17:31,754 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:17:31,754 - INFO - [32mAll ready.[0m
+2024-10-29 20:17:31,754 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:17:31,755 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:17:31,755 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:17:31,755 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:17:31,755 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:17:31,755 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:17:32,169 - INFO - Mounting static files from: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static
+2024-10-29 20:17:32,169 - INFO - Static files mounted successfully.
+2024-10-29 20:17:46,969 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:17:46,969 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:17:46,969 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:17:46,969 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:17:46,969 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:17:46,969 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:17:46,969 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:17:46,969 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:17:46,970 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:17:46,970 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:17:46,970 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:17:46,970 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:17:46,970 - INFO - [32mAll ready.[0m
+2024-10-29 20:17:46,970 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:17:46,970 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:17:46,970 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:17:46,970 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:17:46,970 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:17:46,970 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:17:47,062 - INFO - Mounting static files from: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static
+2024-10-29 20:17:47,063 - INFO - Static files mounted successfully.
+2024-10-29 20:20:32,456 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:20:32,456 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:20:32,456 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:20:32,456 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:20:32,456 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:20:32,456 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:20:32,456 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:20:32,456 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:20:32,457 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:20:32,457 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:20:32,457 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:20:32,457 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:20:32,457 - INFO - [32mAll ready.[0m
+2024-10-29 20:20:32,457 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:20:32,457 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:20:32,457 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:20:32,457 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:20:32,457 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:20:32,457 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:20:32,527 - INFO - Mounting static files from: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static
+2024-10-29 20:20:32,527 - INFO - Static files mounted successfully.
+2024-10-29 20:20:47,669 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:20:47,670 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:20:47,670 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:20:47,670 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:20:47,670 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:20:47,670 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:20:47,670 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:20:47,670 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:20:47,670 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:20:47,670 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:20:47,670 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:20:47,670 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:20:47,670 - INFO - [32mAll ready.[0m
+2024-10-29 20:20:47,670 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:20:47,670 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:20:47,670 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:20:47,670 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:20:47,670 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:20:47,670 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:20:47,738 - INFO - Mounting static files from: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static
+2024-10-29 20:20:47,738 - INFO - Static files mounted successfully.
+2024-10-29 20:21:26,818 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:21:26,819 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:21:26,819 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:21:26,819 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:21:26,819 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:21:26,819 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:21:26,819 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:21:26,819 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:21:26,819 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:21:26,819 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:21:26,820 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:21:26,820 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:21:26,820 - INFO - [32mAll ready.[0m
+2024-10-29 20:21:26,820 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:21:26,820 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:21:26,820 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:21:26,820 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:21:26,820 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:21:26,820 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:21:26,940 - INFO - Mounting static files from: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static
+2024-10-29 20:21:26,941 - INFO - Static files mounted successfully.
+2024-10-29 20:22:17,707 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:22:17,707 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:22:17,707 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:22:17,707 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:22:17,707 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:22:17,708 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:22:17,708 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:22:17,708 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:22:17,708 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:22:17,708 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:22:17,708 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:22:17,708 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:22:17,709 - INFO - [32mAll ready.[0m
+2024-10-29 20:22:17,709 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:22:17,709 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:22:17,709 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:22:17,709 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:22:17,709 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:22:17,709 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:22:17,852 - INFO - Mounting static files from: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static
+2024-10-29 20:22:17,852 - INFO - Static files mounted successfully.
+2024-10-29 20:25:17,095 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:25:17,095 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:25:17,095 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:25:17,095 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:25:17,095 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:25:17,095 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:25:17,095 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:25:17,095 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:25:17,095 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:25:17,095 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:25:17,095 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:25:17,096 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:25:17,096 - INFO - [32mAll ready.[0m
+2024-10-29 20:25:17,096 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:25:17,096 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:25:17,096 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:25:17,096 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:25:17,096 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:25:17,096 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:25:17,203 - INFO - Mounting static files from: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static
+2024-10-29 20:25:17,203 - INFO - Static files mounted successfully.
+2024-10-29 20:25:17,207 - INFO - Main router included successfully.
+2024-10-29 20:25:49,300 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:25:49,300 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:25:49,300 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:25:49,300 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:25:49,301 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:25:49,301 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:25:49,301 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:25:49,301 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:25:49,301 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:25:49,301 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:25:49,301 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:25:49,301 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:25:49,301 - INFO - [32mAll ready.[0m
+2024-10-29 20:25:49,302 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:25:49,302 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:25:49,302 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:25:49,302 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:25:49,302 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:25:49,302 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:25:49,396 - INFO - FastAPI app successfully integrated with Flask.
+2024-10-29 20:25:57,193 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:25:57,193 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:25:57,193 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:25:57,194 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:25:57,194 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:25:57,195 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:25:57,195 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:25:57,195 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:25:57,196 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:25:57,196 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:25:57,196 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:25:57,196 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:25:57,196 - INFO - [32mAll ready.[0m
+2024-10-29 20:25:57,197 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:25:57,197 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:25:57,197 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:25:57,197 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:25:57,197 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:25:57,197 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:25:57,411 - INFO - FastAPI app successfully integrated with Flask.
+2024-10-29 20:26:15,294 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:26:15,295 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:26:15,295 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:26:15,295 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:26:15,295 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:26:15,295 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:26:15,295 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:26:15,295 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:26:15,295 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:26:15,295 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:26:15,295 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:26:15,295 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:26:15,295 - INFO - [32mAll ready.[0m
+2024-10-29 20:26:15,295 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:26:15,295 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:26:15,295 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:26:15,295 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:26:15,295 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:26:15,295 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:26:15,378 - INFO - FastAPI app successfully integrated with Flask.
+2024-10-29 20:28:12,075 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:28:12,075 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:28:12,075 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:28:12,075 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:28:12,075 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:28:12,075 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:28:12,075 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:28:12,075 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:28:12,075 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:28:12,075 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:28:12,076 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:28:12,076 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:28:12,076 - INFO - [32mAll ready.[0m
+2024-10-29 20:28:12,076 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:28:12,076 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:28:12,076 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:28:12,076 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:28:12,076 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:28:12,076 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:28:12,150 - INFO - FastAPI app successfully integrated with Flask.
+2024-10-29 20:28:55,170 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:28:55,170 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:28:55,170 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:28:55,170 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:28:55,170 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:28:55,170 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:28:55,171 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:28:55,171 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:28:55,171 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:28:55,171 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:28:55,171 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:28:55,171 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:28:55,171 - INFO - [32mAll ready.[0m
+2024-10-29 20:28:55,171 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:28:55,171 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:28:55,171 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:28:55,171 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:28:55,171 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:28:55,172 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:28:55,257 - INFO - FastAPI app successfully integrated with Flask.
+2024-10-29 20:29:46,587 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:29:46,587 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:29:46,587 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:29:46,587 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:29:46,587 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:29:46,587 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:29:46,587 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:29:46,587 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:29:46,588 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:29:46,588 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:29:46,588 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:29:46,588 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:29:46,588 - INFO - [32mAll ready.[0m
+2024-10-29 20:29:46,588 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:29:46,588 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:29:46,588 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:29:46,588 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:29:46,588 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:29:46,588 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:29:46,652 - INFO - FastAPI app successfully integrated with Flask.
+2024-10-29 20:29:51,410 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:29:51,411 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:29:51,411 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:29:51,411 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:29:51,411 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:29:51,411 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:29:51,411 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:29:51,411 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:29:51,411 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:29:51,411 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:29:51,411 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:29:51,411 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:29:51,411 - INFO - [32mAll ready.[0m
+2024-10-29 20:29:51,411 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:29:51,411 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:29:51,411 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:29:51,411 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:29:51,411 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:29:51,411 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:29:51,461 - INFO - FastAPI app successfully integrated with Flask.
+2024-10-29 20:30:31,080 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:30:31,080 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:30:31,080 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:30:31,080 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:30:31,081 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:30:31,081 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:30:31,081 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:30:31,081 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:30:31,081 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:30:31,081 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:30:31,081 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:30:31,081 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:30:31,081 - INFO - [32mAll ready.[0m
+2024-10-29 20:30:31,081 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:30:31,081 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:30:31,081 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:30:31,081 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:30:31,081 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:30:31,081 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:30:31,149 - INFO - FastAPI app successfully integrated with Flask.
+2024-10-29 20:31:04,777 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:31:04,777 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:31:04,777 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:31:04,777 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:31:04,778 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:31:04,778 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:31:04,778 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:31:04,778 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:31:04,778 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:31:04,778 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:31:04,778 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:31:04,778 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:31:04,778 - INFO - [32mAll ready.[0m
+2024-10-29 20:31:04,778 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:31:04,778 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:31:04,778 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:31:04,778 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:31:04,778 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:31:04,778 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:31:34,155 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:31:34,155 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:31:34,156 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:31:34,156 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:31:34,156 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:31:34,156 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:31:34,156 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:31:34,156 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:31:34,156 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:31:34,156 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:31:34,156 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:31:34,156 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:31:34,156 - INFO - [32mAll ready.[0m
+2024-10-29 20:31:34,156 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:31:34,156 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:31:34,156 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:31:34,156 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:31:34,157 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:31:34,157 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:31:46,373 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:31:46,373 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:31:46,373 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:31:46,373 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:31:46,373 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:31:46,373 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:31:46,373 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:31:46,373 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:31:46,373 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:31:46,373 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:31:46,373 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:31:46,373 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:31:46,373 - INFO - [32mAll ready.[0m
+2024-10-29 20:31:46,373 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:31:46,373 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:31:46,374 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:31:46,374 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:31:46,374 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:31:46,374 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:32:29,582 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:32:29,582 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:32:29,582 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:32:29,582 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:32:29,582 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:32:29,582 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:32:29,582 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:32:29,582 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:32:29,582 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:32:29,582 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:32:29,582 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:32:29,582 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:32:29,582 - INFO - [32mAll ready.[0m
+2024-10-29 20:32:29,582 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:32:29,582 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:32:29,583 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:32:29,583 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:32:29,583 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:32:29,583 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:32:53,806 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:32:53,806 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:32:53,806 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:32:53,806 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:32:53,806 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:32:53,806 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:32:53,806 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:32:53,806 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:32:53,806 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:32:53,806 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:32:53,806 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:32:53,806 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:32:53,806 - INFO - [32mAll ready.[0m
+2024-10-29 20:32:53,807 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:32:53,807 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:32:53,807 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:32:53,807 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:32:53,807 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:32:53,807 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:33:40,535 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:33:40,535 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:33:40,535 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:33:40,535 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:33:40,535 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:33:40,535 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:33:40,535 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:33:40,535 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:33:40,535 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:33:40,535 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:33:40,536 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:33:40,536 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:33:40,536 - INFO - [32mAll ready.[0m
+2024-10-29 20:33:40,536 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:33:40,536 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:33:40,536 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:33:40,536 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:33:40,536 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:33:40,536 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:33:43,660 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:33:43,660 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:33:43,660 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:33:43,660 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:33:43,660 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:33:43,660 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:33:43,660 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:33:43,660 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:33:43,661 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:33:43,661 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:33:43,661 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:33:43,661 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:33:43,661 - INFO - [32mAll ready.[0m
+2024-10-29 20:33:43,661 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:33:43,661 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:33:43,661 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:33:43,661 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:33:43,661 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:33:43,661 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:33:43,789 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:33:43,789 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:33:43,789 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:33:43,789 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:33:43,789 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:33:43,789 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:33:43,789 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:33:43,789 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:33:43,789 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:33:43,790 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:33:43,790 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:33:43,790 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:33:43,790 - INFO - [32mAll ready.[0m
+2024-10-29 20:33:43,790 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:33:43,790 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:33:43,790 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:33:43,790 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:33:43,790 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:33:43,790 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:33:49,832 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:33:49,832 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:33:49,832 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:33:49,832 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:33:49,832 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:33:49,832 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:33:49,832 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:33:49,833 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:33:49,833 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:33:49,833 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:33:49,833 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:33:49,833 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:33:49,833 - INFO - [32mAll ready.[0m
+2024-10-29 20:33:49,833 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:33:49,833 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:33:49,833 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:33:49,833 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:33:49,833 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:33:49,833 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:33:57,096 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:33:57,096 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:33:57,096 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:33:57,096 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:33:57,097 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:33:57,097 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:33:57,097 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:33:57,097 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:33:57,097 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:33:57,097 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:33:57,097 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:33:57,097 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:33:57,097 - INFO - [32mAll ready.[0m
+2024-10-29 20:33:57,097 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:33:57,097 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:33:57,097 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:33:57,097 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:33:57,097 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:33:57,097 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:33:57,216 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:33:57,216 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:33:57,216 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:33:57,216 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:33:57,216 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:33:57,216 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:33:57,216 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:33:57,216 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:33:57,216 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:33:57,216 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:33:57,216 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:33:57,216 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:33:57,217 - INFO - [32mAll ready.[0m
+2024-10-29 20:33:57,217 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:33:57,217 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:33:57,217 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:33:57,217 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:33:57,217 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:33:57,217 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:34:05,525 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:34:05,525 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:34:05,526 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:34:05,526 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:34:05,526 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:34:05,526 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:34:05,526 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:34:05,526 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:34:05,526 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:34:05,526 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:34:05,526 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:34:05,526 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:34:05,526 - INFO - [32mAll ready.[0m
+2024-10-29 20:34:05,526 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:34:05,526 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:34:05,526 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:34:05,526 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:34:05,526 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:34:05,526 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:34:12,495 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:34:12,496 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:34:12,496 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:34:12,496 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:34:12,496 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:34:12,496 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:34:12,496 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:34:12,496 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:34:12,497 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:34:12,497 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:34:12,497 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:34:12,497 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:34:12,497 - INFO - [32mAll ready.[0m
+2024-10-29 20:34:12,497 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:34:12,497 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:34:12,497 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:34:12,498 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:34:12,498 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:34:12,498 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:34:18,681 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:34:18,682 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:34:18,682 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:34:18,682 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:34:18,682 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:34:18,682 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:34:18,682 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:34:18,682 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:34:18,682 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:34:18,682 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:34:18,682 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:34:18,682 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:34:18,682 - INFO - [32mAll ready.[0m
+2024-10-29 20:34:18,682 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:34:18,682 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:34:18,682 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:34:18,682 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:34:18,682 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:34:18,682 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:35:35,173 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:35:35,173 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:35:35,173 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:35:35,174 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:35:35,174 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:35:35,174 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:35:35,174 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:35:35,174 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:35:35,174 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:35:35,174 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:35:35,174 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:35:35,174 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:35:35,174 - INFO - [32mAll ready.[0m
+2024-10-29 20:35:35,174 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:35:35,174 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:35:35,174 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:35:35,174 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:35:35,174 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:35:35,174 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:35:36,021 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:35:36,021 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:35:36,021 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:35:36,021 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:35:36,021 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:35:36,021 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:35:36,021 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:35:36,021 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:35:36,021 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:35:36,021 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:35:36,022 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:35:36,022 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:35:36,022 - INFO - [32mAll ready.[0m
+2024-10-29 20:35:36,022 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:35:36,022 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:35:36,022 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:35:36,022 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:35:36,022 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:35:36,022 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:40:12,892 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:40:12,892 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:40:12,892 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:40:12,892 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:40:12,892 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:40:12,892 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:40:12,892 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:40:12,892 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:40:12,892 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:40:12,892 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:40:12,892 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:40:12,892 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:40:12,893 - INFO - [32mAll ready.[0m
+2024-10-29 20:40:12,893 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:40:12,893 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:40:12,893 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:40:12,893 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:40:12,893 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:40:12,893 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:47:57,594 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:47:57,595 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:47:57,595 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:47:57,595 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:47:57,595 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:47:57,595 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:47:57,595 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:47:57,595 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:47:57,595 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:47:57,595 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:47:57,595 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:47:57,595 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:47:57,595 - INFO - [32mAll ready.[0m
+2024-10-29 20:47:57,596 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:47:57,596 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:47:57,596 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:47:57,596 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:47:57,596 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:47:57,596 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:47:57,881 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:47:57,881 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:47:57,881 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:47:57,881 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:47:57,881 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:47:57,881 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:47:57,881 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:47:57,881 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:47:57,881 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:47:57,882 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:47:57,882 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:47:57,882 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:47:57,882 - INFO - [32mAll ready.[0m
+2024-10-29 20:47:57,882 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:47:57,882 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:47:57,882 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:47:57,882 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:47:57,882 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:47:57,882 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:48:15,953 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:48:15,953 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:48:15,953 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:48:15,954 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:48:15,954 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:48:15,954 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:48:15,954 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:48:15,954 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:48:15,954 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:48:15,954 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:48:15,954 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:48:15,954 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:48:15,954 - INFO - [32mAll ready.[0m
+2024-10-29 20:48:15,954 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:48:15,954 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:48:15,954 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:48:15,955 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:48:15,955 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:48:15,955 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:48:25,938 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:48:25,938 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:48:25,938 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:48:25,938 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:48:25,938 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:48:25,938 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:48:25,938 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:48:25,939 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:48:25,939 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:48:25,939 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:48:25,939 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:48:25,939 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:48:25,939 - INFO - [32mAll ready.[0m
+2024-10-29 20:48:25,939 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:48:25,939 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:48:25,940 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:48:25,940 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:48:25,940 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:48:25,940 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:48:28,665 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:48:28,665 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:48:28,665 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:48:28,666 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:48:28,666 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:48:28,666 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:48:28,666 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:48:28,666 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:48:28,666 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:48:28,666 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:48:28,666 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:48:28,666 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:48:28,666 - INFO - [32mAll ready.[0m
+2024-10-29 20:48:28,666 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:48:28,666 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:48:28,666 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:48:28,666 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:48:28,666 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:48:28,666 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:48:28,790 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:48:28,791 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:48:28,791 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:48:28,791 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:48:28,791 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:48:28,791 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:48:28,791 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:48:28,791 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:48:28,791 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:48:28,791 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:48:28,791 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:48:28,791 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:48:28,791 - INFO - [32mAll ready.[0m
+2024-10-29 20:48:28,791 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:48:28,791 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:48:28,791 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:48:28,791 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:48:28,791 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:48:28,791 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:48:51,598 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:48:51,598 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:48:51,599 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:48:51,599 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:48:51,599 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:48:51,599 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:48:51,599 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:48:51,599 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:48:51,599 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:48:51,600 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:48:51,600 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:48:51,600 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:48:51,600 - INFO - [32mAll ready.[0m
+2024-10-29 20:48:51,600 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:48:51,600 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:48:51,600 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:48:51,600 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:48:51,600 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:48:51,600 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:48:56,030 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:48:56,030 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:48:56,030 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:48:56,030 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:48:56,030 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:48:56,030 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:48:56,030 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:48:56,030 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:48:56,030 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:48:56,030 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:48:56,030 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:48:56,030 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:48:56,030 - INFO - [32mAll ready.[0m
+2024-10-29 20:48:56,030 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:48:56,030 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:48:56,031 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:48:56,031 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:48:56,031 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:48:56,031 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:48:56,188 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:48:56,188 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:48:56,188 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:48:56,188 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:48:56,188 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:48:56,188 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:48:56,188 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:48:56,188 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:48:56,188 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:48:56,188 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:48:56,188 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:48:56,189 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:48:56,189 - INFO - [32mAll ready.[0m
+2024-10-29 20:48:56,189 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:48:56,189 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:48:56,189 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:48:56,189 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:48:56,189 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:48:56,189 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:49:18,779 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:49:18,779 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:49:18,779 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:49:18,779 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:49:18,779 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:49:18,779 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:49:18,779 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:49:18,780 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:49:18,780 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:49:18,780 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:49:18,780 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:49:18,780 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:49:18,780 - INFO - [32mAll ready.[0m
+2024-10-29 20:49:18,780 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:49:18,780 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:49:18,780 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:49:18,780 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:49:18,780 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:49:18,780 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:49:18,902 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:49:18,902 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:49:18,902 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:49:18,902 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:49:18,902 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:49:18,902 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:49:18,903 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:49:18,903 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:49:18,903 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:49:18,903 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:49:18,903 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:49:18,903 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:49:18,903 - INFO - [32mAll ready.[0m
+2024-10-29 20:49:18,903 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:49:18,903 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:49:18,903 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:49:18,903 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:49:18,903 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:49:18,903 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:49:31,380 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:49:31,380 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:49:31,380 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:49:31,380 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:49:31,380 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:49:31,380 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:49:31,380 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:49:31,380 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:49:31,380 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:49:31,380 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:49:31,380 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:49:31,380 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:49:31,380 - INFO - [32mAll ready.[0m
+2024-10-29 20:49:31,380 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:49:31,380 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:49:31,380 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:49:31,380 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:49:31,380 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:49:31,380 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:49:31,503 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:49:31,503 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:49:31,503 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:49:31,503 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:49:31,503 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:49:31,503 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:49:31,503 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:49:31,503 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:49:31,503 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:49:31,503 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:49:31,504 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:49:31,504 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:49:31,504 - INFO - [32mAll ready.[0m
+2024-10-29 20:49:31,504 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:49:31,504 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:49:31,504 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:49:31,504 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:49:31,504 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:49:31,504 - INFO - [32mAll files are ready.[0m
+2024-10-29 20:50:06,585 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 20:50:06,585 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 20:50:06,585 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/logs[0m
+2024-10-29 20:50:06,585 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs[0m
+2024-10-29 20:50:06,585 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/css[0m
+2024-10-29 20:50:06,585 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/img[0m
+2024-10-29 20:50:06,585 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/js[0m
+2024-10-29 20:50:06,585 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json[0m
+2024-10-29 20:50:06,585 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/templates[0m
+2024-10-29 20:50:06,585 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/utils[0m
+2024-10-29 20:50:06,586 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache[0m
+2024-10-29 20:50:06,586 - INFO - [32mVerzeichnis existiert bereits: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements[0m
+2024-10-29 20:50:06,586 - INFO - [32mAll ready.[0m
+2024-10-29 20:50:06,586 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 20:50:06,586 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/taboo.json[0m
+2024-10-29 20:50:06,586 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 20:50:06,586 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 20:50:06,586 - INFO - [32mOK: Die Datei existiert: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/urls.json[0m
+2024-10-29 20:50:06,586 - INFO - [32mAll files are ready.[0m
