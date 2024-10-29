@@ -63,13 +63,13 @@ def get_url(json_daten=None, eigene_urls=None):
 
     import random
     return random.choice(urls)
-def setup_directories(output_directory: str):
+def setup_directories(OUTPUT_PDFS_DIR: str):
     """
     Richtet die erforderlichen Ausgabe-Verzeichnisse ein.
     """
-    os.makedirs(output_directory, exist_ok=True)
-    individual_collapsed = os.path.join(output_directory, 'individual_pdfs_collapsed')
-    individual_expanded = os.path.join(output_directory, 'individual_pdfs_expanded')
+    os.makedirs(OUTPUT_PDFS_DIR, exist_ok=True)
+    individual_collapsed = os.path.join(OUTPUT_PDFS_DIR, 'individual_pdfs_collapsed')
+    individual_expanded = os.path.join(OUTPUT_PDFS_DIR, 'individual_pdfs_expanded')
     os.makedirs(individual_collapsed, exist_ok=True)
     os.makedirs(individual_expanded, exist_ok=True)
     logger.info(f"Ausgabe-Verzeichnisse eingerichtet: {individual_collapsed}, {individual_expanded}")
@@ -101,8 +101,8 @@ from playwright.async_api import async_playwright, Page
 # ======================= Konfiguration =======================
 
 # Ausgabe-Verzeichnis
-OUTPUT_DIRECTORY = os.getenv("OUTPUT_DIRECTORY", "output_pdfs")
-os.makedirs(OUTPUT_DIRECTORY, exist_ok=True)
+OUTPUT_PDFS_DIR = os.getenv("OUTPUT_PDFS_DIR", "output_pdfs")
+os.makedirs(OUTPUT_PDFS_DIR, exist_ok=True)
 
 # Logging konfigurieren
 logger = logging.getLogger("prepare_logger")
@@ -376,7 +376,7 @@ async def main_test():
 
                     # Optional: Screenshot zur Überprüfung der Änderungen im normal-Modus
                     screenshot_collapsed = sanitize_filename(url).replace('.pdf', '_collapsed.png')
-                    screenshot_collapsed_path = os.path.join(OUTPUT_DIRECTORY, 'individual_pdfs_collapsed', screenshot_collapsed)
+                    screenshot_collapsed_path = os.path.join(OUTPUT_PDFS_DIR, 'individual_pdfs_collapsed', screenshot_collapsed)
                     await page.screenshot(path=screenshot_collapsed_path, full_page=True)
                     logger.info(f"Screenshot im normal-Modus gespeichert: {screenshot_collapsed_path}")
 
@@ -397,7 +397,7 @@ async def main_test():
 
                     # Optional: Screenshot zur Überprüfung der Änderungen im expanded-Modus
                     screenshot_expanded = sanitize_filename(url).replace('.pdf', '_expanded.png')
-                    screenshot_expanded_path = os.path.join(OUTPUT_DIRECTORY, 'individual_pdfs_expanded', screenshot_expanded)
+                    screenshot_expanded_path = os.path.join(OUTPUT_PDFS_DIR, 'individual_pdfs_expanded', screenshot_expanded)
                     await page.screenshot(path=screenshot_expanded_path, full_page=True)
                     logger.info(f"Screenshot im expanded-Modus gespeichert: {screenshot_expanded_path}")
 

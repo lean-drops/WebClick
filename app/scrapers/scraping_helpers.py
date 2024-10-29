@@ -1,10 +1,11 @@
-# app/scrape_helpers.py
+# app/scraping_helpers.py
+
 import json
 import os
-from typing import Dict, Optional, Any
+from typing import Dict, Any
 import threading
 
-from config import logger, MAPPING_DIR
+from config import logger, MAPPING_CACHE_DIR, CACHE_DIR, OUTPUT_MAPPING_PATH
 
 # Import the configuration
 from app.scrapers.fetch_content import scrape_website
@@ -13,9 +14,6 @@ from app.scrapers.fetch_content import scrape_website
 scrape_tasks: Dict[str, Dict] = {}
 # Use threading.Lock for synchronous contexts
 scrape_lock = threading.Lock()
-
-
-# app/scrapers/scraping_helpers.py
 
 async def run_scrape_task(task_id: str, url: str):
     with scrape_lock:
@@ -26,11 +24,33 @@ async def run_scrape_task(task_id: str, url: str):
 
         result = await scrape_website(url)
 
-        # Save result to cache (include both 'url_mapping' and 'base_page_id')
+        if not result or not result.get('url_mapping'):
+            logger.error(f"Scrape task {task_id} returned no data.")
+            with scrape_lock:
+                scrape_tasks[task_id]['status'] = 'failed'
+                scrape_tasks[task_id]['error'] = 'No data returned from scrape_website.'
+            return
+
+        # Sicherstellen, dass das Cache-Verzeichnis existiert
+        MAPPING_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        logger.debug(f"Cache directory ensured: {MAPPING_CACHE_DIR}")
+
+        # Ergebnis in einer individuellen Cache-Datei speichern
         cache_filename = f"{task_id}.json"
-        cache_filepath = os.path.join(MAPPING_DIR, cache_filename)
-        with open(cache_filepath, 'w', encoding='utf-8') as f:
+        cache_file_path = MAPPING_CACHE_DIR / cache_filename
+        logger.debug(f"Saving individual cache to: {cache_file_path}")
+
+        with open(cache_file_path, 'w', encoding='utf-8') as f:
             json.dump(result, f, ensure_ascii=False, indent=4)
+            logger.info(f"Individual cache saved for task {task_id}")
+
+        # Ergebnis in 'output_mapping.json' speichern
+        logger.debug(f"Saving combined output to: {OUTPUT_MAPPING_PATH}")
+
+        with open(OUTPUT_MAPPING_PATH, 'w', encoding='utf-8') as f:
+            json.dump(result['url_mapping'], f, ensure_ascii=False, indent=4)
+            logger.info(f"Combined output saved in {OUTPUT_MAPPING_PATH}")
 
         with scrape_lock:
             scrape_tasks[task_id]['status'] = 'completed'
@@ -44,7 +64,6 @@ async def run_scrape_task(task_id: str, url: str):
             scrape_tasks[task_id]['status'] = 'failed'
             scrape_tasks[task_id]['error'] = str(e)
 
-
 def render_links_recursive(url_mapping: Dict[str, Any], base_page_id: str = None) -> str:
     if not base_page_id:
         base_page_id = next(iter(url_mapping))
@@ -53,7 +72,6 @@ def render_links_recursive(url_mapping: Dict[str, Any], base_page_id: str = None
 
     def render_node(page_id):
         if page_id in visited_pages:
-
             logger.debug(f"Already visited page_id {page_id}, skipping to prevent infinite recursion.")
             return ''
         visited_pages.add(page_id)

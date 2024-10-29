@@ -13,7 +13,6 @@ from flask import Blueprint, request, render_template, redirect, url_for, jsonif
 import json
 
 from app.processing.download import (
-    OUTPUT_DIRECTORY,
     PDFConverter,
     merge_pdfs_with_bookmarks,
     apply_ocr_to_all_pdfs,
@@ -25,13 +24,10 @@ from app.scrapers.scraping_helpers import (
     run_scrape_task,  # Stelle sicher, dass dies eine async Funktion ist
     render_links_recursive
 )
-from config import MAPPING_DIR
-
-# Logger konfigurieren
-logger = logging.getLogger(__name__)
+from config import MAPPING_CACHE_DIR, logger, OUTPUT_PDFS_DIR, BASE_DIR, TEMPLATES_DIR, STATIC_DIR
 
 # Blueprint initialisieren
-main = Blueprint('main', __name__)
+main = Blueprint('main', __name__, template_folder=TEMPLATES_DIR, static_folder=STATIC_DIR)
 
 # Task Management
 pdf_tasks = {}
@@ -44,7 +40,6 @@ def index():
     return render_template('index.html', version=version)
 
 # Route zum Starten des Scraping-Tasks
-# Adjusted code for starting scrape tasks
 @main.route('/scrape_links', methods=['POST'])
 def scrape():
     url = request.form.get('url')
@@ -59,7 +54,7 @@ def scrape():
 
         # Check for cached data
         cache_filename = f"{task_id}.json"
-        cache_filepath = os.path.join(MAPPING_DIR, cache_filename)
+        cache_filepath = os.path.join(MAPPING_CACHE_DIR, cache_filename)
 
         if os.path.exists(cache_filepath):
             # Load cached data
@@ -86,7 +81,6 @@ def scrape():
 def start_scrape_task(task_id, url):
     asyncio.run(run_scrape_task(task_id, url))
 
-
 # Route zur Anzeige des Scraping-Status
 @main.route('/scrape_status/<task_id>', methods=['GET'])
 def scrape_status(task_id):
@@ -111,7 +105,6 @@ def scrape_status(task_id):
     else:
         # Render the scrape_status.html template
         return render_template('scrape_status.html', task_id=task_id)
-
 
 # API-Endpunkt zum Abrufen des Scraping-Status
 @main.route('/get_status/<task_id>', methods=['GET'])
@@ -139,7 +132,7 @@ def get_status(task_id):
 @main.route('/scrape_result/<task_id>')
 def scrape_result(task_id):
     cache_filename = f"{task_id}.json"
-    cache_filepath = os.path.join(MAPPING_DIR, cache_filename)
+    cache_filepath = os.path.join(MAPPING_CACHE_DIR, cache_filename)
     if not os.path.exists(cache_filepath):
         return "Result not found", 404
 
@@ -148,19 +141,23 @@ def scrape_result(task_id):
         url_mapping = result.get('url_mapping')
         base_page_id = result.get('base_page_id')
 
+    # Rufe die Funktion auf, um das HTML zu generieren
+    links_html = render_links_recursive(url_mapping, base_page_id)
+
     # Weitere Daten extrahieren, z.B. main_link_url und main_link_title
     main_link_url = url_mapping.get(base_page_id, {}).get('url', '#')
     main_link_title = url_mapping.get(base_page_id, {}).get('title', 'No Title')
 
     return render_template(
         'scrape_result.html',
+        links_html=links_html,
         url_mapping=url_mapping,
         base_page_id=base_page_id,
         main_link_url=main_link_url,
         main_link_title=main_link_title
     )
 
-
+# Route zum Starten des PDF-Tasks
 @main.route('/start_pdf_task', methods=['POST'])
 def start_pdf_task():
     try:
@@ -205,13 +202,13 @@ async def _run_pdf_task(task_id: str, urls: List[str]):
         # Erstelle PDFs mit eingeklapptem Inhalt
         collapsed_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=False)
         # Fasse die eingeklappten PDFs zusammen
-        merged_collapsed_pdf = os.path.join(OUTPUT_DIRECTORY, f"combined_pdfs_collapsed_{task_id}.pdf")
+        merged_collapsed_pdf = os.path.join(OUTPUT_PDFS_DIR, f"combined_pdfs_collapsed_{task_id}.pdf")
         merge_pdfs_with_bookmarks(collapsed_results, merged_collapsed_pdf)
 
         # Erstelle PDFs mit ausgeklapptem Inhalt
         expanded_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=True)
         # Fasse die ausgeklappten PDFs zusammen
-        merged_expanded_pdf = os.path.join(OUTPUT_DIRECTORY, f"combined_pdfs_expanded_{task_id}.pdf")
+        merged_expanded_pdf = os.path.join(OUTPUT_PDFS_DIR, f"combined_pdfs_expanded_{task_id}.pdf")
         merge_pdfs_with_bookmarks(expanded_results, merged_expanded_pdf)
 
         await pdf_converter.close()
@@ -225,8 +222,8 @@ async def _run_pdf_task(task_id: str, urls: List[str]):
         )
 
         # Erstelle ein ZIP-Archiv mit allen generierten PDFs und OCR-Versionen
-        zip_filename = os.path.join(OUTPUT_DIRECTORY, f"output_pdfs_{task_id}.zip")
-        create_zip_archive(OUTPUT_DIRECTORY, zip_filename)
+        zip_filename = os.path.join(OUTPUT_PDFS_DIR, f"output_pdfs_{task_id}.zip")
+        create_zip_archive(OUTPUT_PDFS_DIR, zip_filename)
 
         # Update Task Info
         with pdf_lock:
@@ -262,7 +259,6 @@ def pdf_status(task_id):
     else:
         # Übergeben Sie 'task_id' an das Template, um es für das Status-Update-Skript zu verwenden
         return render_template('pdf_status.html', task_id=task_id)
-
 
 # Route zum Abrufen des PDF-Task-Status
 @main.route('/get_pdf_status/<task_id>', methods=['GET'])
@@ -351,3 +347,4 @@ def download_pdfs(task_id):
         download_name=os.path.basename(zip_file_path),
         mimetype='application/zip'
     )
+

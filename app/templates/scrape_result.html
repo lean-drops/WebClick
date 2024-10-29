@@ -212,52 +212,67 @@
         <!-- Hauptlink anzeigen -->
         <div class="main-link-container">
             <h2>Hauptlink: <a href="#" id="main-link">{{ main_link_title }}</a></h2>
+
         </div>
 
         <!-- Container für die Liste -->
-        <div class="list-container">
-            <h2>Gefundene Links</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Link</th>
-                        <th>Auswahl</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for page_id, page_data in url_mapping.items() %}
-                        {% if page_data.level == 1 %}
-                        <tr class="parent-row">
-                            <td>
-                                {% if page_data.children|length > 0 %}
-                                <!-- Zeige den Toggle-Pfeil nur, wenn es Kinder gibt -->
-                                <span class="toggle-btn-label" data-page-id="{{ page_id }}" role="button" aria-expanded="false" aria-controls="child-{{ page_id }}"></span>
-                                {% endif %}
-                                <!-- Link zum Öffnen im neuen Fenster -->
-                                <a href="#" class="toggle-link" data-url="{{ page_data.url }}" data-title="{{ page_data.title }}">{{ page_data.title }}</a>
-                            </td>
-                            <td>
-                                <input type="checkbox" name="selected_links" value="{{ page_data.url }}" data-title="{{ page_data.title }}"
-                                    {% if page_data.url == main_link_url %} checked {% endif %}>
-                            </td>
-                        </tr>
-                        <!-- Kinder-Elemente -->
-                        {% for child_id in page_data.children %}
-                            {% if child_id in url_mapping %}
-                            <tr class="child-row child-of-{{ page_id }}" id="child-{{ page_id }}" style="display: none;">
-                                <td style="padding-left: 40px;">
-                                    <!-- Link zum Öffnen im neuen Fenster -->
-                                    <a href="#" class="toggle-link" data-url="{{ url_mapping[child_id].url }}" data-title="{{ url_mapping[child_id].title }}">{{ url_mapping[child_id].title }}</a>
-                                </td>
-                                <td><input type="checkbox" name="selected_links" value="{{ url_mapping[child_id].url }}" data-title="{{ url_mapping[child_id].title }}"></td>
-                            </tr>
-                            {% endif %}
-                        {% endfor %}
+<!-- Container für die Liste -->
+<div class="list-container">
+    <h2>Gefundene Links</h2>
+    <input type="text" id="search-input" placeholder="Suche nach Links..." />
+
+    <table>
+        <thead>
+            <tr>
+                <th>Link</th>
+                <th>Auswahl</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Hauptlink als erster Eintrag -->
+            <tr class="main-link-row">
+                <td>
+                    <!-- Link zum Öffnen im neuen Fenster -->
+                    <a href="#" class="toggle-link" data-url="{{ main_link_url }}" data-title="{{ main_link_title }}">{{ main_link_title }}</a>
+                </td>
+                <td>
+                    <!-- Checkbox für den Hauptlink, standardmäßig aktiviert -->
+                    <input type="checkbox" name="selected_links" value="{{ main_link_url }}" data-title="{{ main_link_title }}" checked>
+                </td>
+            </tr>
+
+            <!-- Restliche Links -->
+            {% for page_id, page_data in url_mapping.items() %}
+                <!-- Überspringe den Hauptlink, falls er in url_mapping enthalten ist -->
+                {% if page_data.url != main_link_url and page_data.level == 1 %}
+                <tr class="parent-row">
+                    <td>
+                        {% if page_data.children|length > 0 %}
+                        <!-- Zeige den Toggle-Pfeil nur, wenn es Kinder gibt -->
+                        <span class="toggle-btn-label" data-page-id="{{ page_id }}" role="button" aria-expanded="false" aria-controls="child-{{ page_id }}"></span>
                         {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                        <a href="#" class="toggle-link" data-url="{{ page_data.url }}" data-title="{{ page_data.title }}">{{ page_data.title }}</a>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="selected_links" value="{{ page_data.url }}" data-title="{{ page_data.title }}">
+                    </td>
+                </tr>
+                <!-- Kinder-Elemente -->
+                {% for child_id in page_data.children %}
+                    {% if child_id in url_mapping %}
+                    <tr class="child-row child-of-{{ page_id }}" id="child-{{ page_id }}" style="display: none;">
+                        <td style="padding-left: 40px;">
+                            <a href="#" class="toggle-link" data-url="{{ url_mapping[child_id].url }}" data-title="{{ url_mapping[child_id].title }}">{{ url_mapping[child_id].title }}</a>
+                        </td>
+                        <td><input type="checkbox" name="selected_links" value="{{ url_mapping[child_id].url }}" data-title="{{ url_mapping[child_id].title }}"></td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
         <!-- Container für die ausgewählten Links -->
         <div class="selected-links-container">
@@ -269,7 +284,9 @@
 
             <!-- Konvertieren-Button -->
 <!-- Konvertieren-Button -->
-<button id="convert-button" onclick="start_pdf_task()">PDF-Konvertierung starten</button>
+<!-- Konvertieren-Button -->
+<!-- Konvertieren-Button -->
+<button id="convert-button">PDF-Konvertierung starten</button>
         </div>
     </main>
 
@@ -277,193 +294,217 @@
     <div id="loading-indicator">Starte PDF-Konvertierung...</div>
 
    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const toggleButtons = document.querySelectorAll('.toggle-btn-label');
-        const selectedLinksContainer = document.getElementById('selected-links');
-        const checkboxes = document.querySelectorAll('input[name="selected_links"]');
-        const listLinks = document.querySelectorAll('.toggle-link');
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButtons = document.querySelectorAll('.toggle-btn-label');
+            const selectedLinksContainer = document.getElementById('selected-links');
+            const checkboxes = document.querySelectorAll('input[name="selected_links"]');
+            const listLinks = document.querySelectorAll('.toggle-link');
 
-        let externalWindow = null;
+            let externalWindow = null;
 
-        // Funktion zum Öffnen eines neuen Fensters rechts neben dem aktuellen Fenster
-        function openExternalWindow(url) {
-            // Berechne die Position und Größe des neuen Fensters
-            const screenWidth = window.screen.width;
-            const screenHeight = window.screen.height;
-            const windowWidth = screenWidth / 2;
-            const windowHeight = screenHeight;
+            // Funktion zum Öffnen eines neuen Fensters rechts neben dem aktuellen Fenster
+            function openExternalWindow(url) {
+                // Berechne die Position und Größe des neuen Fensters
+                const screenWidth = window.screen.width;
+                const screenHeight = window.screen.height;
+                const windowWidth = screenWidth / 2;
+                const windowHeight = screenHeight;
 
-            // Versuche, das neue Fenster rechts neben dem aktuellen Fenster zu öffnen
-            const windowLeft = window.screenX + window.outerWidth;
-            const windowTop = window.screenY;
+                // Versuche, das neue Fenster rechts neben dem aktuellen Fenster zu öffnen
+                const windowLeft = window.screenX + window.outerWidth;
+                const windowTop = window.screenY;
 
-            // Öffne das neue Fenster
-            externalWindow = window.open(
-                url,
-                'externalWindow',
-                `width=${windowWidth},height=${windowHeight},left=${windowLeft},top=${windowTop}`
-            );
-        }
-
-        // Event-Listener für den Hauptlink
-        const mainLinkElement = document.getElementById('main-link');
-        mainLinkElement.addEventListener('click', function (e) {
-            e.preventDefault();
-            const mainLinkUrl = "{{ main_link_url }}";
-            if (externalWindow && !externalWindow.closed) {
-                externalWindow.location.href = mainLinkUrl;
-                externalWindow.focus();
-            } else {
-                openExternalWindow(mainLinkUrl);
+                // Öffne das neue Fenster
+                externalWindow = window.open(
+                    url,
+                    'externalWindow',
+                    `width=${windowWidth},height=${windowHeight},left=${windowLeft},top=${windowTop}`
+                );
             }
-        });
 
-        // Event-Listener für die List Links
-        listLinks.forEach(link => {
-            link.addEventListener('click', function (e) {
+            // Event-Listener für den Hauptlink
+            const mainLinkElement = document.getElementById('main-link');
+            mainLinkElement.addEventListener('click', function (e) {
                 e.preventDefault();
-                const url = this.getAttribute('data-url');
+                const mainLinkUrl = "{{ main_link_url }}";
                 if (externalWindow && !externalWindow.closed) {
-                    externalWindow.location.href = url;
+                    externalWindow.location.href = mainLinkUrl;
                     externalWindow.focus();
                 } else {
-                    openExternalWindow(url);
+                    openExternalWindow(mainLinkUrl);
                 }
             });
-        });
 
-        // Event-Listener für Toggle-Buttons
-        toggleButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const pageId = this.getAttribute('data-page-id');
-                toggleChildren(pageId, this);
-            });
-        });
-
-        // Event-Listener für Checkboxen
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
-                const linkUrl = this.value;
-                const linkTitle = this.dataset.title;
-                const linkId = `selected-${hashCode(linkUrl)}`;
-
-                if (this.checked) {
-                    // Link hinzufügen
-                    const linkDiv = document.createElement('div');
-                    linkDiv.classList.add('selected-link');
-                    linkDiv.id = linkId;
-
-                    const linkAnchor = document.createElement('a');
-                    linkAnchor.href = '#';
-                    linkAnchor.textContent = linkTitle || linkUrl;
-                    linkAnchor.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        if (externalWindow && !externalWindow.closed) {
-                            externalWindow.location.href = linkUrl;
-                            externalWindow.focus();
-                        } else {
-                            openExternalWindow(linkUrl);
-                        }
-                    });
-
-                    const removeButton = document.createElement('button');
-                    removeButton.classList.add('remove-link');
-                    removeButton.innerHTML = '&times;';
-                    removeButton.addEventListener('click', function () {
-                        checkbox.checked = false; // Checkbox deaktivieren
-                        selectedLinksContainer.removeChild(linkDiv);
-                    });
-
-                    linkDiv.appendChild(linkAnchor);
-                    linkDiv.appendChild(removeButton);
-                    selectedLinksContainer.appendChild(linkDiv);
-                } else {
-                    // Link entfernen
-                    const linkDiv = document.getElementById(linkId);
-                    if (linkDiv) {
-                        selectedLinksContainer.removeChild(linkDiv);
+            // Event-Listener für die List Links
+            listLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('data-url');
+                    if (externalWindow && !externalWindow.closed) {
+                        externalWindow.location.href = url;
+                        externalWindow.focus();
+                    } else {
+                        openExternalWindow(url);
                     }
-                }
+                });
             });
 
-            // Initialisiere die ausgewählten Links beim Laden der Seite
-            if (checkbox.checked) {
-                const event = new Event('change');
-                checkbox.dispatchEvent(event);
-            }
-        });
-
-        function toggleChildren(pageId, toggleElement) {
-            const childRows = document.querySelectorAll('.child-of-' + pageId);
-            const isExpanded = toggleElement.classList.toggle('expanded');
-            toggleElement.setAttribute('aria-expanded', isExpanded);
-
-            childRows.forEach(row => {
-                row.style.display = isExpanded ? 'table-row' : 'none';
-            });
-        }
-
-        // Funktion zur Generierung eines einfachen Hashcodes für eindeutige IDs
-        function hashCode(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = (hash << 5) - hash + str.charCodeAt(i);
-                hash |= 0; // Convert to 32bit integer
-            }
-            return Math.abs(hash).toString();
-        }
-
-        // Funktion zum Starten der PDF-Konvertierung
-        async function startPdfConversion() {
-            const checkboxes = document.querySelectorAll('input[name="selected_links"]:checked');
-            let selectedLinks = [];
-
-            // Benutzergewählte Links hinzufügen
-            checkboxes.forEach((checkbox) => {
-                selectedLinks.push(checkbox.value);
+            // Event-Listener für Toggle-Buttons
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const pageId = this.getAttribute('data-page-id');
+                    toggleChildren(pageId, this);
+                });
             });
 
-            if (selectedLinks.length === 0) {
-                alert('Bitte wählen Sie mindestens einen Link aus.');
-                return;
-            }
+            // Event-Listener für Checkboxen
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    const linkUrl = this.value;
+                    const linkTitle = this.dataset.title;
+                    const linkId = `selected-${hashCode(linkUrl)}`;
 
-            // Ladeanzeige einblenden
-            const loadingIndicator = document.getElementById('loading-indicator');
-            loadingIndicator.style.display = 'block';
+                    if (this.checked) {
+                        // Link hinzufügen
+                        const linkDiv = document.createElement('div');
+                        linkDiv.classList.add('selected-link');
+                        linkDiv.id = linkId;
 
-            try {
-                const response = await fetch('/start_pdf_task', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ selected_links: selectedLinks }),
+                        const linkAnchor = document.createElement('a');
+                        linkAnchor.href = '#';
+                        linkAnchor.textContent = linkTitle || linkUrl;
+                        linkAnchor.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            if (externalWindow && !externalWindow.closed) {
+                                externalWindow.location.href = linkUrl;
+                                externalWindow.focus();
+                            } else {
+                                openExternalWindow(url);
+                            }
+                        });
+
+                        const removeButton = document.createElement('button');
+                        removeButton.classList.add('remove-link');
+                        removeButton.innerHTML = '&times;';
+                        removeButton.addEventListener('click', function () {
+                            checkbox.checked = false; // Checkbox deaktivieren
+                            selectedLinksContainer.removeChild(linkDiv);
+                        });
+
+                        linkDiv.appendChild(linkAnchor);
+                        linkDiv.appendChild(removeButton);
+                        selectedLinksContainer.appendChild(linkDiv);
+                    } else {
+                        // Link entfernen
+                        const linkDiv = document.getElementById(linkId);
+                        if (linkDiv) {
+                            selectedLinksContainer.removeChild(linkDiv);
+                        }
+                    }
                 });
 
-                const data = await response.json();
-
-                if (data.status === 'success' && data.task_id) {
-                    // Weiterleitung zur PDF-Statusseite mit der task_id
-                    const taskId = data.task_id;
-                    window.location.href = `/pdf_status/${taskId}`;
-                } else {
-                    loadingIndicator.style.display = 'none';
-                    alert('Fehler beim Starten des PDF-Tasks.');
+                // Initialisiere die ausgewählten Links beim Laden der Seite
+                if (checkbox.checked) {
+                    const event = new Event('change');
+                    checkbox.dispatchEvent(event);
                 }
-            } catch (error) {
-                loadingIndicator.style.display = 'none';
-                console.error('Fehler beim Erstellen des PDF-Tasks:', error);
-                alert('Es gab ein Problem beim Starten der PDF-Konvertierung.');
+            });
+
+            function toggleChildren(pageId, toggleElement) {
+                const childRows = document.querySelectorAll('.child-of-' + pageId);
+                const isExpanded = toggleElement.classList.toggle('expanded');
+                toggleElement.setAttribute('aria-expanded', isExpanded);
+
+                childRows.forEach(row => {
+                    row.style.display = isExpanded ? 'table-row' : 'none';
+                });
             }
-        }
 
-        // Event-Listener für den Konvertieren-Button hinzufügen
-        const convertButton = document.getElementById('convert-button');
-        convertButton.addEventListener('click', startPdfConversion);
+            // Funktion zur Generierung eines einfachen Hashcodes für eindeutige IDs
+            function hashCode(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    hash = (hash << 5) - hash + str.charCodeAt(i);
+                    hash |= 0; // Convert to 32bit integer
+                }
+                return Math.abs(hash).toString();
+            }
+
+            // Funktion zum Starten der PDF-Konvertierung
+            async function startPdfConversion() {
+                const checkboxes = document.querySelectorAll('input[name="selected_links"]:checked');
+                let selectedLinks = [];
+
+                // Benutzergewählte Links hinzufügen
+                checkboxes.forEach((checkbox) => {
+                    selectedLinks.push(checkbox.value);
+                });
+
+                // Hauptlink immer hinzufügen, falls nicht bereits enthalten
+                const mainLinkUrl = "{{ main_link_url }}";
+                if (!selectedLinks.includes(mainLinkUrl)) {
+                    selectedLinks.push(mainLinkUrl);
+                }
+
+                if (selectedLinks.length === 0) {
+                    alert('Bitte wählen Sie mindestens einen Link aus.');
+                    return;
+                }
+
+                // Ladeanzeige einblenden
+                const loadingIndicator = document.getElementById('loading-indicator');
+                loadingIndicator.style.display = 'block';
+
+                try {
+                    const response = await fetch('/start_pdf_task', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ selected_links: selectedLinks }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.status === 'success' && data.task_id) {
+                        // Weiterleitung zur PDF-Statusseite mit der task_id
+                        const taskId = data.task_id;
+                        window.location.href = `/pdf_status/${taskId}`;
+                    } else {
+                        loadingIndicator.style.display = 'none';
+                        alert('Fehler beim Starten des PDF-Tasks.');
+                    }
+                } catch (error) {
+                    loadingIndicator.style.display = 'none';
+                    console.error('Fehler beim Erstellen des PDF-Tasks:', error);
+                    alert('Es gab ein Problem beim Starten der PDF-Konvertierung.');
+                }
+            }
+
+            // Event-Listener für den Konvertieren-Button hinzufügen
+            const convertButton = document.getElementById('convert-button');
+            convertButton.addEventListener('click', startPdfConversion);  // Suchfunktion
+
+            const searchInput = document.getElementById('search-input');
+    searchInput.addEventListener('input', function () {
+        const filter = this.value.toLowerCase();
+        const table = document.querySelector('.list-container table');
+        const rows = table.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            const linkCell = row.querySelector('td a.toggle-link');
+            if (linkCell) {
+                const text = linkCell.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
     });
-</script>
+});
 
-
+    </script>
 </body>
 </html>
