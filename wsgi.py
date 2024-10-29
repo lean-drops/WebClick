@@ -1,25 +1,25 @@
+# /var/www/www_e-archival_ch_wsgi.py
+
 import sys
 import os
-from config import BASE_DIR
-from app.main import app  # Import the FastAPI app directly
 import logging
+from starlette.middleware.wsgi import WSGIMiddleware
+from app.main import app  # Deine FastAPI-App
 
-# Add the project directory to the Python path
-project_home = str(BASE_DIR)
+# Projektverzeichnis zum Python-Pfad hinzufügen
+project_home = '/home/digitalherodot/WebClick'
 if project_home not in sys.path:
     sys.path.insert(0, project_home)
 
-# Optional: Configure logging
+# Logging konfigurieren (optional)
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(os.path.join(BASE_DIR, 'logs', 'app.log'))
-    ]
+    handlers=[logging.StreamHandler()]
 )
 logger = logging.getLogger(__name__)
-logger.debug("FastAPI application has been initialized.")
+logger.debug("WSGI-Konfiguration gestartet.")
 
-# Define the application entry point
-application = app
+# FastAPI-App in WSGI umwandeln
+application = WSGIMiddleware(app)
+logger.debug("WSGIMiddleware gesetzt.")

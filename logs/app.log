@@ -1,0 +1,413 @@
+2024-10-29 18:32:26,236 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 18:32:26,238 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 18:32:26,238 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 18:32:26,239 - ERROR - [31mVerzeichnis fehlt: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 18:32:26,241 - INFO - [32mVerzeichnis erstellt: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 18:32:26,242 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 18:32:26,242 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 18:32:26,242 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 18:32:26,243 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 18:32:26,243 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 18:32:26,244 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 18:32:26,244 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 18:32:26,245 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 18:32:26,245 - WARNING - [33mSetup started.[0m
+2024-10-29 18:32:26,246 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 18:32:26,246 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 18:32:26,247 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 18:32:26,248 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 18:32:26,249 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 18:32:26,249 - INFO - [32mAll files are ready.[0m
+2024-10-29 18:32:37,290 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 18:32:37,291 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 18:32:37,291 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 18:32:37,291 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 18:32:37,292 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 18:32:37,292 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 18:32:37,292 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 18:32:37,292 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 18:32:37,292 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 18:32:37,292 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 18:32:37,293 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 18:32:37,293 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 18:32:37,293 - INFO - [32mAll ready.[0m
+2024-10-29 18:32:37,294 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 18:32:37,294 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 18:32:37,294 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 18:32:37,294 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 18:32:37,294 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 18:32:37,294 - INFO - [32mAll files are ready.[0m
+2024-10-29 18:35:27,227 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 18:35:27,229 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 18:35:27,229 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 18:35:27,230 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 18:35:27,230 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 18:35:27,231 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 18:35:27,231 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 18:35:27,231 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 18:35:27,232 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 18:35:27,232 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 18:35:27,233 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 18:35:27,233 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 18:35:27,233 - INFO - [32mAll ready.[0m
+2024-10-29 18:35:27,234 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 18:35:27,234 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 18:35:27,235 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 18:35:27,235 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 18:35:27,235 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 18:35:27,236 - INFO - [32mAll files are ready.[0m
+2024-10-29 18:36:19,103 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 18:36:19,104 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 18:36:19,104 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 18:36:19,105 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 18:36:19,105 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 18:36:19,106 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 18:36:19,106 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 18:36:19,106 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 18:36:19,106 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 18:36:19,106 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 18:36:19,107 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 18:36:19,107 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 18:36:19,107 - INFO - [32mAll ready.[0m
+2024-10-29 18:36:19,108 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 18:36:19,108 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 18:36:19,109 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 18:36:19,109 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 18:36:19,110 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 18:36:19,110 - INFO - [32mAll files are ready.[0m
+2024-10-29 18:39:48,466 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 18:39:48,468 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 18:39:48,468 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 18:39:48,468 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 18:39:48,468 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 18:39:48,469 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 18:39:48,469 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 18:39:48,470 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 18:39:48,471 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 18:39:48,471 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 18:39:48,471 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 18:39:48,472 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 18:39:48,472 - INFO - [32mAll ready.[0m
+2024-10-29 18:39:48,473 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 18:39:48,473 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 18:39:48,474 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 18:39:48,474 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 18:39:48,475 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 18:39:48,475 - INFO - [32mAll files are ready.[0m
+2024-10-29 18:39:51,859 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 18:39:51,859 - INFO - Static files mounted successfully.
+2024-10-29 18:42:47,048 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 18:42:47,054 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 18:42:47,055 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 18:42:47,055 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 18:42:47,056 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 18:42:47,057 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 18:42:47,057 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 18:42:47,058 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 18:42:47,059 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 18:42:47,059 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 18:42:47,059 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 18:42:47,060 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 18:42:47,060 - INFO - [32mAll ready.[0m
+2024-10-29 18:42:47,061 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 18:42:47,061 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 18:42:47,062 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 18:42:47,062 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 18:42:47,063 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 18:42:47,063 - INFO - [32mAll files are ready.[0m
+2024-10-29 18:42:50,020 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 18:42:50,020 - INFO - Static files mounted successfully.
+2024-10-29 18:44:33,350 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 18:44:33,352 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 18:44:33,352 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 18:44:33,353 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 18:44:33,353 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 18:44:33,354 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 18:44:33,355 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 18:44:33,355 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 18:44:33,356 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 18:44:33,356 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 18:44:33,357 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 18:44:33,357 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 18:44:33,358 - INFO - [32mAll ready.[0m
+2024-10-29 18:44:33,358 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 18:44:33,359 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 18:44:33,359 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 18:44:33,360 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 18:44:33,360 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 18:44:33,360 - INFO - [32mAll files are ready.[0m
+2024-10-29 18:44:36,584 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 18:44:36,585 - INFO - Static files mounted successfully.
+2024-10-29 18:51:32,760 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 18:51:32,762 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 18:51:32,762 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 18:51:32,763 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 18:51:32,763 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 18:51:32,764 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 18:51:32,764 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 18:51:32,765 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 18:51:32,765 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 18:51:32,766 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 18:51:32,766 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 18:51:32,766 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 18:51:32,766 - INFO - [32mAll ready.[0m
+2024-10-29 18:51:32,767 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 18:51:32,767 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 18:51:32,768 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 18:51:32,768 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 18:51:32,769 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 18:51:32,769 - INFO - [32mAll files are ready.[0m
+2024-10-29 18:51:35,305 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 18:51:35,305 - INFO - Static files mounted successfully.
+2024-10-29 18:54:46,950 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 18:54:46,951 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 18:54:46,951 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 18:54:46,951 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 18:54:46,952 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 18:54:46,952 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 18:54:46,953 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 18:54:46,953 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 18:54:46,954 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 18:54:46,954 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 18:54:46,954 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 18:54:46,955 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 18:54:46,955 - INFO - [32mAll ready.[0m
+2024-10-29 18:54:46,955 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 18:54:46,955 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 18:54:46,956 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 18:54:46,956 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 18:54:46,957 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 18:54:46,957 - INFO - [32mAll files are ready.[0m
+2024-10-29 18:54:48,809 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 18:54:48,810 - INFO - Static files mounted successfully.
+2024-10-29 18:59:59,237 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 18:59:59,238 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 18:59:59,238 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 18:59:59,239 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 18:59:59,239 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 18:59:59,240 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 18:59:59,240 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 18:59:59,240 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 18:59:59,241 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 18:59:59,241 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 18:59:59,241 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 18:59:59,242 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 18:59:59,242 - INFO - [32mAll ready.[0m
+2024-10-29 18:59:59,243 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 18:59:59,243 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 18:59:59,244 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 18:59:59,244 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 18:59:59,244 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 18:59:59,245 - INFO - [32mAll files are ready.[0m
+2024-10-29 18:59:59,645 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 18:59:59,646 - INFO - Static files mounted successfully.
+2024-10-29 19:00:05,228 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 19:00:05,229 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 19:00:05,229 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 19:00:05,230 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 19:00:05,230 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 19:00:05,230 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 19:00:05,230 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 19:00:05,230 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 19:00:05,230 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 19:00:05,231 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 19:00:05,231 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 19:00:05,231 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 19:00:05,231 - INFO - [32mAll ready.[0m
+2024-10-29 19:00:05,231 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 19:00:05,231 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 19:00:05,232 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 19:00:05,232 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 19:00:05,232 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 19:00:05,232 - INFO - [32mAll files are ready.[0m
+2024-10-29 19:00:05,879 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 19:00:05,882 - INFO - Static files mounted successfully.
+2024-10-29 19:00:15,397 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 19:00:15,398 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 19:00:15,398 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 19:00:15,398 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 19:00:15,398 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 19:00:15,399 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 19:00:15,399 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 19:00:15,399 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 19:00:15,399 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 19:00:15,399 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 19:00:15,400 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 19:00:15,400 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 19:00:15,400 - INFO - [32mAll ready.[0m
+2024-10-29 19:00:15,400 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 19:00:15,400 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 19:00:15,401 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 19:00:15,401 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 19:00:15,401 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 19:00:15,401 - INFO - [32mAll files are ready.[0m
+2024-10-29 19:00:15,734 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 19:00:15,734 - INFO - Static files mounted successfully.
+2024-10-29 19:00:33,513 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 19:00:33,513 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 19:00:33,513 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 19:00:33,514 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 19:00:33,514 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 19:00:33,514 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 19:00:33,514 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 19:00:33,514 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 19:00:33,514 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 19:00:33,514 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 19:00:33,515 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 19:00:33,515 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 19:00:33,515 - INFO - [32mAll ready.[0m
+2024-10-29 19:00:33,515 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 19:00:33,515 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 19:00:33,515 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 19:00:33,516 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 19:00:33,516 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 19:00:33,516 - INFO - [32mAll files are ready.[0m
+2024-10-29 19:00:33,821 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 19:00:33,821 - INFO - Static files mounted successfully.
+2024-10-29 19:01:05,406 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 19:01:05,407 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 19:01:05,407 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 19:01:05,407 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 19:01:05,407 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 19:01:05,408 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 19:01:05,408 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 19:01:05,409 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 19:01:05,409 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 19:01:05,410 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 19:01:05,410 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 19:01:05,410 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 19:01:05,410 - INFO - [32mAll ready.[0m
+2024-10-29 19:01:05,411 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 19:01:05,411 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 19:01:05,412 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 19:01:05,412 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 19:01:05,413 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 19:01:05,413 - INFO - [32mAll files are ready.[0m
+2024-10-29 19:01:05,769 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 19:01:05,769 - INFO - Static files mounted successfully.
+2024-10-29 19:02:40,548 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 19:02:40,550 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 19:02:40,551 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 19:02:40,551 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 19:02:40,552 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 19:02:40,553 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 19:02:40,554 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 19:02:40,555 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 19:02:40,555 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 19:02:40,556 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 19:02:40,556 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 19:02:40,557 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 19:02:40,558 - INFO - [32mAll ready.[0m
+2024-10-29 19:02:40,558 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 19:02:40,559 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 19:02:40,560 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 19:02:40,564 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 19:02:40,565 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 19:02:40,566 - INFO - [32mAll files are ready.[0m
+2024-10-29 19:02:41,053 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 19:02:41,053 - INFO - Static files mounted successfully.
+2024-10-29 19:04:34,912 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 19:04:34,914 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 19:04:34,914 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 19:04:34,915 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 19:04:34,915 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 19:04:34,916 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 19:04:34,916 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 19:04:34,917 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 19:04:34,917 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 19:04:34,918 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 19:04:34,918 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 19:04:34,919 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 19:04:34,919 - INFO - [32mAll ready.[0m
+2024-10-29 19:04:34,919 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 19:04:34,920 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 19:04:34,920 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 19:04:34,921 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 19:04:34,921 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 19:04:34,921 - INFO - [32mAll files are ready.[0m
+2024-10-29 19:04:35,396 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 19:04:35,396 - INFO - Static files mounted successfully.
+2024-10-29 19:05:15,566 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 19:05:15,567 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 19:05:15,567 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 19:05:15,568 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 19:05:15,568 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 19:05:15,568 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 19:05:15,568 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 19:05:15,568 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 19:05:15,569 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 19:05:15,569 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 19:05:15,569 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 19:05:15,570 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 19:05:15,571 - INFO - [32mAll ready.[0m
+2024-10-29 19:05:15,572 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 19:05:15,572 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 19:05:15,573 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 19:05:15,573 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 19:05:15,573 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 19:05:15,574 - INFO - [32mAll files are ready.[0m
+2024-10-29 19:05:16,030 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 19:05:16,031 - INFO - Static files mounted successfully.
+2024-10-29 19:06:35,131 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 19:06:35,133 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 19:06:35,133 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 19:06:35,133 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 19:06:35,134 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 19:06:35,134 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 19:06:35,135 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 19:06:35,135 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 19:06:35,135 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 19:06:35,136 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 19:06:35,136 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 19:06:35,137 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 19:06:35,137 - INFO - [32mAll ready.[0m
+2024-10-29 19:06:35,137 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 19:06:35,138 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 19:06:35,138 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 19:06:35,139 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 19:06:35,139 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 19:06:35,140 - INFO - [32mAll files are ready.[0m
+2024-10-29 19:06:35,596 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 19:06:35,597 - INFO - Static files mounted successfully.
+2024-10-29 19:07:47,063 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 19:07:47,065 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 19:07:47,065 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 19:07:47,065 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 19:07:47,066 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 19:07:47,066 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 19:07:47,067 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 19:07:47,067 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 19:07:47,068 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 19:07:47,068 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 19:07:47,068 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 19:07:47,069 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 19:07:47,069 - INFO - [32mAll ready.[0m
+2024-10-29 19:07:47,070 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 19:07:47,070 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 19:07:47,071 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 19:07:47,072 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 19:07:47,072 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 19:07:47,072 - INFO - [32mAll files are ready.[0m
+2024-10-29 19:07:47,528 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 19:07:47,528 - INFO - Static files mounted successfully.
+2024-10-29 19:08:01,011 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 19:08:01,013 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache/mapping_cache[0m
+2024-10-29 19:08:01,014 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/logs[0m
+2024-10-29 19:08:01,015 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/output_pdfs[0m
+2024-10-29 19:08:01,015 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/css[0m
+2024-10-29 19:08:01,015 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/img[0m
+2024-10-29 19:08:01,015 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/js[0m
+2024-10-29 19:08:01,015 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json[0m
+2024-10-29 19:08:01,016 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/templates[0m
+2024-10-29 19:08:01,016 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/utils[0m
+2024-10-29 19:08:01,017 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/cache[0m
+2024-10-29 19:08:01,020 - INFO - [32mVerzeichnis existiert bereits: /home/digitalherodot/WebClick/app/static/json/remove_elements[0m
+2024-10-29 19:08:01,021 - INFO - [32mAll ready.[0m
+2024-10-29 19:08:01,022 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/cache/output_mapping.json[0m
+2024-10-29 19:08:01,022 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/taboo.json[0m
+2024-10-29 19:08:01,022 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/cookies_selector.json[0m
+2024-10-29 19:08:01,022 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/exclude_selectors.json[0m
+2024-10-29 19:08:01,022 - INFO - [32mOK: Die Datei existiert: /home/digitalherodot/WebClick/app/static/json/urls.json[0m
+2024-10-29 19:08:01,022 - INFO - [32mAll files are ready.[0m
+2024-10-29 19:08:01,835 - INFO - Mounting static files from: /home/digitalherodot/WebClick/app/static
+2024-10-29 19:08:01,836 - INFO - Static files mounted successfully.
