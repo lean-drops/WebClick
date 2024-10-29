@@ -21,3 +21,17 @@
 2024-10-29 09:21:20,454 - INFO - PDF created: output_pdfs/individual_pdfs_expanded/httpswwwzhchdemigration-integrationintegrationhtml
 2024-10-29 09:21:20,696 - INFO - Alle PDFs wurden zu einem zusammengeführt: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs/combined_pdfs_expanded_3e95dac9-53a9-4205-9ec5-d96561e88e54.pdf
 2024-10-29 09:21:21,022 - INFO - Playwright Browser geschlossen.
+2024-10-29 09:31:41,081 - INFO - Playwright Browser gestartet.
+2024-10-29 09:31:41,403 - INFO - Opening page: https://www.zh.ch/de/migration-integration/integration.html
+2024-10-29 09:31:41,406 - INFO - Opening page: https://www.zh.ch/de/migration-integration/integration/integrationsangebote.html
+2024-10-29 09:31:47,920 - INFO - PDF created: output_pdfs/individual_pdfs_collapsed/httpswwwzhchdemigration-integrationintegrationintegrationsangebotehtml
+2024-10-29 09:31:48,512 - INFO - PDF created: output_pdfs/individual_pdfs_collapsed/httpswwwzhchdemigration-integrationintegrationhtml
+2024-10-29 09:31:48,709 - INFO - Alle PDFs wurden zu einem zusammengeführt: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs/combined_pdfs_collapsed_d4f5f524-d6fa-4c5d-97de-687c54b3f61c.pdf
+2024-10-29 09:31:48,804 - INFO - Opening page: https://www.zh.ch/de/migration-integration/integration/integrationsangebote.html
+2024-10-29 09:31:48,808 - INFO - Opening page: https://www.zh.ch/de/migration-integration/integration.html
+2024-10-29 09:31:53,026 - INFO - Injected external JS to remove elements in expanded mode.
+2024-10-29 09:31:53,569 - INFO - Injected external JS to remove elements in expanded mode.
+2024-10-29 09:31:55,132 - INFO - PDF created: output_pdfs/individual_pdfs_expanded/httpswwwzhchdemigration-integrationintegrationintegrationsangebotehtml
+2024-10-29 09:31:55,846 - INFO - PDF created: output_pdfs/individual_pdfs_expanded/httpswwwzhchdemigration-integrationintegrationhtml
+2024-10-29 09:31:55,931 - INFO - Alle PDFs wurden zu einem zusammengeführt: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs/combined_pdfs_expanded_d4f5f524-d6fa-4c5d-97de-687c54b3f61c.pdf
+2024-10-29 09:31:55,966 - INFO - Playwright Browser geschlossen.
