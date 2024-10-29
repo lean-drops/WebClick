@@ -1,0 +1,47 @@
+2024-10-29 17:10:53,035 - DEBUG - Konfiguration geladen und Logger eingerichtet.
+2024-10-29 17:10:53,046 - WARNING - Einige Dateien wurden erstellt.
+2024-10-29 17:10:53,840 - INFO - pikepdf C++ to Python logger bridge initialized
+2024-10-29 17:10:54,774 - DEBUG - Flask-Anwendung wurde erstellt.
+2024-10-29 17:11:15,217 - INFO - Scrape request received for URL: https://theanarchistlibrary.org/special/index
+2024-10-29 17:11:15,220 - INFO - No cached data found. Scraping started for URL: https://theanarchistlibrary.org/special/index
+2024-10-29 17:11:15,400 - ERROR - Task 9da78d8623cdae9dab201925db0fd801 not found.
+2024-10-29 17:27:32,862 - ERROR - Task 9da78d8623cdae9dab201925db0fd801 not found.
+2024-10-29 17:27:35,059 - INFO - Starting scrape task 9da78d8623cdae9dab201925db0fd801 for URL: https://theanarchistlibrary.org/special/index
+2024-10-29 17:27:35,060 - INFO - Starte Scraping für https://theanarchistlibrary.org/special/index
+2024-10-29 17:27:44,447 - INFO - Scrape request received for URL: https://theanarchistlibrary.org/special/index
+2024-10-29 17:27:44,450 - INFO - No cached data found. Scraping started for URL: https://theanarchistlibrary.org/special/index
+2024-10-29 17:27:44,623 - ERROR - Task 9da78d8623cdae9dab201925db0fd801 not found.
+2024-10-29 17:27:44,624 - INFO - Starting scrape task 9da78d8623cdae9dab201925db0fd801 for URL: https://theanarchistlibrary.org/special/index
+2024-10-29 17:28:26,199 - INFO - Starte Scraping für https://theanarchistlibrary.org/special/index
+2024-10-29 17:29:36,083 - INFO - Scrape request received for URL: https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:29:36,086 - INFO - No cached data found. Scraping started for URL: https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:29:36,086 - INFO - Starting scrape task a87ee6f86d9c16727e5874d86d8e20e7 for URL: https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:29:36,256 - ERROR - Task a87ee6f86d9c16727e5874d86d8e20e7 not found.
+2024-10-29 17:29:39,595 - INFO - Starte Scraping für https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:29:39,595 - INFO - Scrape request received for URL: https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:29:39,597 - INFO - No cached data found. Scraping started for URL: https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:29:39,598 - INFO - Starting scrape task a87ee6f86d9c16727e5874d86d8e20e7 for URL: https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:29:42,268 - INFO - Starte Scraping für https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:30:07,452 - INFO - HTTP Request: GET https://theanarchistlibrary.org/special/index "HTTP/1.1 200 OK"
+2024-10-29 17:30:09,669 - ERROR - Fehler beim Abrufen von https://theanarchistlibrary.org/special/index: 
+2024-10-29 17:30:09,670 - WARNING - Keine Daten nach Scraping gefunden für https://theanarchistlibrary.org/special/index.
+2024-10-29 17:30:29,790 - ERROR - Fehler beim Abrufen von https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html: 
+2024-10-29 17:30:40,771 - WARNING - Keine Daten nach Scraping gefunden für https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150.
+2024-10-29 17:30:40,772 - ERROR - Fehler beim Abrufen von https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html: 
+2024-10-29 17:31:02,568 - WARNING - Keine Daten nach Scraping gefunden für https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150.
+2024-10-29 17:31:13,624 - ERROR - Scrape task a87ee6f86d9c16727e5874d86d8e20e7 returned no data.
+2024-10-29 17:31:49,127 - ERROR - Task a87ee6f86d9c16727e5874d86d8e20e7 failed: No data returned from scrape_website.
+2024-10-29 17:31:51,990 - ERROR - Scrape task a87ee6f86d9c16727e5874d86d8e20e7 returned no data.
+2024-10-29 17:32:22,569 - INFO - Scrape request received for URL: https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:32:22,578 - INFO - Starting scrape task a87ee6f86d9c16727e5874d86d8e20e7 for URL: https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:32:22,578 - INFO - Starte Scraping für https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:32:22,586 - INFO - No cached data found. Scraping started for URL: https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:32:22,806 - ERROR - Task a87ee6f86d9c16727e5874d86d8e20e7 not found.
+2024-10-29 17:32:24,461 - ERROR - Scrape task 9da78d8623cdae9dab201925db0fd801 returned no data.
+2024-10-29 17:32:26,336 - INFO - Verwende gecachte Daten für https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:32:26,336 - INFO - Scrape request received for URL: https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:32:26,340 - INFO - Starting scrape task a87ee6f86d9c16727e5874d86d8e20e7 for URL: https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:32:26,341 - INFO - No cached data found. Scraping started for URL: https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:32:26,341 - INFO - Starte Scraping für https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
+2024-10-29 17:32:26,342 - INFO - Cache ist leer oder ungültig für https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150. Starte erneutes Scraping.
+2024-10-29 17:32:32,794 - INFO - Verwende gecachte Daten für https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150
