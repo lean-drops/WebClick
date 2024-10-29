@@ -29,14 +29,35 @@
             </section>
         </main>
     </div>
+<!DOCTYPE html>
 
     <script>
-        // Show the loading bar when the form is submitted
-        document.getElementById('scrapeForm').addEventListener('submit', function (event) {
-            // Show the loading animation (Border)
-            document.getElementById('loadingBar').style.display = 'block';
-        });
+        function openLeftHalf() {
+            // Bildschirmgröße ermitteln
+            const screenWidth = window.screen.width;
+            const screenHeight = window.screen.height;
+
+            // Fenstergröße auf die linke Hälfte setzen
+            const width = Math.floor(screenWidth / 2);
+            const height = screenHeight;
+
+            // Neues Fenster öffnen
+            window.open(
+                window.location.href,
+                '_blank',
+                `width=${width},height=${height},left=0,top=0`
+            );
+        }
+
+        // Fenster beim Laden automatisch öffnen
+        window.onload = function() {
+            // Optional: Automatisches Öffnen kann durch Pop-up-Blocker verhindert werden
+            // Daher könnte ein Button für den Benutzer notwendig sein
+            // openLeftHalf();
+        };
     </script>
+
+
 
 </body>
 </html>

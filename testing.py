@@ -13,19 +13,32 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# Pfad zum Cache-Verzeichnis
+# Pfade für die zu löschenden Elemente
+output_mapping_path = os.path.join(CACHE_DIR, 'output_mapping.json')
+mapping_cache_dir = os.path.join(CACHE_DIR, 'mapping_cache')
 
 
-def delete_cache(cache_dir):
-    if os.path.exists(cache_dir):
+def delete_cache_content():
+    # Löschen der Datei output_mapping.json
+    if os.path.exists(output_mapping_path):
         try:
-            # Rekursiv den gesamten Cache-Ordner löschen
-            shutil.rmtree(cache_dir)
-            logger.info(f"Cache erfolgreich gelöscht: {cache_dir}")
+            os.remove(output_mapping_path)
+            logger.info(f"Datei erfolgreich gelöscht: {output_mapping_path}")
         except Exception as e:
-            logger.error(f"Fehler beim Löschen des Caches: {e}")
+            logger.error(f"Fehler beim Löschen der Datei {output_mapping_path}: {e}")
     else:
-        logger.info(f"Cache-Verzeichnis existiert nicht: {cache_dir}")
+        logger.info(f"Datei existiert nicht: {output_mapping_path}")
+
+    # Löschen des Ordners mapping_cache
+    if os.path.exists(mapping_cache_dir):
+        try:
+            shutil.rmtree(mapping_cache_dir)
+            logger.info(f"Ordner erfolgreich gelöscht: {mapping_cache_dir}")
+        except Exception as e:
+            logger.error(f"Fehler beim Löschen des Ordners {mapping_cache_dir}: {e}")
+    else:
+        logger.info(f"Ordner existiert nicht: {mapping_cache_dir}")
+
 
 if __name__ == "__main__":
-    delete_cache(CACHE_DIR)
+    delete_cache_content()
