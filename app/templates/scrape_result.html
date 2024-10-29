@@ -5,199 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scraping Ergebnisse</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        /* Basis-Stile */
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-
-        .navbar {
-            background-color: #667eea;
-            color: #fff;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .back-button {
-            background-color: #fff;
-            color: #667eea;
-            padding: 8px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .back-button:hover {
-            background-color: #ddd;
-            color: #667eea;
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            box-sizing: border-box;
-        }
-
-        .main-link-container {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .list-container {
-            flex: 1 1 60%;
-            background-color: #fff;
-            padding: 20px;
-            margin-bottom: 30px;
-            margin-right: 20px;
-            border-radius: 10px;
-            box-sizing: border-box;
-            overflow: auto;
-            max-height: 70vh;
-        }
-
-        .selected-links-container {
-            flex: 1 1 35%;
-            background-color: #fff;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            box-sizing: border-box;
-            overflow: auto;
-            max-height: 70vh;
-        }
-
-        h2 {
-            margin-bottom: 15px;
-            color: #667eea;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f0f0f0;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-
-        tr:nth-child(even) {
-            background-color: #fafafa;
-        }
-
-        .parent-row {
-            background-color: #eef2ff;
-        }
-
-        .child-row {
-            background-color: #f9f9f9;
-        }
-
-        .toggle-btn-label::before {
-            content: '▶';
-            display: inline-block;
-            margin-right: 8px;
-            transition: transform 0.3s;
-        }
-
-        .toggle-btn-label.expanded::before {
-            transform: rotate(90deg);
-        }
-
-        /* Stil für ausgewählte Links */
-        .selected-link {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            background-color: #eef2ff;
-            padding: 10px;
-            border-radius: 5px;
-            word-break: break-word;
-        }
-
-        .selected-link a {
-            color: #667eea;
-            text-decoration: none;
-            flex-grow: 1;
-        }
-
-        .selected-link .remove-link {
-            background-color: transparent;
-            border: none;
-            color: #ff4d4f;
-            font-size: 20px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        #convert-button {
-            background-color: #667eea;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-            margin-top: 20px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        #convert-button:hover {
-            background-color: #5563c1;
-        }
-
-        /* Ladeindikator */
-        #loading-indicator {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #667eea;
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-            font-weight: bold;
-            display: none; /* Initially hidden */
-            z-index: 9999;
-        }
-
-        /* Responsive Anpassungen */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .list-container,
-            .selected-links-container {
-                margin-right: 0;
-                width: 100%;
-            }
-
-            #convert-button {
-                width: 100%;
-                box-sizing: border-box;
-            }
-        }
-    </style>
+    <!-- Externe CSS einbinden -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/scrape_result.css') }}">
 </head>
 <body>
 
@@ -212,67 +21,65 @@
         <!-- Hauptlink anzeigen -->
         <div class="main-link-container">
             <h2>Hauptlink: <a href="#" id="main-link">{{ main_link_title }}</a></h2>
-
         </div>
 
         <!-- Container für die Liste -->
-<!-- Container für die Liste -->
-<div class="list-container">
-    <h2>Gefundene Links</h2>
-    <input type="text" id="search-input" placeholder="Suche nach Links..." />
+        <div class="list-container">
+            <h2>Gefundene Links</h2>
+            <input type="text" id="search-input" placeholder="Suche nach Links..." />
 
-    <table>
-        <thead>
-            <tr>
-                <th>Link</th>
-                <th>Auswahl</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Hauptlink als erster Eintrag -->
-            <tr class="main-link-row">
-                <td>
-                    <!-- Link zum Öffnen im neuen Fenster -->
-                    <a href="#" class="toggle-link" data-url="{{ main_link_url }}" data-title="{{ main_link_title }}">{{ main_link_title }}</a>
-                </td>
-                <td>
-                    <!-- Checkbox für den Hauptlink, standardmäßig aktiviert -->
-                    <input type="checkbox" name="selected_links" value="{{ main_link_url }}" data-title="{{ main_link_title }}" checked>
-                </td>
-            </tr>
-
-            <!-- Restliche Links -->
-            {% for page_id, page_data in url_mapping.items() %}
-                <!-- Überspringe den Hauptlink, falls er in url_mapping enthalten ist -->
-                {% if page_data.url != main_link_url and page_data.level == 1 %}
-                <tr class="parent-row">
-                    <td>
-                        {% if page_data.children|length > 0 %}
-                        <!-- Zeige den Toggle-Pfeil nur, wenn es Kinder gibt -->
-                        <span class="toggle-btn-label" data-page-id="{{ page_id }}" role="button" aria-expanded="false" aria-controls="child-{{ page_id }}"></span>
-                        {% endif %}
-                        <a href="#" class="toggle-link" data-url="{{ page_data.url }}" data-title="{{ page_data.title }}">{{ page_data.title }}</a>
-                    </td>
-                    <td>
-                        <input type="checkbox" name="selected_links" value="{{ page_data.url }}" data-title="{{ page_data.title }}">
-                    </td>
-                </tr>
-                <!-- Kinder-Elemente -->
-                {% for child_id in page_data.children %}
-                    {% if child_id in url_mapping %}
-                    <tr class="child-row child-of-{{ page_id }}" id="child-{{ page_id }}" style="display: none;">
-                        <td style="padding-left: 40px;">
-                            <a href="#" class="toggle-link" data-url="{{ url_mapping[child_id].url }}" data-title="{{ url_mapping[child_id].title }}">{{ url_mapping[child_id].title }}</a>
-                        </td>
-                        <td><input type="checkbox" name="selected_links" value="{{ url_mapping[child_id].url }}" data-title="{{ url_mapping[child_id].title }}"></td>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Link</th>
+                        <th>Auswahl</th>
                     </tr>
-                    {% endif %}
-                {% endfor %}
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+                </thead>
+                <tbody>
+                    <!-- Hauptlink als erster Eintrag -->
+                    <tr class="main-link-row">
+                        <td>
+                            <!-- Link zum Öffnen im neuen Fenster -->
+                            <a href="#" class="toggle-link" data-url="{{ main_link_url }}" data-title="{{ main_link_title }}">{{ main_link_title }}</a>
+                        </td>
+                        <td>
+                            <!-- Checkbox für den Hauptlink, standardmäßig aktiviert -->
+                            <input type="checkbox" name="selected_links" value="{{ main_link_url }}" data-title="{{ main_link_title }}" checked>
+                        </td>
+                    </tr>
+
+                    <!-- Restliche Links -->
+                    {% for page_id, page_data in url_mapping.items() %}
+                        <!-- Überspringe den Hauptlink, falls er in url_mapping enthalten ist -->
+                        {% if page_data.url != main_link_url and page_data.level == 1 %}
+                        <tr class="parent-row">
+                            <td>
+                                {% if page_data.children|length > 0 %}
+                                <!-- Zeige den Toggle-Pfeil nur, wenn es Kinder gibt -->
+                                <span class="toggle-btn-label" data-page-id="{{ page_id }}" role="button" aria-expanded="false" aria-controls="child-{{ page_id }}"></span>
+                                {% endif %}
+                                <a href="#" class="toggle-link" data-url="{{ page_data.url }}" data-title="{{ page_data.title }}">{{ page_data.title }}</a>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="selected_links" value="{{ page_data.url }}" data-title="{{ page_data.title }}">
+                            </td>
+                        </tr>
+                        <!-- Kinder-Elemente -->
+                        {% for child_id in page_data.children %}
+                            {% if child_id in url_mapping %}
+                            <tr class="child-row child-of-{{ page_id }}" id="child-{{ page_id }}" style="display: none;">
+                                <td style="padding-left: 40px;">
+                                    <a href="#" class="toggle-link" data-url="{{ url_mapping[child_id].url }}" data-title="{{ url_mapping[child_id].title }}">{{ url_mapping[child_id].title }}</a>
+                                </td>
+                                <td><input type="checkbox" name="selected_links" value="{{ url_mapping[child_id].url }}" data-title="{{ url_mapping[child_id].title }}"></td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
         <!-- Container für die ausgewählten Links -->
         <div class="selected-links-container">
@@ -282,229 +89,32 @@
                 <!-- Dynamischer Inhalt -->
             </div>
 
+            <!-- Auswahl der Konvertierungsmodi -->
+            <div class="conversion-mode">
+                <h3>Konvertierungsmodus wählen:</h3>
+                <label>
+                    <input type="radio" name="conversion_mode" value="collapsed" checked>
+                    Collapsed
+                </label>
+                <label>
+                    <input type="radio" name="conversion_mode" value="expanded">
+                    Expanded
+                </label>
+                <label>
+                    <input type="radio" name="conversion_mode" value="both">
+                    Beide
+                </label>
+            </div>
+
             <!-- Konvertieren-Button -->
-<!-- Konvertieren-Button -->
-<!-- Konvertieren-Button -->
-<!-- Konvertieren-Button -->
-<button id="convert-button">PDF-Konvertierung starten</button>
+            <button id="convert-button">PDF-Konvertierung starten</button>
         </div>
     </main>
 
     <!-- Ladeindikator -->
     <div id="loading-indicator">Starte PDF-Konvertierung...</div>
 
-   <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const toggleButtons = document.querySelectorAll('.toggle-btn-label');
-            const selectedLinksContainer = document.getElementById('selected-links');
-            const checkboxes = document.querySelectorAll('input[name="selected_links"]');
-            const listLinks = document.querySelectorAll('.toggle-link');
-
-            let externalWindow = null;
-
-            // Funktion zum Öffnen eines neuen Fensters rechts neben dem aktuellen Fenster
-            function openExternalWindow(url) {
-                // Berechne die Position und Größe des neuen Fensters
-                const screenWidth = window.screen.width;
-                const screenHeight = window.screen.height;
-                const windowWidth = screenWidth / 2;
-                const windowHeight = screenHeight;
-
-                // Versuche, das neue Fenster rechts neben dem aktuellen Fenster zu öffnen
-                const windowLeft = window.screenX + window.outerWidth;
-                const windowTop = window.screenY;
-
-                // Öffne das neue Fenster
-                externalWindow = window.open(
-                    url,
-                    'externalWindow',
-                    `width=${windowWidth},height=${windowHeight},left=${windowLeft},top=${windowTop}`
-                );
-            }
-
-            // Event-Listener für den Hauptlink
-            const mainLinkElement = document.getElementById('main-link');
-            mainLinkElement.addEventListener('click', function (e) {
-                e.preventDefault();
-                const mainLinkUrl = "{{ main_link_url }}";
-                if (externalWindow && !externalWindow.closed) {
-                    externalWindow.location.href = mainLinkUrl;
-                    externalWindow.focus();
-                } else {
-                    openExternalWindow(mainLinkUrl);
-                }
-            });
-
-            // Event-Listener für die List Links
-            listLinks.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const url = this.getAttribute('data-url');
-                    if (externalWindow && !externalWindow.closed) {
-                        externalWindow.location.href = url;
-                        externalWindow.focus();
-                    } else {
-                        openExternalWindow(url);
-                    }
-                });
-            });
-
-            // Event-Listener für Toggle-Buttons
-            toggleButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const pageId = this.getAttribute('data-page-id');
-                    toggleChildren(pageId, this);
-                });
-            });
-
-            // Event-Listener für Checkboxen
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function () {
-                    const linkUrl = this.value;
-                    const linkTitle = this.dataset.title;
-                    const linkId = `selected-${hashCode(linkUrl)}`;
-
-                    if (this.checked) {
-                        // Link hinzufügen
-                        const linkDiv = document.createElement('div');
-                        linkDiv.classList.add('selected-link');
-                        linkDiv.id = linkId;
-
-                        const linkAnchor = document.createElement('a');
-                        linkAnchor.href = '#';
-                        linkAnchor.textContent = linkTitle || linkUrl;
-                        linkAnchor.addEventListener('click', function (e) {
-                            e.preventDefault();
-                            if (externalWindow && !externalWindow.closed) {
-                                externalWindow.location.href = linkUrl;
-                                externalWindow.focus();
-                            } else {
-                                openExternalWindow(url);
-                            }
-                        });
-
-                        const removeButton = document.createElement('button');
-                        removeButton.classList.add('remove-link');
-                        removeButton.innerHTML = '&times;';
-                        removeButton.addEventListener('click', function () {
-                            checkbox.checked = false; // Checkbox deaktivieren
-                            selectedLinksContainer.removeChild(linkDiv);
-                        });
-
-                        linkDiv.appendChild(linkAnchor);
-                        linkDiv.appendChild(removeButton);
-                        selectedLinksContainer.appendChild(linkDiv);
-                    } else {
-                        // Link entfernen
-                        const linkDiv = document.getElementById(linkId);
-                        if (linkDiv) {
-                            selectedLinksContainer.removeChild(linkDiv);
-                        }
-                    }
-                });
-
-                // Initialisiere die ausgewählten Links beim Laden der Seite
-                if (checkbox.checked) {
-                    const event = new Event('change');
-                    checkbox.dispatchEvent(event);
-                }
-            });
-
-            function toggleChildren(pageId, toggleElement) {
-                const childRows = document.querySelectorAll('.child-of-' + pageId);
-                const isExpanded = toggleElement.classList.toggle('expanded');
-                toggleElement.setAttribute('aria-expanded', isExpanded);
-
-                childRows.forEach(row => {
-                    row.style.display = isExpanded ? 'table-row' : 'none';
-                });
-            }
-
-            // Funktion zur Generierung eines einfachen Hashcodes für eindeutige IDs
-            function hashCode(str) {
-                let hash = 0;
-                for (let i = 0; i < str.length; i++) {
-                    hash = (hash << 5) - hash + str.charCodeAt(i);
-                    hash |= 0; // Convert to 32bit integer
-                }
-                return Math.abs(hash).toString();
-            }
-
-            // Funktion zum Starten der PDF-Konvertierung
-            async function startPdfConversion() {
-                const checkboxes = document.querySelectorAll('input[name="selected_links"]:checked');
-                let selectedLinks = [];
-
-                // Benutzergewählte Links hinzufügen
-                checkboxes.forEach((checkbox) => {
-                    selectedLinks.push(checkbox.value);
-                });
-
-                // Hauptlink immer hinzufügen, falls nicht bereits enthalten
-                const mainLinkUrl = "{{ main_link_url }}";
-                if (!selectedLinks.includes(mainLinkUrl)) {
-                    selectedLinks.push(mainLinkUrl);
-                }
-
-                if (selectedLinks.length === 0) {
-                    alert('Bitte wählen Sie mindestens einen Link aus.');
-                    return;
-                }
-
-                // Ladeanzeige einblenden
-                const loadingIndicator = document.getElementById('loading-indicator');
-                loadingIndicator.style.display = 'block';
-
-                try {
-                    const response = await fetch('/start_pdf_task', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ selected_links: selectedLinks }),
-                    });
-
-                    const data = await response.json();
-
-                    if (data.status === 'success' && data.task_id) {
-                        // Weiterleitung zur PDF-Statusseite mit der task_id
-                        const taskId = data.task_id;
-                        window.location.href = `/pdf_status/${taskId}`;
-                    } else {
-                        loadingIndicator.style.display = 'none';
-                        alert('Fehler beim Starten des PDF-Tasks.');
-                    }
-                } catch (error) {
-                    loadingIndicator.style.display = 'none';
-                    console.error('Fehler beim Erstellen des PDF-Tasks:', error);
-                    alert('Es gab ein Problem beim Starten der PDF-Konvertierung.');
-                }
-            }
-
-            // Event-Listener für den Konvertieren-Button hinzufügen
-            const convertButton = document.getElementById('convert-button');
-            convertButton.addEventListener('click', startPdfConversion);  // Suchfunktion
-
-            const searchInput = document.getElementById('search-input');
-    searchInput.addEventListener('input', function () {
-        const filter = this.value.toLowerCase();
-        const table = document.querySelector('.list-container table');
-        const rows = table.querySelectorAll('tbody tr');
-
-        rows.forEach(row => {
-            const linkCell = row.querySelector('td a.toggle-link');
-            if (linkCell) {
-                const text = linkCell.textContent.toLowerCase();
-                if (text.includes(filter)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-        });
-    });
-});
-
-    </script>
+    <!-- Externes JavaScript einbinden -->
+    <script src="{{ url_for('static', filename='js/scrape_result.js') }}"></script>
 </body>
 </html>

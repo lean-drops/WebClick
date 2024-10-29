@@ -4,6 +4,7 @@ import os
 import logging
 import hashlib
 import asyncio
+import shutil
 import threading
 import time
 import uuid
@@ -163,17 +164,21 @@ def start_pdf_task():
     try:
         data = request.get_json()
         selected_links = data.get('selected_links', [])
+        conversion_mode = data.get('conversion_mode', 'collapsed')  # Standard: collapsed
 
         if not selected_links:
             return jsonify({'status': 'error', 'message': 'Keine Links ausgewählt.'}), 400
 
+        if conversion_mode not in ['collapsed', 'expanded']:
+            return jsonify({'status': 'error', 'message': 'Ungültiger Konvertierungsmodus. Wähle entweder "collapsed" oder "expanded".'}), 400
+
         # Generiere eine eindeutige Task-ID
         task_id = str(uuid.uuid4())
 
-        # Starte den PDF-Task im Hintergrund
-        threading.Thread(target=run_pdf_task, args=(task_id, selected_links)).start()
+        # Starte den PDF-Task im Hintergrund mit dem conversion_mode
+        threading.Thread(target=run_pdf_task, args=(task_id, selected_links, conversion_mode)).start()
 
-        logger.info(f"PDF-Task gestartet mit Task-ID: {task_id}")
+        logger.info(f"PDF-Task gestartet mit Task-ID: {task_id} und Modus: {conversion_mode}")
 
         return jsonify({'status': 'success', 'task_id': task_id}), 200
 
@@ -181,12 +186,12 @@ def start_pdf_task():
         logger.error(f"Fehler beim Starten des PDF-Tasks: {e}")
         return jsonify({'status': 'error', 'message': 'Fehler beim Erstellen des PDF-Tasks'}), 500
 
-def run_pdf_task(task_id: str, urls: List[str]):
+def run_pdf_task(task_id: str, urls: List[str], conversion_mode: str):
     with pdf_lock:
         pdf_tasks[task_id] = {'status': 'running', 'result': {}, 'error': None}
 
     try:
-        asyncio.run(_run_pdf_task(task_id, urls))
+        asyncio.run(_run_pdf_task(task_id, urls, conversion_mode))
 
     except Exception as e:
         logger.error(f"Fehler bei PDF-Task {task_id}: {e}")
@@ -194,36 +199,58 @@ def run_pdf_task(task_id: str, urls: List[str]):
             pdf_tasks[task_id]['status'] = 'failed'
             pdf_tasks[task_id]['error'] = str(e)
 
-async def _run_pdf_task(task_id: str, urls: List[str]):
+async def _run_pdf_task(task_id: str, urls: List[str], conversion_mode: str):
     try:
         pdf_converter = PDFConverter(max_concurrent_tasks=20)
         await pdf_converter.initialize()
 
-        # Erstelle PDFs mit eingeklapptem Inhalt
-        collapsed_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=False)
-        # Fasse die eingeklappten PDFs zusammen
-        merged_collapsed_pdf = os.path.join(OUTPUT_PDFS_DIR, f"combined_pdfs_collapsed_{task_id}.pdf")
-        merge_pdfs_with_bookmarks(collapsed_results, merged_collapsed_pdf)
+        pdf_entries = []
 
-        # Erstelle PDFs mit ausgeklapptem Inhalt
-        expanded_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=True)
-        # Fasse die ausgeklappten PDFs zusammen
-        merged_expanded_pdf = os.path.join(OUTPUT_PDFS_DIR, f"combined_pdfs_expanded_{task_id}.pdf")
-        merge_pdfs_with_bookmarks(expanded_results, merged_expanded_pdf)
+        # Erstelle PDFs basierend auf dem ausgewählten Konvertierungsmodus
+        if conversion_mode == 'collapsed':
+            logger.info(f"Starte die Konvertierung der URLs zu PDFs (collapsed) für Task-ID: {task_id}.")
+            collapsed_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=False)
+            pdf_entries.extend(collapsed_results)
+            merged_collapsed_pdf = os.path.join(OUTPUT_PDFS_DIR, f"combined_pdfs_collapsed_{task_id}.pdf")
+            merge_pdfs_with_bookmarks(collapsed_results, merged_collapsed_pdf)
+
+        elif conversion_mode == 'expanded':
+            logger.info(f"Starte die Konvertierung der URLs zu PDFs (expanded) für Task-ID: {task_id}.")
+            expanded_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=True)
+            pdf_entries.extend(expanded_results)
+            merged_expanded_pdf = os.path.join(OUTPUT_PDFS_DIR, f"combined_pdfs_expanded_{task_id}.pdf")
+            merge_pdfs_with_bookmarks(expanded_results, merged_expanded_pdf)
 
         await pdf_converter.close()
 
         # Anwenden von OCR auf die PDFs
+        logger.info(f"Wende OCR auf die PDFs für Task-ID: {task_id} an.")
         apply_ocr_to_all_pdfs(
             individual_collapsed_dir=pdf_converter.output_dir_collapsed,
             individual_expanded_dir=pdf_converter.output_dir_expanded,
-            merged_collapsed_pdf=merged_collapsed_pdf,
-            merged_expanded_pdf=merged_expanded_pdf
+            merged_collapsed_pdf=merged_collapsed_pdf if conversion_mode == 'collapsed' else None,
+            merged_expanded_pdf=merged_expanded_pdf if conversion_mode == 'expanded' else None
         )
 
-        # Erstelle ein ZIP-Archiv mit allen generierten PDFs und OCR-Versionen
+        # Erstelle ein ZIP-Archiv mit den ausgewählten PDFs
+        logger.info(f"Erstelle ein ZIP-Archiv für Task-ID: {task_id}.")
         zip_filename = os.path.join(OUTPUT_PDFS_DIR, f"output_pdfs_{task_id}.zip")
         create_zip_archive(OUTPUT_PDFS_DIR, zip_filename)
+
+        # Bereinigen der Ausgabeordner, um nur das ZIP-Archiv zu behalten
+        logger.info(f"Bereinige die Ausgabeordner für Task-ID: {task_id}, um nur das ZIP-Archiv zu behalten.")
+        for item in os.listdir(OUTPUT_PDFS_DIR):
+            item_path = os.path.join(OUTPUT_PDFS_DIR, item)
+            if item_path != zip_filename:
+                try:
+                    if os.path.isfile(item_path) or os.path.islink(item_path):
+                        os.remove(item_path)
+                        logger.info(f"Datei entfernt: {item_path}")
+                    elif os.path.isdir(item_path):
+                        shutil.rmtree(item_path)
+                        logger.info(f"Verzeichnis entfernt: {item_path}")
+                except Exception as e:
+                    logger.error(f"Fehler beim Entfernen von {item_path}: {e}")
 
         # Update Task Info
         with pdf_lock:
@@ -237,6 +264,7 @@ async def _run_pdf_task(task_id: str, urls: List[str]):
         with pdf_lock:
             pdf_tasks[task_id]['status'] = 'failed'
             pdf_tasks[task_id]['error'] = str(e)
+
 
 # Route zur Anzeige des PDF-Status
 @main.route('/pdf_status/<task_id>', methods=['GET'])

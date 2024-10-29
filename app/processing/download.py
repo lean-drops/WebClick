@@ -190,29 +190,26 @@ class PDFConverter:
             # Ensure all content is loaded
             await asyncio.sleep(2)
 
-            # Step 1: Expand hidden elements
-            await expand_hidden_elements(page)
+            if expanded == True:
+                # Step 1: Expand hidden elements
+                await expand_hidden_elements(page)
+                # Step 2: Remove unwanted elements
+                await remove_unwanted_elements(page, expanded=expanded)
 
-            # Step 2: Remove unwanted elements
-            await remove_unwanted_elements(page, expanded=expanded)
-
-            # Step 3: Remove fixed elements (only in normal mode)
-            if not expanded:
-                await remove_fixed_elements(page)
-                # Remove navigation bar and sidebars
-                await remove_navigation_and_sidebars(page)
-
-            if expanded:
-                # Step 4: Remove specific elements in expanded mode
                 if self.remove_elements_js:
                     await page.evaluate(self.remove_elements_js)
                     logger.info("Injected external JS to remove elements in expanded mode.")
 
-                # Step 5: Inject custom CSS for expanded mode
-                await inject_custom_css(page, expanded=True)
+
             else:
+                await remove_fixed_elements(page)
+                # Remove navigation bar and sidebars
+                await remove_navigation_and_sidebars(page)
                 # Step 4: Inject custom CSS for normal mode
                 await inject_custom_css(page, expanded=False)
+
+
+
 
             # Optionally: Scroll to trigger lazy-loading
             await scroll_page(page)
