@@ -3,6 +3,7 @@
 import os
 import asyncio
 import logging
+import json  # Hinzugefügt
 from typing import List, Dict
 from playwright.async_api import async_playwright, Page
 from pypdf import PdfReader, PdfWriter
@@ -20,6 +21,7 @@ from app.processing.utils import (
     setup_directories, remove_navigation_and_sidebars, inject_custom_css,
     load_js_file
 )
+from config import ELEMENTS_COLLAPSED_CONFIG, ELEMENTS_EXPANDED_CONFIG
 
 # ======================= Konfiguration =======================
 
@@ -143,6 +145,23 @@ class PDFConverter:
         self.remove_elements_js_path = os.path.join(os.path.dirname(__file__), 'js', 'remove_elements.js')
         self.remove_elements_js = load_js_file(self.remove_elements_js_path)
 
+        # Laden der JSON-Konfigurationsdateien
+        try:
+            with open(ELEMENTS_COLLAPSED_CONFIG, 'r', encoding='utf-8') as f:
+                self.elements_collapsed = json.load(f)
+            logger.info(f"Loaded collapsed elements configuration from {ELEMENTS_COLLAPSED_CONFIG}")
+        except Exception as e:
+            logger.error(f"Failed to load collapsed elements configuration: {e}")
+            self.elements_collapsed = {"remove": []}
+
+        try:
+            with open(ELEMENTS_EXPANDED_CONFIG, 'r', encoding='utf-8') as f:
+                self.elements_expanded = json.load(f)
+            logger.info(f"Loaded expanded elements configuration from {ELEMENTS_EXPANDED_CONFIG}")
+        except Exception as e:
+            logger.error(f"Failed to load expanded elements configuration: {e}")
+            self.elements_expanded = {"remove": []}
+
     async def initialize(self):
         """Initialisiert Playwright und startet den Browser."""
         self.playwright = await async_playwright().start()
@@ -190,17 +209,20 @@ class PDFConverter:
             # Ensure all content is loaded
             await asyncio.sleep(2)
 
-            if expanded == True:
+            if expanded:
                 # Step 1: Expand hidden elements
                 await expand_hidden_elements(page)
-                # Step 2: Remove unwanted elements
+                # Step 2: Remove unwanted elements based on JSON config
                 await remove_unwanted_elements(page, expanded=expanded)
 
-                if self.remove_elements_js:
-                    await page.evaluate(self.remove_elements_js)
+                if self.remove_elements_js and self.elements_expanded:
+                    # Inject the remove_elements.js script
+                    await page.add_script_tag(content=self.remove_elements_js)
+                    # Wait until the script is loaded
+                    await page.wait_for_function("typeof removeElements === 'function'")
+                    # Pass the JSON config to the removeElements function
+                    await page.evaluate(f"removeElements({json.dumps(self.elements_expanded)})")
                     logger.info("Injected external JS to remove elements in expanded mode.")
-
-
             else:
                 await remove_fixed_elements(page)
                 # Remove navigation bar and sidebars
@@ -208,8 +230,14 @@ class PDFConverter:
                 # Step 4: Inject custom CSS for normal mode
                 await inject_custom_css(page, expanded=False)
 
-
-
+                if self.remove_elements_js and self.elements_collapsed:
+                    # Inject the remove_elements.js script
+                    await page.add_script_tag(content=self.remove_elements_js)
+                    # Wait until the script is loaded
+                    await page.wait_for_function("typeof removeElements === 'function'")
+                    # Pass the JSON config to the removeElements function
+                    await page.evaluate(f"removeElements({json.dumps(self.elements_collapsed)})")
+                    logger.info("Injected external JS to remove elements in collapsed mode.")
 
             # Optionally: Scroll to trigger lazy-loading
             await scroll_page(page)
@@ -266,8 +294,7 @@ class PDFConverter:
             else:
                 processed_results.append(result)
         return processed_results
-
-# ======================= Main Block =======================
+# app/processing/download.py
 
 if __name__ == "__main__":
     import asyncio
@@ -282,9 +309,8 @@ if __name__ == "__main__":
 
         # Lade die URLs
         urls = [
-            "https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html",
-            "https://www.zh.ch/de/wirtschaft-arbeit/handelsregister/stiftung.html",
-            "https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen.html"
+            "https://replicate.com/home",
+
         ]
         if not urls:
             logger.error("Keine URLs zum Verarbeiten gefunden. Programm beendet.")
