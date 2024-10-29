@@ -1,6 +1,5 @@
 {
     "exclude_selectors": [
-        "#header",
         ".important-class",
         "div#specific-id",
         "nav.main-navigation",

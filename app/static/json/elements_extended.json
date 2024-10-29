@@ -1,0 +1,11 @@
+{
+    "remove": [
+        "script",
+        "noscript",
+        "style",
+        "iframe",
+        "footer",
+        "div.ads"
+
+    ]
+}
