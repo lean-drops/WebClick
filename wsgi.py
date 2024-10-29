@@ -1,30 +1,25 @@
-# wsgi.py
-
 import sys
 import os
 from config import BASE_DIR
-from app import create_app
+from app.main import app  # Import the FastAPI app directly
 import logging
 
-# Füge das Projektverzeichnis zum Python-Pfad hinzu
-project_home = BASE_DIR
-if str(project_home) not in sys.path:
-    sys.path.insert(0, str(project_home))
+# Add the project directory to the Python path
+project_home = str(BASE_DIR)
+if project_home not in sys.path:
+    sys.path.insert(0, project_home)
 
-# Setze die Umgebungsvariable für die Flask-Anwendung, falls erforderlich
-os.environ['FLASK_APP'] = 'wsgi.py'
-
-# Erstelle die Flask-Anwendung
-application = create_app()
-
-# Optional: Logging konfigurieren, falls benötigt
+# Optional: Configure logging
 logging.basicConfig(
     level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
         logging.StreamHandler(),
-        logging.FileHandler(BASE_DIR / 'logs' / 'app.log')
+        logging.FileHandler(os.path.join(BASE_DIR, 'logs', 'app.log'))
     ]
 )
 logger = logging.getLogger(__name__)
-logger.debug("Flask-Anwendung wurde erstellt.")
+logger.debug("FastAPI application has been initialized.")
+
+# Define the application entry point
+application = app
