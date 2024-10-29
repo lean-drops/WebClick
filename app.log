@@ -13407,3 +13407,8 @@
 2024-10-29 19:08:02,726 - download_logger - INFO - Playwright Browser geschlossen.
 2024-10-29 19:08:02,820 - root - INFO - ZIP-Archiv erstellt: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs/output_pdfs_b61663a9-979c-45cc-b435-4e09cadea7e9.zip
 2024-10-29 19:08:02,824 - config - INFO - PDF task completed: b61663a9-979c-45cc-b435-4e09cadea7e9
+2024-10-29 19:11:54,757 - __main__ - INFO - Starting FastAPI application with debug mode enabled.
+2024-10-29 19:11:55,247 - asyncio - DEBUG - Using selector: KqueueSelector
+2024-10-29 19:11:57,246 - pikepdf._core - INFO - pikepdf C++ to Python logger bridge initialized
+2024-10-29 19:11:58,259 - config - INFO - Mounting static files from: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static
+2024-10-29 19:11:58,262 - config - INFO - Static files mounted successfully.
