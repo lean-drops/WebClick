@@ -6,7 +6,9 @@
     <title>Scraping Ergebnisse</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <!-- Externe CSS einbinden -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/scrape_result.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='css/scrape_result.css') }}?v={{ version }}">
+<script src="{{ url_for('static', path='js/scrape_result.js') }}?v={{ version }}"></script>
+
 </head>
 <body>
 
@@ -14,7 +16,7 @@
     <header class="navbar">
         <div>Scraping Ergebnisse</div>
         <!-- Zurück zum Index Button -->
-        <a href="{{ url_for('main.index') }}" class="back-button">Zurück zum Index</a>
+<a href="{{ url_for('index') }}" class="back-button">Zurück zum Index</a>
     </header>
 
     <main class="container">
@@ -115,6 +117,5 @@
     <div id="loading-indicator">Starte PDF-Konvertierung...</div>
 
     <!-- Externes JavaScript einbinden -->
-    <script src="{{ url_for('static', filename='js/scrape_result.js') }}"></script>
 </body>
 </html>

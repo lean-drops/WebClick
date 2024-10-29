@@ -1,12 +1,11 @@
 import os
-import tkinter as tk
-from tkinter import filedialog
+
 
 # Liste von Datei-Endungen, die in der Ausgabe berücksichtigt werden sollen
 ALLOWED_EXTENSIONS = {".py", ".pdf", ".json", ".css", ".html", ".gif", ".png", ".jpg", ".jpeg", ".env"}
 
 # Liste von Ordnern, die ignoriert werden sollen
-IGNORED_FOLDERS = {"venv", "node_modules", "__pycache__", "dist", "build", "External Libraries", "Scratches and Consoles", ".venv(310)", ".git"}
+IGNORED_FOLDERS = {"venv", "node_modules", "__pycache__", "dist", "build", "External Libraries", "Scratches and Consoles", "webvenv", ".git"}
 
 
 def list_files_in_directory(directory, indent_level=0):
@@ -33,12 +32,10 @@ def list_files_in_directory(directory, indent_level=0):
 
 # Hauptprogramm
 if __name__ == "__main__":
-    # tkinter für Datei-Auswahlfenster einrichten
-    root = tk.Tk()
-    root.withdraw()  # GUI-Fenster ausblenden
+
 
     # Ordner-Auswahl
-    folder_path = filedialog.askdirectory(title="Wähle ein Projektverzeichnis aus")
+    folder_path = "/Users/python/Satelite 1 Python Projekte/Archiv/WebClick"
 
     # Wenn ein Ordner ausgewählt wurde, Struktur anzeigen
     if folder_path:

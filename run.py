@@ -1,32 +1,32 @@
-# run.py
-
 import os
 import logging
-from app import create_app
+import uvicorn
 from dotenv import load_dotenv
+from config import BASE_DIR
 
-# Load environment variables from .env file
+# Laden Sie Umgebungsvariablen aus der .env-Datei
 load_dotenv()
 
-# Initialize the Flask app
-app = create_app()
-app.debug = os.getenv('DEBUG', 'True').lower() in ['true', '1', 't']
 
-# Centralized logging configuration with file handler
+# Zentralisierte Logging-Konfiguration mit Datei-Handler
 def configure_logging():
+    log_level = logging.DEBUG if os.getenv('DEBUG', 'True').lower() in ['true', '1', 't'] else logging.INFO
     logging.basicConfig(
-        level=logging.DEBUG if app.debug else logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        level=log_level,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[
             logging.StreamHandler(),
-            logging.FileHandler("app.log", mode='a')
+            logging.FileHandler(os.path.join(BASE_DIR, "app.log"), mode="a")
         ],
     )
     return logging.getLogger(__name__)
 
+
 logger = configure_logging()
 
-if __name__ == '__main__':
-    logger.info(f"Starting Flask application with debug mode {'enabled' if app.debug else 'disabled'}.")
-    # On PythonAnywhere, we can omit host and port as it defaults to their WSGI configuration.
-    app.run()
+if __name__ == "__main__":
+    debug_mode = os.getenv("DEBUG", "True").lower() in ["true", "1", "t"]
+    logger.info(f"Starting FastAPI application with debug mode {'enabled' if debug_mode else 'disabled'}.")
+
+    # Verwenden Sie den Import-String "app.main:app" für Uvicorn
+    uvicorn.run("app.main:app", host="0.0.0.0", port=int(os.getenv("PORT", 8000)), reload=debug_mode)
