@@ -32,12 +32,12 @@ def create_zip_file(source_folder, output_zip_path):
         raise
 
 
-def create_zip_archive(output_directory, zip_filename):
+def create_zip_archive(OUTPUT_PDFS_DIR, zip_filename):
     with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
-        for root, dirs, files in os.walk(output_directory):
+        for root, dirs, files in os.walk(OUTPUT_PDFS_DIR):
             for file in files:
                 if not file.endswith('.zip'):
                     file_path = os.path.join(root, file)
-                    arcname = os.path.relpath(file_path, output_directory)
+                    arcname = os.path.relpath(file_path, OUTPUT_PDFS_DIR)
                     zipf.write(file_path, arcname=arcname)
     logging.info(f"ZIP-Archiv erstellt: {zip_filename}")

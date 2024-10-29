@@ -24,8 +24,8 @@ from app.processing.utils import (
 # ======================= Konfiguration =======================
 
 # Ausgabe-Verzeichnis
-OUTPUT_DIRECTORY = os.getenv("OUTPUT_DIRECTORY", "output_pdfs")
-os.makedirs(OUTPUT_DIRECTORY, exist_ok=True)
+OUTPUT_PDFS_DIR = os.getenv("OUTPUT_PDFS_DIR", "output_pdfs")
+os.makedirs(OUTPUT_PDFS_DIR, exist_ok=True)
 
 # Logging konfigurieren mit RotatingFileHandler
 logger = logging.getLogger("download_logger")
@@ -39,7 +39,7 @@ ch.setLevel(logging.INFO)
 from logging.handlers import RotatingFileHandler
 
 fh = RotatingFileHandler(
-    os.path.join(OUTPUT_DIRECTORY, 'download.log'),
+    os.path.join(OUTPUT_PDFS_DIR, 'download.log'),
     maxBytes=5*1024*1024,  # 5 MB
     backupCount=3
 )
@@ -134,8 +134,8 @@ class PDFConverter:
         self.max_concurrent_tasks = max_concurrent_tasks
         self.playwright = None
         self.browser = None
-        self.output_dir_collapsed = os.path.join(OUTPUT_DIRECTORY, 'individual_pdfs_collapsed')
-        self.output_dir_expanded = os.path.join(OUTPUT_DIRECTORY, 'individual_pdfs_expanded')
+        self.output_dir_collapsed = os.path.join(OUTPUT_PDFS_DIR, 'individual_pdfs_collapsed')
+        self.output_dir_expanded = os.path.join(OUTPUT_PDFS_DIR, 'individual_pdfs_expanded')
         os.makedirs(self.output_dir_collapsed, exist_ok=True)
         os.makedirs(self.output_dir_expanded, exist_ok=True)
 
@@ -277,7 +277,7 @@ if __name__ == "__main__":
 
     async def main():
         # Vorbereitung: Einrichtung der Verzeichnisse
-        setup_directories(OUTPUT_DIRECTORY)
+        setup_directories(OUTPUT_PDFS_DIR)
 
         # Initialisiere den PDFConverter
         converter = PDFConverter(max_concurrent_tasks=5)
@@ -296,13 +296,13 @@ if __name__ == "__main__":
         # ======================= Individuelle PDFs (Collapsed) =======================
         logger.info("Starte die Konvertierung der URLs zu PDFs (eingeklappte Version).")
         collapsed_results = await converter.convert_urls_to_pdfs(urls, expanded=False)
-        merged_collapsed_pdf = os.path.join(OUTPUT_DIRECTORY, "combined_collapsed.pdf")
+        merged_collapsed_pdf = os.path.join(OUTPUT_PDFS_DIR, "combined_collapsed.pdf")
         merge_pdfs_with_bookmarks(collapsed_results, merged_collapsed_pdf)
 
         # ======================= Individuelle PDFs (Expanded) =======================
         logger.info("Starte die Konvertierung der URLs zu PDFs (ausgeklappte Version).")
         expanded_results = await converter.convert_urls_to_pdfs(urls, expanded=True)
-        merged_expanded_pdf = os.path.join(OUTPUT_DIRECTORY, "combined_expanded.pdf")
+        merged_expanded_pdf = os.path.join(OUTPUT_PDFS_DIR, "combined_expanded.pdf")
         merge_pdfs_with_bookmarks(expanded_results, merged_expanded_pdf)
 
         # ======================= OCR Anwenden =======================
@@ -324,13 +324,13 @@ if __name__ == "__main__":
         # Begrenze die Länge des ZIP-Namens, falls notwendig
         zip_name_base = "_".join(unique_domains)
         zip_name_base = zip_name_base[:50]  # Begrenze auf 50 Zeichen, um Probleme zu vermeiden
-        zip_filename = os.path.join(OUTPUT_DIRECTORY, f"{zip_name_base}.zip")
-        create_zip_archive(OUTPUT_DIRECTORY, zip_filename)
+        zip_filename = os.path.join(OUTPUT_PDFS_DIR, f"{zip_name_base}.zip")
+        create_zip_archive(OUTPUT_PDFS_DIR, zip_filename)
 
         # ======================= Bereinigen der Ausgabeordner =======================
         logger.info("Bereinige die Ausgabeordner, um nur das ZIP-Archiv zu behalten.")
-        for item in os.listdir(OUTPUT_DIRECTORY):
-            item_path = os.path.join(OUTPUT_DIRECTORY, item)
+        for item in os.listdir(OUTPUT_PDFS_DIR):
+            item_path = os.path.join(OUTPUT_PDFS_DIR, item)
             if item_path != zip_filename:
                 try:
                     if os.path.isfile(item_path) or os.path.islink(item_path):
