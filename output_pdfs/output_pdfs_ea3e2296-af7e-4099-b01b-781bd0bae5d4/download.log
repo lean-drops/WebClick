@@ -1,0 +1,16 @@
+2024-10-30 14:49:52,465 - INFO - Loaded collapsed elements configuration from /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements/elements_collapsed.json
+2024-10-30 14:49:52,466 - INFO - Loaded expanded elements configuration from /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/app/static/json/remove_elements/elements_expanded.json
+2024-10-30 14:49:53,696 - INFO - Playwright Browser gestartet.
+2024-10-30 14:49:53,989 - INFO - Opening page: https://www.zh.ch/de/direktion-der-justiz-und-des-innern/staatsarchiv.html
+2024-10-30 14:49:53,992 - INFO - Opening page: None
+2024-10-30 14:49:53,992 - ERROR - Error rendering page None: Frame.goto() missing 1 required positional argument: 'url'
+2024-10-30 14:50:00,332 - INFO - Injected external JS to remove elements in collapsed mode.
+2024-10-30 14:50:04,613 - INFO - PDF created: output_pdfs/individual_pdfs_collapsed/httpswwwzhchdedirektion-der-justiz-und-des-innernstaatsarchivhtml.pdf
+2024-10-30 14:50:04,764 - INFO - Alle PDFs wurden zu einem zusammengeführt: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs/combined_pdfs_collapsed_ea3e2296-af7e-4099-b01b-781bd0bae5d4.pdf
+2024-10-30 14:50:04,851 - INFO - Opening page: None
+2024-10-30 14:50:04,852 - ERROR - Error rendering page None: Frame.goto() missing 1 required positional argument: 'url'
+2024-10-30 14:50:04,853 - INFO - Opening page: https://www.zh.ch/de/direktion-der-justiz-und-des-innern/staatsarchiv.html
+2024-10-30 14:50:11,874 - INFO - Injected external JS to remove elements in expanded mode.
+2024-10-30 14:50:14,287 - INFO - PDF created: output_pdfs/individual_pdfs_expanded/httpswwwzhchdedirektion-der-justiz-und-des-innernstaatsarchivhtml.pdf
+2024-10-30 14:50:14,397 - INFO - Alle PDFs wurden zu einem zusammengeführt: /Users/python/Satelite 1 Python Projekte/Archiv/WebClick/output_pdfs/combined_pdfs_expanded_ea3e2296-af7e-4099-b01b-781bd0bae5d4.pdf
+2024-10-30 14:50:14,446 - INFO - Playwright Browser geschlossen.
