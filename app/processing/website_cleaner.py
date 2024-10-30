@@ -4,9 +4,8 @@ from config import logger
 
 
 async def remove_unwanted_elements(page: Page, expanded: bool = False):
-    """Entfernt unerwünschte Elemente von der Seite."""
+    """Removes unwanted elements from the page."""
     try:
-        # Gemeinsame Selektoren zum Entfernen
         selectors = [
             'script',
             'noscript',
@@ -14,13 +13,12 @@ async def remove_unwanted_elements(page: Page, expanded: bool = False):
             'iframe',
             'footer',
             'div.ads',
-            # Füge weitere unerwünschte Elemente hinzu
+            # Add more unwanted elements
         ]
 
         if expanded:
-            # Zusätzliche Selektoren zum Entfernen im expanded Modus
             selectors.extend([
-                'header',
+                # Removed 'header' from here
                 'nav',
                 '.sidebar',
                 '#navigation',
@@ -30,7 +28,7 @@ async def remove_unwanted_elements(page: Page, expanded: bool = False):
                 '#toc',
                 '.mdl-footer',
                 '#footer',
-                # Füge weitere Selektoren spezifisch für Navbar und Sidebar hinzu
+                # Add more selectors specific for Navbar and Sidebar
             ])
 
         for selector in selectors:
@@ -38,38 +36,35 @@ async def remove_unwanted_elements(page: Page, expanded: bool = False):
                 const elements = document.querySelectorAll('{selector}');
                 elements.forEach(el => el.remove());
             ''')
-        logger.debug(f"Unerwünschte Elemente entfernt: {selectors}")
+        logger.debug(f"Removed unwanted elements: {selectors}")
     except Exception as e:
-        logger.error(f"Fehler beim Entfernen unerwünschter Elemente: {e}")
+        logger.error(f"Error removing unwanted elements: {e}")
 
 
 
 
 async def remove_navigation_and_sidebars(page: Page):
     """
-    Entfernt die Navigationsleiste und alle Sidebars von der Seite.
+    Removes the navigation bar and all sidebars from the page, but keeps the header.
     """
-    logger.info("Entferne die Navigationsleiste und Sidebars.")
+    logger.info("Removing the navigation bar and sidebars.")
     try:
         await page.evaluate("""
-            () => {
-                // Entferne die Navigationsleiste
-                const headers = document.querySelectorAll('header, nav');
-                headers.forEach(header => {
-                    header.style.display = 'none';
-                });
+            // Remove navigation bars (excluding header)
+            const navs = document.querySelectorAll('nav');
+            navs.forEach(nav => {
+                nav.style.display = 'none';
+            });
 
-                // Entferne alle Sidebars mit der Klasse 'mdl-anchornav' oder ähnlichen Klassen
-                const sidebars = document.querySelectorAll('div.mdl-anchornav, aside.sidebar, .sidebar');
-                sidebars.forEach(sidebar => {
-                    sidebar.style.display = 'none';
-                });
-            }
+            // Remove all sidebars with the class 'mdl-anchornav' or similar classes
+            const sidebars = document.querySelectorAll('div.mdl-anchornav, aside.sidebar, .sidebar');
+            sidebars.forEach(sidebar => {
+                sidebar.style.display = 'none';
+            });
         """)
-        logger.debug("Navigationsleiste und Sidebars erfolgreich entfernt.")
+        logger.debug("Navigation bar and sidebars successfully removed.")
     except Exception as e:
-        logger.error(f"Fehler beim Entfernen der Navigationsleiste und Sidebars: {e}")
-    pass
+        logger.error(f"Error removing navigation bar and sidebars: {e}")
 
 async def remove_fixed_elements(page: Page):
     # """
