@@ -239,12 +239,10 @@ async def _run_pdf_task(task_id: str, urls: List[str], conversion_mode: str):
         # Anwenden von OCR auf die PDFs
         logger.info(f"Wende OCR auf die PDFs für Task-ID: {task_id} an.")
         apply_ocr_to_all_pdfs(
-            individual_collapsed_dir=pdf_converter.output_dir_collapsed if conversion_mode in ['collapsed',
-                                                                                               'both'] else None,
-            individual_expanded_dir=pdf_converter.output_dir_expanded if conversion_mode in ['expanded',
-                                                                                             'both'] else None,
-            merged_collapsed_pdf=merged_collapsed_pdf if conversion_mode in ['collapsed', 'both'] else None,
-            merged_expanded_pdf=merged_expanded_pdf if conversion_mode in ['expanded', 'both'] else None
+            individual_collapsed_dir=pdf_converter.output_dir_collapsed,
+            individual_expanded_dir=pdf_converter.output_dir_expanded,
+            merged_collapsed_pdf=merged_collapsed_pdf if conversion_mode == 'collapsed' else None,
+            merged_expanded_pdf=merged_expanded_pdf if conversion_mode == 'expanded' else None
         )
 
         # Erstelle ein ZIP-Archiv mit den ausgewählten PDFs
