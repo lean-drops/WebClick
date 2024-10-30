@@ -243,7 +243,8 @@ class PDFConverter:
             await scroll_page(page)
 
             # Create a safe filename
-            filename = sanitize_filename(url)
+            filename = sanitize_filename(url) + '.pdf'
+
             if expanded:
                 pdf_path = os.path.join(self.output_dir_expanded, filename)
             else:

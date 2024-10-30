@@ -169,8 +169,9 @@ def start_pdf_task():
         if not selected_links:
             return jsonify({'status': 'error', 'message': 'Keine Links ausgewählt.'}), 400
 
-        if conversion_mode not in ['collapsed', 'expanded']:
-            return jsonify({'status': 'error', 'message': 'Ungültiger Konvertierungsmodus. Wähle entweder "collapsed" oder "expanded".'}), 400
+        if conversion_mode not in ['collapsed', 'expanded', 'both']:
+            return jsonify({'status': 'error',
+                            'message': 'Ungültiger Konvertierungsmodus. Wähle entweder "collapsed", "expanded" oder "both".'}), 400
 
         # Generiere eine eindeutige Task-ID
         task_id = str(uuid.uuid4())
@@ -206,18 +207,30 @@ async def _run_pdf_task(task_id: str, urls: List[str], conversion_mode: str):
 
         pdf_entries = []
 
-        # Erstelle PDFs basierend auf dem ausgewählten Konvertierungsmodus
         if conversion_mode == 'collapsed':
+            # Code für collapsed PDFs
             logger.info(f"Starte die Konvertierung der URLs zu PDFs (collapsed) für Task-ID: {task_id}.")
             collapsed_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=False)
-            pdf_entries.extend(collapsed_results)
+            merged_collapsed_pdf = os.path.join(OUTPUT_PDFS_DIR, f"combined_pdfs_collapsed_{task_id}.pdf")
+            merge_pdfs_with_bookmarks(collapsed_results, merged_collapsed_pdf)
+        elif conversion_mode == 'expanded':
+            # Code für expanded PDFs
+            logger.info(f"Starte die Konvertierung der URLs zu PDFs (expanded) für Task-ID: {task_id}.")
+            expanded_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=True)
+            merged_expanded_pdf = os.path.join(OUTPUT_PDFS_DIR, f"combined_pdfs_expanded_{task_id}.pdf")
+            merge_pdfs_with_bookmarks(expanded_results, merged_expanded_pdf)
+        elif conversion_mode == 'both':
+            # Code für beide PDFs
+            logger.info(
+                f"Starte die Konvertierung der URLs zu PDFs (both collapsed and expanded) für Task-ID: {task_id}.")
+
+            # Collapsed PDFs generieren
+            collapsed_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=False)
             merged_collapsed_pdf = os.path.join(OUTPUT_PDFS_DIR, f"combined_pdfs_collapsed_{task_id}.pdf")
             merge_pdfs_with_bookmarks(collapsed_results, merged_collapsed_pdf)
 
-        elif conversion_mode == 'expanded':
-            logger.info(f"Starte die Konvertierung der URLs zu PDFs (expanded) für Task-ID: {task_id}.")
+            # Expanded PDFs generieren
             expanded_results = await pdf_converter.convert_urls_to_pdfs(urls, expanded=True)
-            pdf_entries.extend(expanded_results)
             merged_expanded_pdf = os.path.join(OUTPUT_PDFS_DIR, f"combined_pdfs_expanded_{task_id}.pdf")
             merge_pdfs_with_bookmarks(expanded_results, merged_expanded_pdf)
 
@@ -226,10 +239,12 @@ async def _run_pdf_task(task_id: str, urls: List[str], conversion_mode: str):
         # Anwenden von OCR auf die PDFs
         logger.info(f"Wende OCR auf die PDFs für Task-ID: {task_id} an.")
         apply_ocr_to_all_pdfs(
-            individual_collapsed_dir=pdf_converter.output_dir_collapsed,
-            individual_expanded_dir=pdf_converter.output_dir_expanded,
-            merged_collapsed_pdf=merged_collapsed_pdf if conversion_mode == 'collapsed' else None,
-            merged_expanded_pdf=merged_expanded_pdf if conversion_mode == 'expanded' else None
+            individual_collapsed_dir=pdf_converter.output_dir_collapsed if conversion_mode in ['collapsed',
+                                                                                               'both'] else None,
+            individual_expanded_dir=pdf_converter.output_dir_expanded if conversion_mode in ['expanded',
+                                                                                             'both'] else None,
+            merged_collapsed_pdf=merged_collapsed_pdf if conversion_mode in ['collapsed', 'both'] else None,
+            merged_expanded_pdf=merged_expanded_pdf if conversion_mode in ['expanded', 'both'] else None
         )
 
         # Erstelle ein ZIP-Archiv mit den ausgewählten PDFs
