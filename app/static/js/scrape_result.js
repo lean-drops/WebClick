@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.location.href = `/pdf_status/${taskId}`;
             } else {
                 loadingIndicator.style.display = 'none';
-                alert('Fehler beim Starten des PDF-Tasks.');
+                alert(data.message || 'Fehler beim Starten des PDF-Tasks.');
             }
         } catch (error) {
             loadingIndicator.style.display = 'none';
