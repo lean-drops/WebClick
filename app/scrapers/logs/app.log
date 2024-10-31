@@ -1,8 +1,0 @@
-2024-10-28 23:27:14,575 - DEBUG - Konfiguration geladen und Logger eingerichtet.
-2024-10-28 23:27:14,576 - DEBUG - Using selector: KqueueSelector
-2024-10-28 23:27:14,577 - ERROR - Fehler beim Laden der Taboo-Begriffe: [Errno 2] No such file or directory: 'taboo.json'
-2024-10-28 23:27:14,577 - DEBUG - Using selector: KqueueSelector
-2024-10-28 23:27:41,081 - DEBUG - Konfiguration geladen und Logger eingerichtet.
-2024-10-28 23:27:41,081 - DEBUG - Using selector: KqueueSelector
-2024-10-28 23:27:41,082 - ERROR - Fehler beim Laden der Taboo-Begriffe: [Errno 2] No such file or directory: 'taboo.json'
-2024-10-28 23:27:41,083 - DEBUG - Using selector: KqueueSelector
