@@ -3,17 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfekter Web Scraper</title>
+    <title>Perfekter Web Scraper - Kanton Zürich</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css', v=version) }}">
+    <!-- Einbindung des Kantons-Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/kanton_zuerich.css', v=version) }}">
 </head>
 <body>
 
-    <div class="container">
-        <!-- Schimmernder Lade-Rahmen um den Container -->
-        <div class="loading-wrapper" id="loadingBar" aria-hidden="true"></div>
+    <!-- Hauptnavigation -->
+    <header>
+        <div class="container">
+            <!-- Logo des Kantons Zürich -->
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo_kanton_zuerich.svg') }}" alt="Logo des Kantons Zürich">
+            </div>
+            <!-- Navigation -->
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#">Startseite</a></li>
+                    <li><a href="#">Themen</a></li>
+                    <li><a href="#">Organisation</a></li>
+                    <li><a href="#">Kontakt</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-        <!-- Hauptinhalt -->
-        <main>
+    <!-- Sprunglinks -->
+    <div class="skip-links">
+        <a href="#content">Zum Inhalt springen</a>
+        <a href="#main-nav">Zur Navigation</a>
+        <a href="#footer">Zum Footer</a>
+    </div>
+
+    <!-- Hauptinhalt -->
+    <main id="content">
+        <div class="container">
+            <h1>Willkommen beim Web Scraper des Kantons Zürich</h1>
+            <p>Der Kanton Zürich legt Wert darauf, qualitativ hochstehende und einheitliche Informationsangebote und Online-Services bereitzustellen.</p>
+
             <!-- Web Scraper Formular -->
             <section class="scraper-form">
                 <h2>Web Scraper</h2>
@@ -27,37 +55,105 @@
                     </div>
                 </form>
             </section>
-        </main>
-    </div>
-<!DOCTYPE html>
 
-    <script>
-        function openLeftHalf() {
-            // Bildschirmgröße ermitteln
-            const screenWidth = window.screen.width;
-            const screenHeight = window.screen.height;
+            <!-- Ladeanzeige -->
+            <div id="loadingBar" class="loading-bar" aria-hidden="true" style="display:none;">
+                <div class="loading-bar-progress"></div>
+                <p>Bitte warten, der Scraping-Prozess läuft...</p>
+            </div>
+        </div>
+    </main>
 
-            // Fenstergröße auf die linke Hälfte setzen
-            const width = Math.floor(screenWidth / 2);
-            const height = screenHeight;
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="container">
+            <p>&copy;2024 Kanton Zürich</p>
+            <nav class="footer-nav">
+                <ul>
+                    <li><a href="#">Kontakt</a></li>
+                    <li><a href="#">News</a></li>
+                    <li><a href="#">Jobs</a></li>
+                    <li><a href="#">Datenschutz</a></li>
+                    <li><a href="#">Impressum</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
 
-            // Neues Fenster öffnen
-            window.open(
-                window.location.href,
-                '_blank',
-                `width=${width},height=${height},left=0,top=0`
-            );
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js', v=version) }}"></script>
+<!-- JavaScript -->
+<script src="{{ url_for('static', filename='js/main.js', v=version) }}"></script>
+<script>
+    // Formular asynchron abschicken und Ladeanzeige anzeigen
+    document.getElementById('scrapeForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Verhindert das Standard-Formularverhalten
+        const urlInput = document.getElementById('url');
+        const urlValue = urlInput.value;
+
+        if (!urlValue) {
+            alert('Bitte geben Sie eine URL ein.');
+            return;
         }
 
-        // Fenster beim Laden automatisch öffnen
-        window.onload = function() {
-            // Optional: Automatisches Öffnen kann durch Pop-up-Blocker verhindert werden
-            // Daher könnte ein Button für den Benutzer notwendig sein
-            // openLeftHalf();
-        };
-    </script>
+        // Ladeanzeige anzeigen
+        document.getElementById('loadingBar').style.display = 'block';
 
+        // Daten asynchron an den Server senden
+        fetch('/scrape_links', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url: urlValue })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success' && data.task_id) {
+                // Startet das Polling, um den Task-Status abzufragen
+                pollScrapeStatus(data.task_id);
+            } else {
+                // Ladeanzeige ausblenden
+                document.getElementById('loadingBar').style.display = 'none';
+                alert(data.message || 'Fehler beim Starten des Scrape-Tasks.');
+            }
+        })
+        .catch(error => {
+            console.error('Fehler beim Starten des Scrape-Tasks:', error);
+            // Ladeanzeige ausblenden
+            document.getElementById('loadingBar').style.display = 'none';
+            alert('Es gab ein Problem beim Starten des Scrape-Tasks.');
+        });
+    });
 
+    // Funktion zum Abfragen des Scrape-Status
+    function pollScrapeStatus(taskId) {
+        fetch(`/get_status/${taskId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'completed') {
+                // Task abgeschlossen, leitet zur Ergebnisseite weiter
+                window.location.href = `/scrape_result/${taskId}`;
+            } else if (data.status === 'failed') {
+                // Ladeanzeige ausblenden
+                document.getElementById('loadingBar').style.display = 'none';
+                alert(data.error || 'Der Scrape-Task ist fehlgeschlagen.');
+            } else {
+                // Hier könnten Sie den Ladebalken aktualisieren
+                // Erneutes Abfragen nach einer Verzögerung
+                setTimeout(function() {
+                    pollScrapeStatus(taskId);
+                }, 1000);
+            }
+        })
+        .catch(error => {
+            console.error('Fehler beim Abrufen des Scrape-Status:', error);
+            // Ladeanzeige ausblenden
+            document.getElementById('loadingBar').style.display = 'none';
+            alert('Es gab ein Problem beim Abrufen des Scrape-Status.');
+        });
+    }
+</script>
 
 </body>
 </html>

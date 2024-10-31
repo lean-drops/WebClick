@@ -3,9 +3,9 @@
 import os
 import asyncio
 import logging
-import json  # Hinzugefügt
-from typing import List, Dict
-from playwright.async_api import async_playwright, Page
+import json
+from typing import List, Dict, Callable
+from playwright.async_api import async_playwright
 from pypdf import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -13,18 +13,17 @@ from io import BytesIO
 import shutil
 
 from app.create_package.create_zipfile import create_zip_archive
-from app.processing.website_cleaner import remove_unwanted_elements, remove_fixed_elements, \
-    remove_navigation_and_sidebars
+from app.processing.website_cleaner import remove_unwanted_elements, remove_fixed_elements, remove_navigation_and_sidebars
 from app.processing.website_handler import expand_hidden_elements, scroll_page
 from app.processing.website_utils import load_js_file, extract_domain, setup_directories, inject_custom_css
 from app.utils.naming_utils import sanitize_filename
+from app.archiver.local_archiver import LocalArchiver
 
-from config import ELEMENTS_COLLAPSED_CONFIG, ELEMENTS_EXPANDED_CONFIG
+from config import ELEMENTS_COLLAPSED_CONFIG, ELEMENTS_EXPANDED_CONFIG, OUTPUT_PDFS_DIR
 
 # ======================= Konfiguration =======================
 
 # Ausgabe-Verzeichnis
-OUTPUT_PDFS_DIR = os.getenv("OUTPUT_PDFS_DIR", "output_pdfs")
 os.makedirs(OUTPUT_PDFS_DIR, exist_ok=True)
 
 # Logging konfigurieren mit RotatingFileHandler
@@ -64,18 +63,39 @@ def create_table_of_contents(toc_entries: List[Dict]) -> BytesIO:
     packet = BytesIO()
     can = canvas.Canvas(packet, pagesize=A4)
     width, height = A4
-    can.setFont("Helvetica-Bold", 16)
+
+    # Überschrift des Inhaltsverzeichnisses
+    can.setFont("Helvetica-Bold", 13)  # Größere Schrift für die Überschrift
     can.drawString(100, height - 50, "Inhaltsverzeichnis")
+
+    # Schrift für die Einträge
     can.setFont("Helvetica", 12)
+
+    # Anfangsposition für die Einträge
     y_position = height - 80
+    line_height = 20  # Erhöhter Zeilenabstand
+
     for entry in toc_entries:
         title = entry['title']
         page_number = entry['page_number'] + 1  # 1-basierte Seitennummerierung
+
+        # Trunkiere lange Titel, um Überlappungen zu vermeiden
+        max_title_length = 30  # Maximale Anzahl an Zeichen für den Titel
+        if len(title) > max_title_length:
+            title = title[:max_title_length - 3] + "..."
+
+        # Zeichne den Eintrag
         can.drawString(100, y_position, f"{title} ...... {page_number}")
-        y_position -= 20
+        y_position -= line_height
+
+        # Neue Seite, wenn nicht genug Platz ist
         if y_position < 50:
             can.showPage()
-            y_position = height - 50
+            can.setFont("Helvetica-Bold", 18)
+            can.drawString(100, height - 50, "Inhaltsverzeichnis (Fortsetzung)")
+            can.setFont("Helvetica", 12)
+            y_position = height - 80
+
     can.save()
     packet.seek(0)
     return packet
@@ -183,10 +203,8 @@ class PDFConverter:
             await self.playwright.stop()
         logger.info("Playwright Browser geschlossen.")
 
-    # app/processing/download.py
-
     async def render_page(self, url: str, expanded: bool = False) -> Dict:
-        """Renders a webpage and saves it as PDF."""
+        """Rendert eine Webseite und speichert sie als PDF."""
         context = None
         page = None
         try:
@@ -201,46 +219,46 @@ class PDFConverter:
                 )
             )
             page = await context.new_page()
-            logger.info(f"Opening page: {url}")
+            logger.info(f"Öffne Seite: {url}")
             await page.goto(url, timeout=120000, wait_until='networkidle')
 
-            # Ensure all content is loaded
+            # Stelle sicher, dass alle Inhalte geladen sind
             await asyncio.sleep(2)
 
             if expanded:
-                # Step 1: Expand hidden elements
+                # Schritt 1: Versteckte Elemente expandieren
                 await expand_hidden_elements(page)
-                # Step 2: Remove unwanted elements based on JSON config
+                # Schritt 2: Unerwünschte Elemente basierend auf der JSON-Konfiguration entfernen
                 await remove_unwanted_elements(page, expanded=expanded)
 
                 if self.remove_elements_js and self.elements_expanded:
-                    # Inject the remove_elements.js script
+                    # Injecte das remove_elements.js Skript
                     await page.add_script_tag(content=self.remove_elements_js)
-                    # Wait until the script is loaded
+                    # Warte, bis das Skript geladen ist
                     await page.wait_for_function("typeof removeElements === 'function'")
-                    # Pass the JSON config to the removeElements function
+                    # Übergebe die JSON-Konfiguration an die removeElements-Funktion
                     await page.evaluate(f"removeElements({json.dumps(self.elements_expanded)})")
-                    logger.info("Injected external JS to remove elements in expanded mode.")
+                    logger.info("Externes JS zum Entfernen von Elementen im expanded-Modus injiziert.")
             else:
                 await remove_fixed_elements(page)
-                # Remove navigation bar and sidebars
+                # Navigationsleiste und Seitenleisten entfernen
                 await remove_navigation_and_sidebars(page)
-                # Step 4: Inject custom CSS for normal mode
+                # Schritt 4: Benutzerdefiniertes CSS für den normalen Modus injizieren
                 await inject_custom_css(page, expanded=False)
 
                 if self.remove_elements_js and self.elements_collapsed:
-                    # Inject the remove_elements.js script
+                    # Injecte das remove_elements.js Skript
                     await page.add_script_tag(content=self.remove_elements_js)
-                    # Wait until the script is loaded
+                    # Warte, bis das Skript geladen ist
                     await page.wait_for_function("typeof removeElements === 'function'")
-                    # Pass the JSON config to the removeElements function
+                    # Übergebe die JSON-Konfiguration an die removeElements-Funktion
                     await page.evaluate(f"removeElements({json.dumps(self.elements_collapsed)})")
-                    logger.info("Injected external JS to remove elements in collapsed mode.")
+                    logger.info("Externes JS zum Entfernen von Elementen im collapsed-Modus injiziert.")
 
-            # Optionally: Scroll to trigger lazy-loading
+            # Optional: Scrollen, um Lazy-Loading auszulösen
             await scroll_page(page)
 
-            # Create a safe filename
+            # Erstelle einen sicheren Dateinamen
             filename = sanitize_filename(url) + '.pdf'
 
             if expanded:
@@ -248,7 +266,7 @@ class PDFConverter:
             else:
                 pdf_path = os.path.join(self.output_dir_collapsed, filename)
 
-            # Generate PDF with optimized options
+            # Generiere das PDF mit optimierten Optionen
             await page.emulate_media(media="screen")
             await page.pdf(
                 path=pdf_path,
@@ -259,15 +277,15 @@ class PDFConverter:
                 scale=1,
                 display_header_footer=False
             )
-            logger.info(f"PDF created: {pdf_path}")
+            logger.info(f"PDF erstellt: {pdf_path}")
 
-            # Extract the page title for the table of contents
+            # Extrahiere den Seitentitel für das Inhaltsverzeichnis
             title = await page.title()
 
             return {"url": url, "status": "success", "path": pdf_path, "title": title}
 
         except Exception as e:
-            logger.error(f"Error rendering page {url}: {e}")
+            logger.error(f"Fehler beim Rendern der Seite {url}: {e}")
             return {"url": url, "status": "error", "error": str(e)}
         finally:
             if page:
@@ -275,13 +293,20 @@ class PDFConverter:
             if context:
                 await context.close()
 
-    async def convert_urls_to_pdfs(self, urls: List[str], expanded: bool = False) -> List[Dict]:
-        """Konvertiert eine Liste von URLs zu PDFs."""
+    async def convert_urls_to_pdfs(self, urls: List[str], expanded: bool = False, progress_callback: Callable[[int, int], None] = None) -> List[Dict]:
+        """Konvertiert eine Liste von URLs zu PDFs und aktualisiert den Fortschritt nach jeder URL."""
         semaphore = asyncio.Semaphore(self.max_concurrent_tasks)
+        total_urls = len(urls)
+        completed_urls = 0
 
         async def sem_task(url):
             async with semaphore:
-                return await self.render_page(url, expanded=expanded)
+                result = await self.render_page(url, expanded=expanded)
+                nonlocal completed_urls
+                completed_urls += 1
+                if progress_callback:
+                    progress_callback(completed_urls, total_urls)
+                return result
 
         tasks = [asyncio.create_task(sem_task(url)) for url in urls]
         results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -293,78 +318,89 @@ class PDFConverter:
             else:
                 processed_results.append(result)
         return processed_results
-# app/processing/download.py
+
+# ======================= Hauptfunktion =======================
+
+async def main():
+    # Vorbereitung: Einrichtung der Verzeichnisse
+    setup_directories(OUTPUT_PDFS_DIR)
+
+    # Initialisiere den PDFConverter
+    converter = PDFConverter(max_concurrent_tasks=5)
+    await converter.initialize()
+
+    # Lade die URLs
+    urls = [
+        "https://www.beispielseite.de",
+        "https://www.andere-seite.de",
+        # Fügen Sie hier weitere URLs hinzu
+    ]
+    if not urls:
+        logger.error("Keine URLs zum Verarbeiten gefunden. Programm beendet.")
+        return
+
+    # Fortschrittsvariable
+    total_steps = len(urls) * 2  # Angenommen, sowohl collapsed als auch expanded Modus
+    current_step = 0
+
+    # Fortschritts-Callback-Funktion
+    def progress_callback(completed, total):
+        nonlocal current_step
+        current_step += 1
+        progress = int((current_step / total_steps) * 100)
+        # Hier können Sie den Fortschritt speichern oder anzeigen
+        logger.info(f"Fortschritt: {progress}% ({current_step}/{total_steps})")
+        # Wenn Sie den Fortschritt extern benötigen, speichern Sie ihn in einer globalen Variable oder Datenstruktur
+
+    # ======================= Individuelle PDFs (Collapsed) =======================
+    logger.info("Starte die Konvertierung der URLs zu PDFs (eingeklappte Version).")
+    collapsed_results = await converter.convert_urls_to_pdfs(urls, expanded=False, progress_callback=progress_callback)
+    merged_collapsed_pdf = os.path.join(OUTPUT_PDFS_DIR, "combined_collapsed.pdf")
+    merge_pdfs_with_bookmarks(collapsed_results, merged_collapsed_pdf)
+
+    # ======================= Individuelle PDFs (Expanded) =======================
+    logger.info("Starte die Konvertierung der URLs zu PDFs (ausgeklappte Version).")
+    expanded_results = await converter.convert_urls_to_pdfs(urls, expanded=True, progress_callback=progress_callback)
+    merged_expanded_pdf = os.path.join(OUTPUT_PDFS_DIR, "combined_expanded.pdf")
+    merge_pdfs_with_bookmarks(expanded_results, merged_expanded_pdf)
+
+    # ======================= Backup erstellen =======================
+    logger.info("Erstelle Backup der generierten PDFs.")
+    archiver = LocalArchiver(source_dir=OUTPUT_PDFS_DIR, backup_dir=os.path.join(OUTPUT_PDFS_DIR, "backups"), manifest_format="csv")
+    backup_manifest = archiver.backup()
+
+    # ======================= ZIP Archiv erstellen =======================
+    logger.info("Erstelle ein ZIP-Archiv der generierten PDFs.")
+
+    # Extrahiere Domain-Namen ohne 'www' und TLD
+    domains = [extract_domain(url) for url in urls]
+    # Entferne doppelte Domains, falls vorhanden
+    unique_domains = list(dict.fromkeys(domains))
+    # Begrenze die Länge des ZIP-Namens, falls notwendig
+    zip_name_base = "_".join(unique_domains)
+    zip_name_base = zip_name_base[:50]  # Begrenze auf 50 Zeichen, um Probleme zu vermeiden
+    zip_filename = os.path.join(OUTPUT_PDFS_DIR, f"{zip_name_base}.zip")
+    create_zip_archive(OUTPUT_PDFS_DIR, zip_filename)
+
+    # ======================= Bereinigen der Ausgabeordner =======================
+    logger.info("Bereinige die Ausgabeordner, um nur das ZIP-Archiv zu behalten.")
+    for item in os.listdir(OUTPUT_PDFS_DIR):
+        item_path = os.path.join(OUTPUT_PDFS_DIR, item)
+        if item_path != zip_filename and item_path != os.path.join(OUTPUT_PDFS_DIR, "backups"):
+            try:
+                if os.path.isfile(item_path) or os.path.islink(item_path):
+                    os.remove(item_path)
+                    logger.info(f"Datei entfernt: {item_path}")
+                elif os.path.isdir(item_path):
+                    shutil.rmtree(item_path)
+                    logger.info(f"Verzeichnis entfernt: {item_path}")
+            except Exception as e:
+                logger.error(f"Fehler beim Entfernen von {item_path}: {e}")
+
+    # ======================= Abschluss =======================
+    await converter.close()
+    logger.info(f"Alle Prozesse abgeschlossen. ZIP-Archiv befindet sich unter: {zip_filename}")
+    print(f"ZIP-Archiv erstellt: {zip_filename}")
 
 if __name__ == "__main__":
-    import asyncio
-
-    async def main():
-        # Vorbereitung: Einrichtung der Verzeichnisse
-        setup_directories(OUTPUT_PDFS_DIR)
-
-        # Initialisiere den PDFConverter
-        converter = PDFConverter(max_concurrent_tasks=5)
-        await converter.initialize()
-
-        # Lade die URLs
-        urls = [
-            "https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023.html#-792208150",
-
-        ]
-        if not urls:
-            logger.error("Keine URLs zum Verarbeiten gefunden. Programm beendet.")
-            return
-
-        # ======================= Individuelle PDFs (Collapsed) =======================
-        logger.info("Starte die Konvertierung der URLs zu PDFs (eingeklappte Version).")
-        collapsed_results = await converter.convert_urls_to_pdfs(urls, expanded=False)
-        merged_collapsed_pdf = os.path.join(OUTPUT_PDFS_DIR, "combined_collapsed.pdf")
-        merge_pdfs_with_bookmarks(collapsed_results, merged_collapsed_pdf)
-
-        # ======================= Individuelle PDFs (Expanded) =======================
-        logger.info("Starte die Konvertierung der URLs zu PDFs (ausgeklappte Version).")
-        expanded_results = await converter.convert_urls_to_pdfs(urls, expanded=True)
-        merged_expanded_pdf = os.path.join(OUTPUT_PDFS_DIR, "combined_expanded.pdf")
-        merge_pdfs_with_bookmarks(expanded_results, merged_expanded_pdf)
-
-        # ======================= OCR Anwenden =======================
-        logger.info("Wende OCR auf alle PDFs an.")
-        # ======================= OCR Anwenden =======================
-        logger.info("Überprüfen, ob OCR erforderlich ist.")
-
-
-        # ======================= ZIP Archiv erstellen =======================
-        logger.info("Erstelle ein ZIP-Archiv der generierten PDFs.")
-
-        # Extrahiere Domain-Namen ohne 'www' und TLD
-        domains = [extract_domain(url) for url in urls]
-        # Entferne doppelte Domains, falls vorhanden
-        unique_domains = list(dict.fromkeys(domains))
-        # Begrenze die Länge des ZIP-Namens, falls notwendig
-        zip_name_base = "_".join(unique_domains)
-        zip_name_base = zip_name_base[:50]  # Begrenze auf 50 Zeichen, um Probleme zu vermeiden
-        zip_filename = os.path.join(OUTPUT_PDFS_DIR, f"{zip_name_base}.zip")
-        create_zip_archive(OUTPUT_PDFS_DIR, zip_filename)
-
-        # ======================= Bereinigen der Ausgabeordner =======================
-        logger.info("Bereinige die Ausgabeordner, um nur das ZIP-Archiv zu behalten.")
-        for item in os.listdir(OUTPUT_PDFS_DIR):
-            item_path = os.path.join(OUTPUT_PDFS_DIR, item)
-            if item_path != zip_filename:
-                try:
-                    if os.path.isfile(item_path) or os.path.islink(item_path):
-                        os.remove(item_path)
-                        logger.info(f"Datei entfernt: {item_path}")
-                    elif os.path.isdir(item_path):
-                        shutil.rmtree(item_path)
-                        logger.info(f"Verzeichnis entfernt: {item_path}")
-                except Exception as e:
-                    logger.error(f"Fehler beim Entfernen von {item_path}: {e}")
-
-        # ======================= Abschluss =======================
-        await converter.close()
-        logger.info(f"Alle Prozesse abgeschlossen. ZIP-Archiv befindet sich unter: {zip_filename}")
-        print(f"ZIP-Archiv erstellt: {zip_filename}")
-
-    # Starte das asynchrone Hauptprogramm
     asyncio.run(main())

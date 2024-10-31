@@ -1,157 +1,159 @@
 // static/js/scrape_result.js
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
     const toggleButtons = document.querySelectorAll('.toggle-btn-label');
     const selectedLinksContainer = document.getElementById('selected-links');
     const checkboxes = document.querySelectorAll('input[name="selected_links"]');
     const listLinks = document.querySelectorAll('.toggle-link');
+    const mainLinkElement = document.getElementById('main-link');
+    const convertButton = document.getElementById('convert-button');
+    const searchInput = document.getElementById('search-input');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loadingMessage = document.getElementById('loading-message');
+    const progressBar = document.getElementById('progress-bar');
 
     let externalWindow = null;
 
-    // Funktion zum Öffnen eines neuen Fensters rechts neben dem aktuellen Fenster
+    // Funktion zum Öffnen eines externen Fensters mit der angegebenen URL
     function openExternalWindow(url) {
-        // Berechne die Position und Größe des neuen Fensters
-        const screenWidth = window.screen.width;
-        const screenHeight = window.screen.height;
-        const windowWidth = screenWidth / 2;
-        const windowHeight = screenHeight;
-
-        // Berechne die Position des neuen Fensters (rechts neben dem aktuellen Fenster)
-        const windowLeft = window.screenX + window.outerWidth;
-        const windowTop = window.screenY;
-
-        // Öffne das neue Fenster
-        externalWindow = window.open(
-            url,
-            'externalWindow',
-            `width=${windowWidth},height=${windowHeight},left=${windowLeft},top=${windowTop}`
-        );
+        if (externalWindow && !externalWindow.closed) {
+            externalWindow.location.href = url;
+            externalWindow.focus();
+        } else {
+            externalWindow = window.open(url, '_blank');
+        }
     }
 
     // Event-Listener für den Hauptlink
-    const mainLinkElement = document.getElementById('main-link');
     if (mainLinkElement) {
-        mainLinkElement.addEventListener('click', function (e) {
+        mainLinkElement.addEventListener('click', (e) => {
             e.preventDefault();
-            const mainLinkUrl = this.getAttribute('data-url');
-            if (externalWindow && !externalWindow.closed) {
-                externalWindow.location.href = mainLinkUrl;
-                externalWindow.focus();
-            } else {
-                openExternalWindow(mainLinkUrl);
-            }
+            const mainLinkUrl = mainLinkElement.getAttribute('data-url');
+            openExternalWindow(mainLinkUrl);
         });
     }
 
-    // Event-Listener für die List Links
+    // Event-Listener für die Listenlinks
     listLinks.forEach(link => {
-        link.addEventListener('click', function (e) {
+        link.addEventListener('click', (e) => {
             e.preventDefault();
-            const url = this.getAttribute('data-url');
-            if (externalWindow && !externalWindow.closed) {
-                externalWindow.location.href = url;
-                externalWindow.focus();
-            } else {
-                openExternalWindow(url);
-            }
+            const url = link.getAttribute('data-url');
+            openExternalWindow(url);
         });
     });
 
-    // Event-Listener für Toggle-Buttons
+    // Event-Listener für die Umschaltknöpfe (Toggle-Buttons)
     toggleButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const pageId = this.getAttribute('data-page-id');
-            toggleChildren(pageId, this);
+        button.addEventListener('click', () => {
+            const pageId = button.getAttribute('data-page-id');
+            toggleChildren(pageId, button);
         });
     });
 
-    // Event-Listener für Checkboxen
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
-            const linkUrl = this.value;
-            const linkTitle = this.dataset.title;
-            const linkId = `selected-${hashCode(linkUrl)}`;
+    // Funktion zum Verarbeiten der Änderung des Kontrollkästchens
+    function handleCheckboxChange(checkbox) {
+        const linkUrl = checkbox.value;
+        const linkTitle = checkbox.dataset.title || linkUrl;
+        const linkId = `selected-${hashCode(linkUrl)}`;
 
-            if (this.checked) {
-                // Link hinzufügen
-                const linkDiv = document.createElement('div');
-                linkDiv.classList.add('selected-link');
-                linkDiv.id = linkId;
+        if (checkbox.checked) {
+            addSelectedLink(linkId, linkTitle, linkUrl, checkbox);
+        } else {
+            removeSelectedLink(linkId);
+        }
+    }
 
-                const linkAnchor = document.createElement('a');
-                linkAnchor.href = '#';
-                linkAnchor.textContent = linkTitle || linkUrl;
-                linkAnchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    if (externalWindow && !externalWindow.closed) {
-                        externalWindow.location.href = linkUrl;
-                        externalWindow.focus();
-                    } else {
-                        openExternalWindow(linkUrl);
-                    }
-                });
+    // Funktion zum Hinzufügen eines ausgewählten Links zur Liste
+    function addSelectedLink(linkId, linkTitle, linkUrl, checkbox) {
+        const linkDiv = document.createElement('div');
+        linkDiv.classList.add('selected-link');
+        linkDiv.id = linkId;
 
-                const removeButton = document.createElement('button');
-                removeButton.classList.add('remove-link');
-                removeButton.innerHTML = '&times;';
-                removeButton.addEventListener('click', function () {
-                    checkbox.checked = false; // Checkbox deaktivieren
-                    selectedLinksContainer.removeChild(linkDiv);
-                });
-
-                linkDiv.appendChild(linkAnchor);
-                linkDiv.appendChild(removeButton);
-                selectedLinksContainer.appendChild(linkDiv);
-            } else {
-                // Link entfernen
-                const linkDiv = document.getElementById(linkId);
-                if (linkDiv) {
-                    selectedLinksContainer.removeChild(linkDiv);
-                }
-            }
+        const linkAnchor = document.createElement('a');
+        linkAnchor.href = '#';
+        linkAnchor.textContent = linkTitle;
+        linkAnchor.addEventListener('click', (e) => {
+            e.preventDefault();
+            openExternalWindow(linkUrl);
         });
+
+        const removeButton = document.createElement('button');
+        removeButton.classList.add('remove-link');
+        removeButton.innerHTML = '&times;';
+        removeButton.addEventListener('click', () => {
+            checkbox.checked = false;
+            selectedLinksContainer.removeChild(linkDiv);
+        });
+
+        linkDiv.appendChild(linkAnchor);
+        linkDiv.appendChild(removeButton);
+        selectedLinksContainer.appendChild(linkDiv);
+    }
+
+    // Funktion zum Entfernen eines ausgewählten Links aus der Liste
+    function removeSelectedLink(linkId) {
+        const linkDiv = document.getElementById(linkId);
+        if (linkDiv) {
+            selectedLinksContainer.removeChild(linkDiv);
+        }
+    }
+
+    // Event-Listener für die Kontrollkästchen
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => handleCheckboxChange(checkbox));
 
         // Initialisiere die ausgewählten Links beim Laden der Seite
         if (checkbox.checked) {
-            const event = new Event('change');
-            checkbox.dispatchEvent(event);
+            handleCheckboxChange(checkbox);
         }
     });
 
+    // Funktion zum Umschalten der Anzeige von Kindelementen
     function toggleChildren(pageId, toggleElement) {
-        const childRows = document.querySelectorAll('.child-of-' + pageId);
+        const childRows = document.querySelectorAll(`.child-of-${pageId}`);
         const isExpanded = toggleElement.classList.toggle('expanded');
         toggleElement.setAttribute('aria-expanded', isExpanded);
 
         childRows.forEach(row => {
-            row.style.display = isExpanded ? 'table-row' : 'none';
+            row.style.display = isExpanded ? '' : 'none';
         });
     }
 
-    // Funktion zur Generierung eines einfachen Hashcodes für eindeutige IDs
+    // Funktion zum Generieren eines Hashcodes für eindeutige IDs
     function hashCode(str) {
         let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            hash = (hash << 5) - hash + str.charCodeAt(i);
-            hash |= 0; // Convert to 32bit integer
+        for (const char of str) {
+            hash = ((hash << 5) - hash) + char.charCodeAt(0);
+            hash |= 0; // Konvertiert zu einer 32-Bit-Ganzzahl
         }
         return Math.abs(hash).toString();
     }
 
+    // Funktion zur Aktualisierung der Ladeanzeige-Nachricht
+    function updateLoadingMessage(message) {
+        if (loadingMessage) {
+            loadingMessage.textContent = message;
+        }
+    }
+
+    // Funktion zur Aktualisierung des Fortschrittsbalkens
+    function updateProgressBar(progress) {
+        if (progressBar) {
+            progressBar.style.width = `${progress}%`;
+        }
+    }
+
     // Funktion zum Starten der PDF-Konvertierung
     async function startPdfConversion() {
-        const checkboxes = document.querySelectorAll('input[name="selected_links"]:checked');
-        let selectedLinks = [];
+        const selectedCheckboxes = document.querySelectorAll('input[name="selected_links"]:checked');
+        const selectedLinks = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
 
-        // Benutzergewählte Links hinzufügen
-        checkboxes.forEach((checkbox) => {
-            selectedLinks.push(checkbox.value);
-        });
-
-        // Hauptlink immer hinzufügen, falls nicht bereits enthalten
-        const mainLinkUrl = document.getElementById('main-link').getAttribute('data-url');
-        if (!selectedLinks.includes(mainLinkUrl)) {
-            selectedLinks.push(mainLinkUrl);
+        // Hauptlink hinzufügen, falls nicht bereits enthalten
+        if (mainLinkElement) {
+            const mainLinkUrl = mainLinkElement.getAttribute('data-url');
+            if (!selectedLinks.includes(mainLinkUrl)) {
+                selectedLinks.push(mainLinkUrl);
+            }
         }
 
         if (selectedLinks.length === 0) {
@@ -159,63 +161,87 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Erfasse den ausgewählten Konvertierungsmodus
         const modeRadio = document.querySelector('input[name="conversion_mode"]:checked');
         const conversionMode = modeRadio ? modeRadio.value : 'collapsed';
 
-        // Ladeanzeige einblenden
-        const loadingIndicator = document.getElementById('loading-indicator');
-        loadingIndicator.style.display = 'block';
+        // Zeige die Ladeanzeige
+        loadingOverlay.style.display = 'flex';
+        updateLoadingMessage('PDF-Konvertierung läuft. Bitte warten...');
+        updateProgressBar(0);
 
         try {
             const response = await fetch('/start_pdf_task', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ selected_links: selectedLinks, conversion_mode: conversionMode }),
             });
 
             const data = await response.json();
 
             if (data.status === 'success' && data.task_id) {
-                // Weiterleitung zur PDF-Statusseite mit der task_id
-                const taskId = data.task_id;
-                window.location.href = `/pdf_status/${taskId}`;
+                // Starte das Polling für den Task-Status
+                pollPdfStatus(data.task_id);
             } else {
-                loadingIndicator.style.display = 'none';
-                alert(data.message || 'Fehler beim Starten des PDF-Tasks.');
+                throw new Error(data.message || 'Fehler beim Starten des PDF-Tasks.');
             }
         } catch (error) {
-            loadingIndicator.style.display = 'none';
-            console.error('Fehler beim Erstellen des PDF-Tasks:', error);
+            console.error('Fehler beim Starten des PDF-Tasks:', error);
             alert('Es gab ein Problem beim Starten der PDF-Konvertierung.');
+            // Verstecke die Ladeanzeige
+            loadingOverlay.style.display = 'none';
         }
     }
 
-    // Event-Listener für den Konvertieren-Button hinzufügen
-    const convertButton = document.getElementById('convert-button');
+    // Funktion zum regelmäßigen Abfragen des PDF-Task-Status
+    function pollPdfStatus(taskId) {
+        const interval = setInterval(async () => {
+            try {
+                const response = await fetch(`/get_pdf_status/${taskId}`);
+                const data = await response.json();
+
+                if (data.status === 'completed') {
+                    clearInterval(interval);
+                    updateProgressBar(100);
+                    updateLoadingMessage('PDF-Konvertierung abgeschlossen!');
+                    setTimeout(() => {
+                        window.location.href = `/pdf_result/${taskId}`;
+                    }, 1000);
+                } else if (data.status === 'failed') {
+                    clearInterval(interval);
+                    alert(data.error || 'Der PDF-Task ist fehlgeschlagen.');
+                    loadingOverlay.style.display = 'none';
+                } else if (data.status === 'running') {
+                    // Aktualisiere die Ladeanzeige mit dem Fortschritt
+                    if (data.progress !== undefined) {
+                        updateProgressBar(data.progress);
+                        updateLoadingMessage(`PDF-Konvertierung läuft... ${data.progress}% abgeschlossen`);
+                    }
+                }
+            } catch (error) {
+                console.error('Fehler beim Abrufen des PDF-Status:', error);
+                alert('Es gab ein Problem beim Abrufen des PDF-Status.');
+                clearInterval(interval);
+                loadingOverlay.style.display = 'none';
+            }
+        }, 1000); // Polling-Intervall von 1 Sekunde
+    }
+
+    // Event-Listener für den "PDF-Konvertierung starten"-Button
     if (convertButton) {
         convertButton.addEventListener('click', startPdfConversion);
     }
 
-    // Verbesserte Suchfunktion
-    const searchInput = document.getElementById('search-input');
+    // Verbesserte Suchfunktion für die Linkliste
     if (searchInput) {
-        searchInput.addEventListener('input', function () {
-            const filter = this.value.toLowerCase();
-            const table = document.querySelector('.list-container table');
-            const rows = table.querySelectorAll('tbody tr');
+        searchInput.addEventListener('input', () => {
+            const filter = searchInput.value.toLowerCase();
+            const tableRows = document.querySelectorAll('.list-container table tbody tr');
 
-            rows.forEach(row => {
+            tableRows.forEach(row => {
                 const linkCell = row.querySelector('td a.toggle-link');
                 if (linkCell) {
                     const text = linkCell.textContent.toLowerCase();
-                    if (text.includes(filter)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
+                    row.style.display = text.includes(filter) ? '' : 'none';
                 }
             });
         });

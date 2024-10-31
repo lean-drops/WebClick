@@ -17,6 +17,15 @@
         <a href="{{ url_for('main.index') }}" class="back-button">Zurück zum Index</a>
     </header>
 
+        <!-- Ladebalken (neu hinzugefügt) -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p id="loading-message">PDF-Konvertierung läuft. Bitte warten...</p>
+        </div>
+    </div>
+
+
     <main class="container">
         <!-- Hauptlink anzeigen -->
         <div class="main-link-container">
