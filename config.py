@@ -26,7 +26,7 @@ def get_base_dir():
 
 # Basisverzeichnis festlegen
 if IS_HEROKU:
-    # Verwende das temporäre Verzeichnis auf Heroku
+    # Verwende das /tmp-Verzeichnis auf Heroku
     BASE_DIR = Path('/tmp')
 else:
     # Verwende das Basisverzeichnis des Skripts
@@ -46,10 +46,10 @@ JSON_DIR = STATIC_DIR / os.getenv('JSON_DIR', 'json')
 TEMPLATES_DIR = APP_DIR / os.getenv('TEMPLATES_DIR', 'templates')
 UTILS_DIR = APP_DIR / os.getenv('UTILS_DIR', 'utils')
 
-# Cache-Verzeichnisse
-CACHE_DIR = STATIC_DIR / os.getenv('CACHE_DIR', 'cache')
+# Cache-Verzeichnisse (jetzt außerhalb von STATIC_DIR)
+CACHE_DIR = BASE_DIR / os.getenv('CACHE_DIR', 'cache')
 MAPPING_CACHE_DIR = CACHE_DIR / os.getenv('MAPPING_CACHE_DIR', 'mapping_cache')
-
+MAPPING_CACHE_FILE = CACHE_DIR / 'output_mapping.json'
 # Logs-Verzeichnis
 LOGS_DIR = BASE_DIR / os.getenv('LOGS_DIR', 'logs')
 
@@ -57,7 +57,7 @@ LOGS_DIR = BASE_DIR / os.getenv('LOGS_DIR', 'logs')
 OUTPUT_PDFS_DIR = BASE_DIR / os.getenv('OUTPUT_PDFS_DIR', 'output_pdfs')
 
 # Pfade zu spezifischen Dateien
-OUTPUT_MAPPING_PATH = CACHE_DIR / os.getenv('OUTPUT_MAPPING_PATH', 'output_mapping.json')
+OUTPUT_MAPPING_PATH = CACHE_DIR / os.getenv('MAPPING_CACHE_FILE', 'output_mapping.json')
 TABOO_JSON_PATH = JSON_DIR / os.getenv('TABOO_JSON_FILE', 'taboo.json')
 COOKIES_SELECTOR_JSON_PATH = JSON_DIR / os.getenv('COOKIES_SELECTOR_JSON_FILE', 'cookies_selector.json')
 EXCLUDE_SELECTORS_JSON_PATH = JSON_DIR / os.getenv('EXCLUDE_SELECTORS_JSON_FILE', 'exclude_selectors.json')
@@ -69,7 +69,7 @@ ELEMENTS_COLLAPSED_CONFIG = REMOVE_ELEMENTS_CONFIG_DIR / 'elements_collapsed.jso
 ELEMENTS_EXPANDED_CONFIG = REMOVE_ELEMENTS_CONFIG_DIR / 'elements_expanded.json'
 
 # Einstellungen
-DEFAULT_MAX_WORKERS = int(os.getenv('DEFAULT_MAX_WORKERS', '4'))
+DEFAULT_MAX_WORKERS = int(os.getenv('MAX_WORKERS', '4'))
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'DEBUG').upper()
 ENABLE_LOGGING = os.getenv('ENABLE_LOGGING', 'True').lower() in ['true', '1', 't']
 
@@ -159,4 +159,104 @@ if ensure_directories_exist(directories):
 else:
     logger.warning(f"{Fore.YELLOW}Setup started.{Style.RESET_ALL}")
 
-# Rest Ihres Codes bleibt unverändert
+# Pfade zu spezifischen Dateien
+files = [
+    OUTPUT_MAPPING_PATH,
+    TABOO_JSON_PATH,
+    COOKIES_SELECTOR_JSON_PATH,
+    EXCLUDE_SELECTORS_JSON_PATH,
+    URLS_JSON_PATH,
+]
+
+# Überprüfung der Dateien
+def ensure_files_exist(files):
+    all_exist = True
+    for file in files:
+        if not file.exists():
+            if file == OUTPUT_MAPPING_PATH:
+                try:
+                    # Erstelle eine leere JSON-Datei
+                    with open(file, 'w') as f:
+                        json.dump({}, f, indent=4)
+                    logger.info(f"{Fore.GREEN}Erstellte leere Datei: {file}{Style.RESET_ALL}")
+                except Exception as e:
+                    logger.error(f"Fehler beim Erstellen der Datei {file}: {e}")
+                    all_exist = False
+            else:
+                logger.error(f"{Fore.RED}Fehler: Die Datei existiert nicht: {file}{Style.RESET_ALL}")
+                all_exist = False
+        else:
+            logger.info(f"{Fore.GREEN}OK: Die Datei existiert: {file}{Style.RESET_ALL}")
+    return all_exist
+
+# Dateien sicherstellen
+if not ensure_files_exist(files):
+    logger.critical(f"{Fore.RED}Ein oder mehrere erforderliche Dateien fehlen. Bitte erstelle sie und starte die Anwendung neu.{Style.RESET_ALL}")
+    sys.exit(1)
+else:
+    logger.info(f"{Fore.GREEN}All files are ready.{Style.RESET_ALL}")
+
+# Funktion zur Bestimmung der maximal möglichen Anzahl von Workern
+def get_max_workers(default=DEFAULT_MAX_WORKERS):
+    cpu_count = multiprocessing.cpu_count()
+    memory = psutil.virtual_memory()
+    available_memory_gb = memory.available / (1024 ** 3)
+
+    # Beispielhafte Logik: Je nach verfügbarem Speicher mehr Worker erlauben
+    # Dies kann an die spezifischen Anforderungen deiner Anwendung angepasst werden
+    max_workers = min(cpu_count * 2, default)
+
+    logger.debug(f"CPU-Kerne: {cpu_count}")
+    logger.debug(f"Verfügbarer Speicher: {available_memory_gb:.2f} GB")
+    logger.debug(f"Berechnete maximale Worker: {max_workers}")
+
+    return max_workers
+
+# Funktion zur Überprüfung der Port-Verfügbarkeit und Finden eines freien Ports
+def find_available_port(start_port=5000):
+    port = start_port
+    while port < 65535:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            try:
+                sock.bind(('localhost', port))
+                sock.close()
+                logger.debug(f"Port {port} ist verfügbar.")
+                return port
+            except socket.error:
+                logger.debug(f"Port {port} ist belegt. Versuche nächsten Port...")
+                port += 1
+    raise RuntimeError("Kein verfügbarer Port gefunden.")
+
+# Funktion zur Systemüberwachung
+def get_system_stats():
+    cpu_usage = psutil.cpu_percent(interval=1)
+    memory = psutil.virtual_memory()
+    memory_usage = memory.percent
+    disk = psutil.disk_usage('/')
+    disk_usage = disk.percent
+
+    stats = {
+        'cpu_usage_percent': cpu_usage,
+        'memory_usage_percent': memory_usage,
+        'disk_usage_percent': disk_usage,
+    }
+
+    logger.debug(f"Systemstatistiken: {stats}")
+    return stats
+
+# Funktion zur Überprüfung von verfügbaren Workern und Port
+def check_system_and_port(start_port=5000):
+    max_workers = get_max_workers()
+    port = find_available_port(start_port)
+    system_stats = get_system_stats()
+    return {
+        'max_workers': max_workers,
+        'port': port,
+        'system_stats': system_stats
+    }
+
+if __name__ == "__main__":
+    config = check_system_and_port()
+    logger.info(f"{Fore.GREEN}Maximale Anzahl der Worker: {config['max_workers']}{Style.RESET_ALL}")
+    logger.info(f"{Fore.GREEN}Verwendeter Port: {config['port']}{Style.RESET_ALL}")
+    logger.info(f"{Fore.GREEN}Systemstatistiken: {config['system_stats']}{Style.RESET_ALL}")

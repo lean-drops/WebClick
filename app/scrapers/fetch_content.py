@@ -11,7 +11,7 @@ from collections import defaultdict
 from lxml import html  # Import lxml
 import aiofiles
 
-from config import OUTPUT_MAPPING_PATH
+from config import OUTPUT_MAPPING_PATH, CACHE_DIR, MAPPING_CACHE_DIR
 
 # Logging konfigurieren
 logging.basicConfig(
@@ -26,9 +26,6 @@ logger = logging.getLogger(__name__)
 # Fehlerverfolgung
 error_counts = defaultdict(int)
 
-# Cache-Verzeichnisse
-CACHE_DIR = "../static/cache"
-MAPPING_DIR = "../static/cache/mapping_cache"
 
 
 # Tabu-Begriffe aus der JSON-Datei laden
@@ -229,9 +226,9 @@ async def scrape_website(url, max_depth=2, max_concurrency=500, use_cache=True):
     base_page_id = url_to_filename(url)
 
     # Lade bestehenden Cache, falls vorhanden
-    cache_file = os.path.join(MAPPING_DIR, f"{hashlib.md5(url.encode()).hexdigest()}.json")
+    cache_file = os.path.join(MAPPING_CACHE_DIR, f"{hashlib.md5(url.encode()).hexdigest()}.json")
 
-    ensure_directory_exists(MAPPING_DIR)  # Überprüfe und erstelle das Cache-Verzeichnis
+    ensure_directory_exists(MAPPING_CACHE_DIR)  # Überprüfe und erstelle das Cache-Verzeichnis
 
     if use_cache and os.path.exists(cache_file):
         logger.info(f"Verwende gecachte Daten für {url}")
@@ -262,7 +259,7 @@ async def scrape_website(url, max_depth=2, max_concurrency=500, use_cache=True):
         logger.info(f"Scraping abgeschlossen. Gefundene Seiten: {len(url_mapping)}")
 
     # Speichere den Cache am Ende
-    ensure_directory_exists(MAPPING_DIR)  # Überprüfe und erstelle das Cache-Verzeichnis
+    ensure_directory_exists(MAPPING_CACHE_DIR)  # Überprüfe und erstelle das Cache-Verzeichnis
     async with aiofiles.open(cache_file, 'w', encoding='utf-8') as f:
         cache_data = json.dumps(url_mapping, indent=4)
         await f.write(cache_data)
@@ -286,7 +283,7 @@ def log_error_summary():
 if __name__ == "__main__":
     async def main():
         os.makedirs(CACHE_DIR, exist_ok=True)
-        os.makedirs(MAPPING_DIR, exist_ok=True)
+        os.makedirs(MAPPING_CACHE_DIR, exist_ok=True)
 
         test_url = "https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023/jahresbericht-2022.html"  # Ersetzen Sie dies durch die gewünschte URL
 
