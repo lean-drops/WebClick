@@ -289,7 +289,7 @@ if __name__ == "__main__":
         os.makedirs(CACHE_DIR, exist_ok=True)
         os.makedirs(MAPPING_CACHE_DIR, exist_ok=True)
 
-        test_url = "https://www.zh.ch/de/sicherheit-justiz/strafvollzug-und-strafrechtliche-massnahmen/jahresbericht-2023/jahresbericht-2022.html"  # Ersetzen Sie dies durch die gewünschte URL
+        test_url = "https://www.zh.ch/de/direktion-der-justiz-und-des-innern/justizvollzug-wiedereingliederung/untersuchungsgefaengnisse-zuerich.html"  # Ersetzen Sie dies durch die gewünschte URL
 
         start_time = time.time()
         result = await scrape_website(test_url, max_depth=2, max_concurrency=500, use_cache=True)

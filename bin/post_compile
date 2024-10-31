@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "Running post_compile script to install Playwright browsers"
+playwright install --with-deps
