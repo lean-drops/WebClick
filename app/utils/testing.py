@@ -2,7 +2,7 @@ import os
 import shutil
 import logging
 
-from config import CACHE_DIR
+from config import CACHE_DIR, OUTPUT_MAPPING_PATH, MAPPING_CACHE_DIR
 
 # Logging konfigurieren
 logging.basicConfig(
@@ -14,10 +14,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Pfade für die zu löschenden Elemente
-output_mapping_path = os.path.join(CACHE_DIR, 'output_mapping.json')
-mapping_cache_dir = os.path.join(CACHE_DIR, 'mapping_cache')
+output_mapping_path = OUTPUT_MAPPING_PATH
 
-
+mapping_cache_dir = MAPPING_CACHE_DIR
 def delete_cache_content():
     # Löschen der Datei output_mapping.json
     if os.path.exists(output_mapping_path):
