@@ -25,17 +25,23 @@ def get_base_dir():
     return os.path.dirname(os.path.abspath(__file__))
 
 # Basisverzeichnis festlegen
-if IS_HEROKU:
-    # Verwende das /tmp-Verzeichnis auf Heroku
-    BASE_DIR = Path('/tmp')
-else:
+
     # Verwende das Basisverzeichnis des Skripts
-    BASE_DIR = Path(get_base_dir())
+BASE_DIR = Path(get_base_dir())
 
 # App-Verzeichnis
 APP_DIR = BASE_DIR / os.getenv('APP_DIR', 'app')
 
-# Static-Verzeichnis innerhalb der App
+# Wenn Sie spezifische Verzeichnisse auf Heroku im /tmp speichern möchten
+if IS_HEROKU:
+    CACHE_DIR = Path('/tmp') / os.getenv('CACHE_DIR', 'cache')
+    LOGS_DIR = Path('/tmp') / os.getenv('LOGS_DIR', 'logs')
+else:
+    CACHE_DIR = BASE_DIR / os.getenv('CACHE_DIR', 'cache')
+    LOGS_DIR = BASE_DIR / os.getenv('LOGS_DIR', 'logs')
+
+
+#Innerhalb der App
 STATIC_DIR = APP_DIR / os.getenv('STATIC_DIR', 'static')
 
 # Weitere Verzeichnisse innerhalb Static
@@ -45,11 +51,10 @@ JS_DIR = STATIC_DIR / os.getenv('JS_DIR', 'js')
 JSON_DIR = STATIC_DIR / os.getenv('JSON_DIR', 'json')
 TEMPLATES_DIR = APP_DIR / os.getenv('TEMPLATES_DIR', 'templates')
 UTILS_DIR = APP_DIR / os.getenv('UTILS_DIR', 'utils')
-
 # Cache-Verzeichnisse (jetzt außerhalb von STATIC_DIR)
 CACHE_DIR = BASE_DIR / os.getenv('CACHE_DIR', 'cache')
 MAPPING_CACHE_DIR = CACHE_DIR / os.getenv('MAPPING_CACHE_DIR', 'mapping_cache')
-MAPPING_CACHE_FILE = CACHE_DIR / 'output_mapping.json'
+MAPPING_CACHE_FILE = os.getenv('MAPPING_CACHE_FILE', 'output_mapping.json')  # Nur der Dateiname
 # Logs-Verzeichnis
 LOGS_DIR = BASE_DIR / os.getenv('LOGS_DIR', 'logs')
 
