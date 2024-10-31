@@ -1,3 +1,17 @@
 #!/bin/bash
-echo "Running post_compile script to install Playwright browsers"
-playwright install --with-deps
+echo "Running post_compile script to install Playwright Chromium browser"
+
+# Redirect output to a log file
+exec > >(tee -i /tmp/post_compile.log)
+exec 2>&1
+
+# Install Playwright Chromium browser
+playwright install chromium
+
+# Check if the installation was successful
+if [ $? -ne 0 ]; then
+  echo "Error: Failed to install Playwright Chromium browser."
+  exit 1
+else
+  echo "Playwright Chromium browser installed successfully."
+fi
