@@ -39,9 +39,7 @@ CSS_DIR = STATIC_DIR / os.getenv('CSS_DIR', 'css')
 IMG_DIR = STATIC_DIR / os.getenv('IMG_DIR', 'img')
 JS_DIR = STATIC_DIR / os.getenv('JS_DIR', 'js')
 
-# Entfernen Sie JSON_DIR, da die JSON-Dateien nicht mehr in static/json liegen
-# JSON_DIR = STATIC_DIR / os.getenv('JSON_DIR', 'json')
-
+# Templates und Utils Verzeichnisse
 TEMPLATES_DIR = APP_DIR / os.getenv('TEMPLATES_DIR', 'templates')
 UTILS_DIR = APP_DIR / os.getenv('UTILS_DIR', 'utils')
 
@@ -70,7 +68,8 @@ REMOVE_ELEMENTS_CONFIG_DIR = CONFIG_DIR / 'remove_elements'
 ELEMENTS_COLLAPSED_CONFIG = REMOVE_ELEMENTS_CONFIG_DIR / 'elements_collapsed.json'
 ELEMENTS_EXPANDED_CONFIG = REMOVE_ELEMENTS_CONFIG_DIR / 'elements_expanded.json'
 
-OUTPUT_MAPPING_PATH = CACHE_DIR / os.getenv('MAPPING_CACHE_FILE', 'output_mapping.json')
+# Pfad zur Output Mapping Datei
+OUTPUT_MAPPING_PATH = CACHE_DIR / MAPPING_CACHE_FILE
 
 # Einstellungen
 DEFAULT_MAX_WORKERS = int(os.getenv('MAX_WORKERS', '4'))
@@ -136,10 +135,9 @@ directories = [
     TEMPLATES_DIR,
     UTILS_DIR,
     CACHE_DIR,
-    CONFIG_DIR,  # Fügen Sie das neue Config-Verzeichnis hinzu
+    CONFIG_DIR,  # Config-Verzeichnis hinzugefügt
     REMOVE_ELEMENTS_CONFIG_DIR,
 ]
-
 
 # Überprüfung der Verzeichnisse
 def ensure_directories_exist(directories):

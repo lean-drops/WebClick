@@ -11,7 +11,7 @@ from collections import defaultdict
 from lxml import html  # Import lxml
 import aiofiles
 
-from config import OUTPUT_MAPPING_PATH, CACHE_DIR, MAPPING_CACHE_DIR
+from config import OUTPUT_MAPPING_PATH, CACHE_DIR, MAPPING_CACHE_DIR, TABOO_JSON_PATH
 
 # Logging konfigurieren
 logging.basicConfig(
@@ -28,11 +28,11 @@ error_counts = defaultdict(int)
 
 
 
-# Tabu-Begriffe aus der JSON-Datei laden
-TABOO_JSON_PATH = os.path.join(os.path.dirname(__file__), '..', 'static', 'json', 'taboo.json')
-with open(TABOO_JSON_PATH, 'r', encoding='utf-8') as f:
+import json
+from config import TABOO_JSON_PATH
+
+with TABOO_JSON_PATH.open('r', encoding='utf-8') as f:
     taboo_data = json.load(f)
-    TABOO_TERMS = set(term.lower() for term in taboo_data.get('taboo_terms', []))
 
 # Utility-Funktionen
 def url_to_filename(url):
