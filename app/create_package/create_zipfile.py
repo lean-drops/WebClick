@@ -32,11 +32,31 @@ def create_zip_file(source_folder, output_zip_path):
         raise
 
 
-def create_zip_archive(file_paths, output_zip_path):
-    import zipfile
-    with zipfile.ZipFile(output_zip_path, 'w') as zipf:
-        for file_path in file_paths:
-            if os.path.exists(file_path):
-                zipf.write(file_path, os.path.basename(file_path))
-            else:
-                logger.warning(f"Datei nicht gefunden und wird nicht zum ZIP hinzugefügt: {file_path}")
+def create_zip_archive(pdf_files, zip_filename):
+    """
+    Erstellt ein ZIP-Archiv aus einer Liste von PDF-Dateien.
+
+    Args:
+        pdf_files (List[str]): Liste der PDF-Dateipfade.
+        zip_filename (str): Pfad zur zu erstellenden ZIP-Datei.
+
+    Returns:
+        None
+    """
+    # Stelle sicher, dass das Verzeichnis für die ZIP-Datei existiert
+    os.makedirs(os.path.dirname(zip_filename), exist_ok=True)
+
+    try:
+        with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for file_path in pdf_files:
+                if os.path.exists(file_path):
+                    arcname = os.path.basename(file_path)
+                    zipf.write(file_path, arcname)
+                    logger.info(f"Datei zum ZIP hinzugefügt: {file_path}")
+                else:
+                    logger.warning(f"Datei nicht gefunden und wird übersprungen: {file_path}")
+        logger.info(f"ZIP-Archiv erstellt: {zip_filename}")
+    except Exception as e:
+        logger.error(f"Fehler beim Erstellen des ZIP-Archivs {zip_filename}: {e}")
+        raise
+

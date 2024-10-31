@@ -1,5 +1,3 @@
-// static/js/convert_result.js
-
 document.addEventListener('DOMContentLoaded', function () {
     // Modal-Funktionalität
     const modal = document.getElementById('pdf-modal');
@@ -55,6 +53,10 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // Zeige einen Ladeindikator an
+        downloadButton.disabled = true;
+        downloadButton.textContent = 'Download läuft...';
+
         // Sende die Daten an den Server
         fetch('/finalize_pdfs', {
             method: 'POST',
@@ -73,12 +75,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Weiterleitung zum Download-Link
                 window.location.href = data.download_url;
             } else {
-                alert('Es gab einen Fehler beim Erstellen des Downloads.');
+                alert('Es gab einen Fehler beim Erstellen des Downloads: ' + data.message);
             }
         })
         .catch(error => {
             console.error('Fehler:', error);
             alert('Es gab einen Fehler beim Erstellen des Downloads.');
+        })
+        .finally(() => {
+            // Ladeindikator zurücksetzen
+            downloadButton.disabled = false;
+            downloadButton.textContent = 'PDF herunterladen';
         });
     });
 });

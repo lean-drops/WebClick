@@ -103,7 +103,7 @@ def get_status(task_id):
     response_data = {
         'status': task_info['status'],
         'error': task_info.get('error'),
-        # 'progress': task_info.get('progress', 0)  # Falls Sie Fortschrittsdaten implementieren
+        # 'progress': task_info.get('progress', 0)  # Falls Fortschrittsdaten implementiert sind
     }
     return jsonify(response_data)
 
@@ -202,17 +202,10 @@ async def _run_pdf_task(task_id, urls, conversion_mode):
 
         await pdf_converter.close()
 
-        zip_filename = os.path.join(OUTPUT_PDFS_DIR, f"output_pdfs_{task_id}.zip")
-        create_zip_archive(list(results.values()), zip_filename)
-
-        # Entferne die einzelnen PDF-Dateien nach dem Archivieren
-        for pdf_file in results.values():
-            if os.path.exists(pdf_file):
-                os.remove(pdf_file)
-
+        # Speichere die individuellen PDFs für die spätere Auswahl
         with pdf_lock:
             pdf_tasks[task_id]['status'] = 'completed'
-            pdf_tasks[task_id]['result'] = {'zip_file': zip_filename}
+            pdf_tasks[task_id]['result'] = {'pdf_files': results}
             pdf_tasks[task_id]['progress'] = 100
 
         logger.info(f"PDF-Task abgeschlossen: {task_id}")
@@ -223,6 +216,7 @@ async def _run_pdf_task(task_id, urls, conversion_mode):
             pdf_tasks[task_id]['status'] = 'failed'
             pdf_tasks[task_id]['error'] = str(e)
             pdf_tasks[task_id]['progress'] = 0
+
 @main.route('/get_pdf_status/<task_id>', methods=['GET'])
 def get_pdf_status(task_id):
     with pdf_lock:
@@ -254,15 +248,62 @@ def pdf_result(task_id):
     if task_info['status'] != 'completed':
         return redirect(url_for('main.pdf_status', task_id=task_id))
 
-    zip_file_path = task_info['result'].get('zip_file')
-    if not zip_file_path or not os.path.exists(zip_file_path):
-        return render_template('error.html', message='ZIP-Datei nicht gefunden.'), 404
+    pdf_files = task_info['result'].get('pdf_files')
+    if not pdf_files:
+        return render_template('error.html', message='Keine PDF-Dateien gefunden.'), 404
 
     return render_template(
         'convert_result.html',
-        zip_filename=os.path.basename(zip_file_path),
+        pdf_files=pdf_files,
         task_id=task_id
     )
+
+@main.route('/finalize_pdfs', methods=['POST'])
+def finalize_pdfs():
+    try:
+        data = request.get_json()
+        task_id = data.get('task_id')
+        pdfs_to_include = data.get('pdfs_to_include', [])
+        folder_name = data.get('folder_name').strip()
+
+        logger.info(f"Empfangene Daten in finalize_pdfs - task_id: {task_id}, pdfs_to_include: {pdfs_to_include}, folder_name: {folder_name}")
+
+        if not task_id or not pdfs_to_include or not folder_name:
+            return jsonify({'status': 'error', 'message': 'Ungültige Daten.'}), 400
+
+        with pdf_lock:
+            task_info = pdf_tasks.get(task_id)
+
+        if not task_info or task_info['status'] != 'completed':
+            return jsonify({'status': 'error', 'message': 'Task nicht gefunden oder nicht abgeschlossen.'}), 404
+
+        pdf_files = task_info['result'].get('pdf_files')
+        if not pdf_files:
+            return jsonify({'status': 'error', 'message': 'Keine PDF-Dateien gefunden.'}), 404
+
+        # Verwende die Schlüssel direkt
+        selected_pdfs = [pdf_files[key] for key in pdfs_to_include if key in pdf_files]
+
+        if not selected_pdfs:
+            return jsonify({'status': 'error', 'message': 'Keine gültigen PDFs ausgewählt.'}), 400
+
+        logger.info(f"Ausgewählte PDFs für ZIP-Erstellung: {selected_pdfs}")
+
+        zip_filename = os.path.join(OUTPUT_PDFS_DIR, f"{folder_name}_{task_id}.zip")
+        create_zip_archive(selected_pdfs, zip_filename)
+
+        # Speichere den Pfad der ZIP-Datei
+        with pdf_lock:
+            task_info['result']['zip_file'] = zip_filename
+            logger.info(f"ZIP-Dateipfad gespeichert: {zip_filename}")
+
+        download_url = url_for('main.download_pdfs', task_id=task_id, _external=True)
+
+        return jsonify({'status': 'success', 'download_url': download_url}), 200
+
+    except Exception as e:
+        logger.error(f"Fehler bei finalize_pdfs: {e}", exc_info=True)
+        return jsonify({'status': 'error', 'message': 'Fehler bei der Finalisierung der PDFs.'}), 500
 
 @main.route('/download_pdfs/<task_id>', methods=['GET'])
 def download_pdfs(task_id):
@@ -270,14 +311,19 @@ def download_pdfs(task_id):
         task_info = pdf_tasks.get(task_id)
 
     if not task_info:
+        logger.error(f"PDF Task {task_id} nicht gefunden.")
         return render_template('error.html', message='PDF Task nicht gefunden.'), 404
 
     if task_info['status'] != 'completed':
+        logger.warning(f"PDF Task {task_id} ist noch nicht abgeschlossen.")
         return render_template('error.html', message='PDF Task ist noch nicht abgeschlossen.'), 400
 
     zip_file_path = task_info['result'].get('zip_file')
     if not zip_file_path or not os.path.exists(zip_file_path):
+        logger.error(f"ZIP-Datei nicht gefunden für Task {task_id}: {zip_file_path}")
         return render_template('error.html', message='ZIP-Datei nicht gefunden.'), 404
+
+    logger.info(f"ZIP-Datei wird heruntergeladen: {zip_file_path}")
 
     return send_file(
         zip_file_path,
