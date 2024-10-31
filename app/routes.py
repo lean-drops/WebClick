@@ -16,7 +16,6 @@ import json
 from app.processing.website_downloader  import (
     PDFConverter,
     merge_pdfs_with_bookmarks,
-    apply_ocr_to_all_pdfs,
     create_zip_archive
 )
 from app.scrapers.scraping_helpers import (
@@ -235,15 +234,6 @@ async def _run_pdf_task(task_id: str, urls: List[str], conversion_mode: str):
             merge_pdfs_with_bookmarks(expanded_results, merged_expanded_pdf)
 
         await pdf_converter.close()
-
-        # Anwenden von OCR auf die PDFs
-        logger.info(f"Wende OCR auf die PDFs für Task-ID: {task_id} an.")
-        apply_ocr_to_all_pdfs(
-            individual_collapsed_dir=pdf_converter.output_dir_collapsed,
-            individual_expanded_dir=pdf_converter.output_dir_expanded,
-            merged_collapsed_pdf=merged_collapsed_pdf if conversion_mode == 'collapsed' else None,
-            merged_expanded_pdf=merged_expanded_pdf if conversion_mode == 'expanded' else None
-        )
 
         # Erstelle ein ZIP-Archiv mit den ausgewählten PDFs
         logger.info(f"Erstelle ein ZIP-Archiv für Task-ID: {task_id}.")

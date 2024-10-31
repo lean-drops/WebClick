@@ -76,3 +76,5 @@ Werkzeug==3.0.6
 whitenoise==6.8.2
 wrapt==1.16.0
 yarl==1.17.1
+gunicorn
+playwright==1.32.0

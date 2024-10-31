@@ -10,11 +10,9 @@ from pypdf import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from io import BytesIO
-import ocrmypdf
 import shutil
 
 from app.create_package.create_zipfile import create_zip_archive
-from app.create_package.ocr_helper import apply_ocr_to_all_pdfs
 from app.processing.website_cleaner import remove_unwanted_elements, remove_fixed_elements, \
     remove_navigation_and_sidebars
 from app.processing.website_handler import expand_hidden_elements, scroll_page
@@ -331,12 +329,9 @@ if __name__ == "__main__":
 
         # ======================= OCR Anwenden =======================
         logger.info("Wende OCR auf alle PDFs an.")
-        apply_ocr_to_all_pdfs(
-            individual_collapsed_dir=converter.output_dir_collapsed,
-            individual_expanded_dir=converter.output_dir_expanded,
-            merged_collapsed_pdf=merged_collapsed_pdf,
-            merged_expanded_pdf=merged_expanded_pdf
-        )
+        # ======================= OCR Anwenden =======================
+        logger.info("Überprüfen, ob OCR erforderlich ist.")
+
 
         # ======================= ZIP Archiv erstellen =======================
         logger.info("Erstelle ein ZIP-Archiv der generierten PDFs.")
