@@ -1,5 +1,3 @@
-# config.py
-
 import os
 import json
 from pathlib import Path
@@ -25,14 +23,29 @@ def get_base_dir():
     return os.path.dirname(os.path.abspath(__file__))
 
 # Basisverzeichnis festlegen
-
-    # Verwende das Basisverzeichnis des Skripts
 BASE_DIR = Path(get_base_dir())
 
 # App-Verzeichnis
 APP_DIR = BASE_DIR / os.getenv('APP_DIR', 'app')
 
-# Wenn Sie spezifische Verzeichnisse auf Heroku im /tmp speichern möchten
+# Config-Verzeichnis (für die JSON-Dateien)
+CONFIG_DIR = APP_DIR / os.getenv('CONFIG_DIR', 'config')
+
+# Static-Verzeichnis innerhalb der App (nur für statische Assets)
+STATIC_DIR = APP_DIR / os.getenv('STATIC_DIR', 'static')
+
+# Weitere Verzeichnisse innerhalb Static
+CSS_DIR = STATIC_DIR / os.getenv('CSS_DIR', 'css')
+IMG_DIR = STATIC_DIR / os.getenv('IMG_DIR', 'img')
+JS_DIR = STATIC_DIR / os.getenv('JS_DIR', 'js')
+
+# Entfernen Sie JSON_DIR, da die JSON-Dateien nicht mehr in static/json liegen
+# JSON_DIR = STATIC_DIR / os.getenv('JSON_DIR', 'json')
+
+TEMPLATES_DIR = APP_DIR / os.getenv('TEMPLATES_DIR', 'templates')
+UTILS_DIR = APP_DIR / os.getenv('UTILS_DIR', 'utils')
+
+# Cache-Verzeichnisse
 if IS_HEROKU:
     CACHE_DIR = Path('/tmp') / os.getenv('CACHE_DIR', 'cache')
     LOGS_DIR = Path('/tmp') / os.getenv('LOGS_DIR', 'logs')
@@ -40,38 +53,24 @@ else:
     CACHE_DIR = BASE_DIR / os.getenv('CACHE_DIR', 'cache')
     LOGS_DIR = BASE_DIR / os.getenv('LOGS_DIR', 'logs')
 
-
-#Innerhalb der App
-STATIC_DIR = APP_DIR / os.getenv('STATIC_DIR', 'static')
-
-# Weitere Verzeichnisse innerhalb Static
-CSS_DIR = STATIC_DIR / os.getenv('CSS_DIR', 'css')
-IMG_DIR = STATIC_DIR / os.getenv('IMG_DIR', 'img')
-JS_DIR = STATIC_DIR / os.getenv('JS_DIR', 'js')
-JSON_DIR = STATIC_DIR / os.getenv('JSON_DIR', 'json')
-TEMPLATES_DIR = APP_DIR / os.getenv('TEMPLATES_DIR', 'templates')
-UTILS_DIR = APP_DIR / os.getenv('UTILS_DIR', 'utils')
-# Cache-Verzeichnisse (jetzt außerhalb von STATIC_DIR)
-CACHE_DIR = BASE_DIR / os.getenv('CACHE_DIR', 'cache')
 MAPPING_CACHE_DIR = CACHE_DIR / os.getenv('MAPPING_CACHE_DIR', 'mapping_cache')
 MAPPING_CACHE_FILE = os.getenv('MAPPING_CACHE_FILE', 'output_mapping.json')  # Nur der Dateiname
-# Logs-Verzeichnis
-LOGS_DIR = BASE_DIR / os.getenv('LOGS_DIR', 'logs')
 
 # Output PDFs-Verzeichnis
 OUTPUT_PDFS_DIR = BASE_DIR / os.getenv('OUTPUT_PDFS_DIR', 'output_pdfs')
 
-# Pfade zu spezifischen Dateien
-OUTPUT_MAPPING_PATH = CACHE_DIR / os.getenv('MAPPING_CACHE_FILE', 'output_mapping.json')
-TABOO_JSON_PATH = JSON_DIR / os.getenv('TABOO_JSON_FILE', 'taboo.json')
-COOKIES_SELECTOR_JSON_PATH = JSON_DIR / os.getenv('COOKIES_SELECTOR_JSON_FILE', 'cookies_selector.json')
-EXCLUDE_SELECTORS_JSON_PATH = JSON_DIR / os.getenv('EXCLUDE_SELECTORS_JSON_FILE', 'exclude_selectors.json')
-URLS_JSON_PATH = JSON_DIR / os.getenv('URLS_JSON_FILE', 'urls.json')
+# Pfade zu spezifischen Dateien im CONFIG_DIR
+TABOO_JSON_PATH = CONFIG_DIR / os.getenv('TABOO_JSON_FILE', 'taboo.json')
+COOKIES_SELECTOR_JSON_PATH = CONFIG_DIR / os.getenv('COOKIES_SELECTOR_JSON_FILE', 'cookies_selector.json')
+EXCLUDE_SELECTORS_JSON_PATH = CONFIG_DIR / os.getenv('EXCLUDE_SELECTORS_JSON_FILE', 'exclude_selectors.json')
+URLS_JSON_PATH = CONFIG_DIR / os.getenv('URLS_JSON_FILE', 'urls.json')
 
 # Zusätzliche Verzeichnisse für Remove Elements Konfiguration
-REMOVE_ELEMENTS_CONFIG_DIR = JSON_DIR / 'remove_elements'
+REMOVE_ELEMENTS_CONFIG_DIR = CONFIG_DIR / 'remove_elements'
 ELEMENTS_COLLAPSED_CONFIG = REMOVE_ELEMENTS_CONFIG_DIR / 'elements_collapsed.json'
 ELEMENTS_EXPANDED_CONFIG = REMOVE_ELEMENTS_CONFIG_DIR / 'elements_expanded.json'
+
+OUTPUT_MAPPING_PATH = CACHE_DIR / os.getenv('MAPPING_CACHE_FILE', 'output_mapping.json')
 
 # Einstellungen
 DEFAULT_MAX_WORKERS = int(os.getenv('MAX_WORKERS', '4'))
@@ -134,12 +133,13 @@ directories = [
     CSS_DIR,
     IMG_DIR,
     JS_DIR,
-    JSON_DIR,
     TEMPLATES_DIR,
     UTILS_DIR,
     CACHE_DIR,
+    CONFIG_DIR,  # Fügen Sie das neue Config-Verzeichnis hinzu
     REMOVE_ELEMENTS_CONFIG_DIR,
 ]
+
 
 # Überprüfung der Verzeichnisse
 def ensure_directories_exist(directories):
@@ -171,6 +171,8 @@ files = [
     COOKIES_SELECTOR_JSON_PATH,
     EXCLUDE_SELECTORS_JSON_PATH,
     URLS_JSON_PATH,
+    ELEMENTS_COLLAPSED_CONFIG,
+    ELEMENTS_EXPANDED_CONFIG,
 ]
 
 # Überprüfung der Dateien
